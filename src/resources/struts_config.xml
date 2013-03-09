@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 系统属性设置 -->
+	<package name="config" extends="struts-default" >
+		<!-- 显示属性列表 -->
+		<action name="listConfig" class="configAction" method="list"></action>
+		<!-- 保存角色-->
+		<action name="saveConfig" class="configAction" method="save"></action>
+		
+		
+		
+		<!-- 索引 -->
+		<action name="createIndexer" class="indexerAction" method="createIndexerOnCREATE"></action>
+		<action name="createFilesIndexer" class="indexerAction" method="createFilesIndexer"></action>
+		
+		<!-- 删除、追加、更新索引  测试代码。暂时不开发这三个功能。本系统采用全部重新建立索引的方式 -->
+		<action name="deleteIndexer" class="indexerAction" method="deleteIndexer"></action>
+		<action name="appendIndexer" class="indexerAction" method="appendIndexer"></action>
+		<action name="updateIndexer" class="indexerAction" method="updateIndexer"></action>
+		
+		
+		
+	</package>
+</struts>

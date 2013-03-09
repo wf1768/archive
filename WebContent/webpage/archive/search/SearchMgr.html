@@ -1,0 +1,103 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+<script type="text/javascript" src="../../js/jquery-1.7.1.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="../../js/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css" />
+<script type="text/javascript"
+	src="../../js/jquery-ui/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="../../js/us.archive.search.js"></script>
+<script type="text/javascript" src="../../js/us.archive.ui.js"></script>
+<script type="text/javascript" src="../../js/us.archive.util.js"></script>
+<link rel="stylesheet" type="text/css" href="../../js/bootstrap/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="../../js/bootstrap/css/darkblue.css" />
+<script type="text/javascript" src="../../js/bootstrap/js/bootstrap.js"></script>
+
+<script type="text/javascript" src="SearchMgr.js"></script>
+<title></title>
+<style type="text/css">
+.narrowValue {
+	color: #888888;
+}
+</style>
+</head>
+<body>
+	<!-- margin: 0 auto; -->
+	<div style="margin-top: 20px;"></div>
+	<div style="margin: 0 auto; padding: 0; height: 50px; width: 700px">
+		<form class="form-horizontal">
+			<fieldset>
+				<div class="control-group">
+					<label for="searchTxt" class="control-label">搜索</label>
+
+					<div class="controls">
+						<select class="span2" title="搜索范围" class="searchSelect"
+							id="searchDropdownBox">
+						</select>
+						<div class="input-append">
+							<input type="text" id="searchTxt" size="86"
+								onkeypress="if(event.keyCode==13) {$('#btn').click();return false;}"
+								class="span3">
+							<button type="button" id="btn" onClick="submitSearch()"
+								class="btn">搜索</button>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	<div style="border-top: 1px dashed #AE1337;">
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div class="span3" id="refinements"></div>
+				<div class="span9">
+					<div style="height: 10px"></div>
+					<ul class="nav nav-tabs">
+					    <li id="listTab" class="active"><a href="#list" data-toggle="tab">查询</a></li>
+					    <li id="contentTab" ><a href="#content" data-toggle="tab">详细</a></li>
+				    </ul>
+				    <div class="tab-content">
+    					<div class="tab-pane active" id="list">
+							<div class="alert alert-info fade in">
+								<a href="#" data-dismiss="alert" class="close">×</a> <strong>提示！</strong>
+								欢迎使用档案查询模块。本系统对中文智能分词，您在模糊检索时，请尽量输入词组，例如"北京"、"南京"。对于英文，请输入完整单词。
+							</div>
+							<div id="searchInfo" class="alert alert-info fade in">
+								<strong>提示！</strong>选择档案类型进行智能检索。
+							</div>
+							<div id="searchList" style="width: 100%"></div>
+							<div class="pagination">
+								<ul>
+									<!-- <input type="text" id="page" size="26"
+										onkeypress="if(event.keyCode==13) {$('#btn').click();return false;}"
+										class="span1"> -->
+									<li id="first" class=""><a href="javascript:void(0);" onClick="selectPage('first');return false;">首页</a></li>
+									<li id="previous"><a href="javascript:void(0);" onClick="selectPage('previous');return false;">上一页</a></li>
+									<li><a>第 <input id="currentPage" type="text" onkeyup='this.value=this.value.replace(/\D/gi,"")' onkeypress="if(event.keyCode==13) {selectPage(this.value);return false;}"
+											style="margin-bottom: 0px; margin-top: 0px; width: 25px; height: 10px; direction: rtl;">
+											页
+									</a></li>
+									<li id="next"><a href="javascript:void(0);" onClick="selectPage('next');return false;">下一页</a></li>
+									<li id="over"><a href="javascript:void(0);" onClick="selectPage('over');return false;">尾页</a></li>
+								</ul>
+								<ul class="pull-right">
+									<li class="disabled"><a id="pageinfo">第  页 / 共  页</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="tab-pane " id="content">
+							<form class="form-horizontal">
+						        <fieldset id="data">
+						        </fieldset>
+						      </form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</body>
+</html>

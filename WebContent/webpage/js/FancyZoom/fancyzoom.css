@@ -1,0 +1,54 @@
+/*wf*/
+
+#fancymain {
+   padding: 16px 40px 16px 40px;
+}
+
+.post-body {
+  font-size: 13.8px;
+ line-height: 1.55em;
+}
+
+#fancymain .photoblock-many {		/* A general full-width photo block (that clears), for many thumbnails */
+   margin: 0 10px 10px -4px;
+   clear: both;
+   width: 100%;
+   text-align: center;
+   font-size: 10px;
+   color: #888888;
+}
+#fancymain .photoblock-many a {		/* (Need clear links in the photo block) */
+   background: white;
+}
+
+#fancymain .photoborder-right {		/* A photo with a border on the right */
+   border: 1px solid #ccc;
+   padding: 1px;
+   margin: 0px 0px 10px 10px;
+   float: right;
+}
+
+#fancymain .photo {			/* A normal photo */
+  padding: 3px;
+  vertical-align: middle;
+}
+
+#fancymain a:hover {
+ color: #666666;
+}
+
+#fancymain .post-body a {
+  color: #022d3f;
+  background: url(/images/underline-blue.gif) repeat-x 0 95%;
+}
+#fancymain .post-body a:hover {
+  color: #666666;
+}
+#fancymain .post-body a img {
+  background: white;
+}
+
+
+#fancymain .post-body a:link {
+ text-decoration: none;
+}

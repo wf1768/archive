@@ -1,0 +1,71 @@
+
+<!-- fancyZoom 提供给客户来选择图片展示的一种效果。-->
+<link rel="stylesheet" type="text/css" href="../../js/FancyZoom/fancyzoom.css" />
+<script src="../../js/FancyZoom/js-global/FancyZoom.js" type="text/javascript"></script>
+<script src="../../js/fancyzoom/js-global/FancyZoomHTML.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="MediaWjList.js"></script>
+<div id="mediaWjGrid" class="gridC" style="position: relative; height:100%;overflow: hidden">
+    <div id="grid_header_mediawj" class="grid-header" style="width: 100%;height:20px">多媒体-文件管理</div>
+    <div style="width:100%; height:35px" class="grid-menu">
+        <ul class="nav nav-pills" style="background-color: #F5F5F5; border: 1px solid #D3D3D3">
+            <li><a href="javascript:void(0);" onClick="addMediaWj()">添加</a></li>
+            <li><a href="javascript:void(0);" onClick="showMediaWj()">预览</a></li>
+            <li><a href="javascript:void(0);" onClick="refreshWj()">刷新</a></li>
+        </ul>
+    </div>
+    <div id="meidawjdiv" class="grid-div container"
+         style="position: relative; width: 100%; height: 100%;overflow: auto;padding: 0px">
+        <div class="row-fluid">
+            <ul class="thumbnails">
+                <li class="span3">
+                    <a class="thumbnail" href="#">
+                        <img alt="260x180" data-src="holder.js/260x180" style="width: 260px; height: 180px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQQAAAC0CAYAAABytVLLAAACpElEQVR4nO3YSW7CQBRAQe5/FA7nK5DdUwQBtwfFnagWtbFbpoX0n4fbsiwPgGVZHrerNwDMQxCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCBO63+8vRtatrTljT2fu+er/mVeCMJmfhmXt2LsBG1kzup+RIT9jz1xLECYzMlwjwzQ6pEf2dXTPojAfQZiMIHAlQZjcp0H69Ci/ZUj3Xu/d+T2vEMxBECa3FoS1NVuObX0KeLdmb6C4niBM7Iy7/5brjT4BrJ33hPB3CcKkfvOd/WgQfEP4PwRhQnuGUxA4gyBM5sx3/7PW7Dl35HsF1xGEyXy/Wz/7tHbkent+a89eRuIhBnMSBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCkC8zT00KX+7RYgAAAABJRU5ErkJggg==">
+                    </a>
+                </li>
+                <li class="span3">
+                    <a class="thumbnail" href="#">
+                        <img alt="260x180" data-src="holder.js/260x180" style="width: 260px; height: 180px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQQAAAC0CAYAAABytVLLAAACpElEQVR4nO3YSW7CQBRAQe5/FA7nK5DdUwQBtwfFnagWtbFbpoX0n4fbsiwPgGVZHrerNwDMQxCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCBO63+8vRtatrTljT2fu+er/mVeCMJmfhmXt2LsBG1kzup+RIT9jz1xLECYzMlwjwzQ6pEf2dXTPojAfQZiMIHAlQZjcp0H69Ci/ZUj3Xu/d+T2vEMxBECa3FoS1NVuObX0KeLdmb6C4niBM7Iy7/5brjT4BrJ33hPB3CcKkfvOd/WgQfEP4PwRhQnuGUxA4gyBM5sx3/7PW7Dl35HsF1xGEyXy/Wz/7tHbkent+a89eRuIhBnMSBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCkC8zT00KX+7RYgAAAABJRU5ErkJggg==">
+                    </a>
+                </li>
+                <li class="span3">
+                    <a class="thumbnail" href="#">
+                        <img alt="260x180" data-src="holder.js/260x180" style="width: 260px; height: 180px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQQAAAC0CAYAAABytVLLAAACpElEQVR4nO3YSW7CQBRAQe5/FA7nK5DdUwQBtwfFnagWtbFbpoX0n4fbsiwPgGVZHrerNwDMQxCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCBO63+8vRtatrTljT2fu+er/mVeCMJmfhmXt2LsBG1kzup+RIT9jz1xLECYzMlwjwzQ6pEf2dXTPojAfQZiMIHAlQZjcp0H69Ci/ZUj3Xu/d+T2vEMxBECa3FoS1NVuObX0KeLdmb6C4niBM7Iy7/5brjT4BrJ33hPB3CcKkfvOd/WgQfEP4PwRhQnuGUxA4gyBM5sx3/7PW7Dl35HsF1xGEyXy/Wz/7tHbkent+a89eRuIhBnMSBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCkC8zT00KX+7RYgAAAABJRU5ErkJggg==">
+                    </a>
+                </li>
+                <li class="span3">
+                    <a class="thumbnail" href="#">
+                        <img alt="260x180" data-src="holder.js/260x180" style="width: 260px; height: 180px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQQAAAC0CAYAAABytVLLAAACpElEQVR4nO3YSW7CQBRAQe5/FA7nK5DdUwQBtwfFnagWtbFbpoX0n4fbsiwPgGVZHrerNwDMQxCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCEAEAYggABEEIIIARBCACAIQQQAiCBO63+8vRtatrTljT2fu+er/mVeCMJmfhmXt2LsBG1kzup+RIT9jz1xLECYzMlwjwzQ6pEf2dXTPojAfQZiMIHAlQZjcp0H69Ci/ZUj3Xu/d+T2vEMxBECa3FoS1NVuObX0KeLdmb6C4niBM7Iy7/5brjT4BrJ33hPB3CcKkfvOd/WgQfEP4PwRhQnuGUxA4gyBM5sx3/7PW7Dl35HsF1xGEyXy/Wz/7tHbkent+a89eRuIhBnMSBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCEEEAIghABAGIIAARBCCCAEQQgAgCkC8zT00KX+7RYgAAAABJRU5ErkJggg==">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="pager_media_wj" class="grid-pager" style="width: 100%; height: 20px;"></div>
+</div>
+
+<div id="mediaWjInfo">
+    <div class="row" style="margin-top:20px;">
+        <div class="span4">
+            <img class="mediainfo" style="width:300;height: 200;">
+            <!--<div class="prettyprint linenums">-->
+                <!--<button type="button" class="btn btn-small">上一张</button><button type="button" class="btn btn-small">下一张</button>-->
+            <!--</div>-->
+            <pre class="prettyprint linenums">
+                <ol class="linenums"><li class="L0"><span class="tag">&lt;fieldset</span></li><li class="L1"><span class="pln">  </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"control-group error"</span><span class="tag">&gt;</span></li><li class="L2"><span class="pln">  …</span></li><li class="L3"><span class="tag">&lt;/fieldset&gt;</span></li></ol>
+            </pre>
+        </div>
+        <div class="span4">
+            <form class="form-horizontal" id="mediaWjInfoForm">
+
+            </form>
+        </div>
+    </div>
+</div>
+        <input type="hidden" id="selectTreeid" value="" />
+<div id="showMediaImg" >
+    <iframe id="ifr" width="100%" height="100%"
+            name="ifr"  frameborder="no" border="0" marginwidth="0"
+            marginheight="0" scrolling="auto" allowtransparency="yes"
+            src=""></iframe>
+</div>
