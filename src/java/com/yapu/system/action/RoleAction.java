@@ -2,6 +2,7 @@ package com.yapu.system.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yapu.system.common.BaseAction;
+import com.yapu.system.entity.SysAccount;
 import com.yapu.system.entity.SysFunction;
 import com.yapu.system.entity.SysFunctionExample;
 import com.yapu.system.entity.SysRole;
@@ -36,32 +38,34 @@ public class RoleAction extends BaseAction {
 	public String list() throws IOException {
 		
 		PrintWriter out = this.getPrintWriter();
-		
+		SysAccount account = this.getAccount();
+		if(account==null){
+			out.write("error");
+			return null;
+		}
+		String result = "var account='" + account.getAccountcode() + "';";
 		SysRoleExample example = new SysRoleExample();
 		List<SysRole> rolesList = roleService.selectByWhereNotPage(example);
-		StringBuffer sb = new StringBuffer();
-		sb.append("{\"total\":").append(rolesList.size()).append(",\"rows\":[");
-		String resultStr = "";
+		List<Map> roleList = new ArrayList<Map>();
 		if(null!=rolesList && rolesList.size()>0){
-			
 			for (SysRole sysRole : rolesList) {
-				sb.append("{");
-				sb.append("\"roleid\":\""+sysRole.getRoleid()+"\",");
-				sb.append("\"rolename\":\""+sysRole.getRolename()+"\",");
-				sb.append("\"rolememo\":\""+sysRole.getRolememo()+"\"");
-				sb.append("},");
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("roleid",sysRole.getRoleid());
+				map.put("rolename",sysRole.getRolename());
+				map.put("rolememo",sysRole.getRolememo());
+				roleList.add(map);
 			}
-			resultStr = sb.substring(0,sb.length()-1);
-			
 		}
 		else {
-			resultStr = sb.toString();
+			out.write("error");
+			return null;
 		}
-		resultStr += "]}";
-		out.write(resultStr);
+		Gson gson = new Gson();
+		result += "var roleList=" + gson.toJson(roleList);
+		out.write(result);
 		return null;
 	}
-	
+
 	public String save() throws IOException {
 		PrintWriter out  = this.getPrintWriter();
 		

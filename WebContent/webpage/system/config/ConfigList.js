@@ -1,115 +1,90 @@
-		
-
-		var lastIndex = -1;
-		$(function(){
-			$('#configtable').datagrid({
-				url		: 'listConfig.action',
-				title	: '参数属性列表',
-				width	: 800,
-				height	: 'auto',
-				loadMsg		: '数据加载中......',
-				singleSelect: true,
-				fitColumns	: false,
-				fit:true,
-				columns:[[
-					{field:'configname',title:'属性名称',width:150,
-						styler:function(value,row,index){
-							return 'background-color:#efefef;';
-						}
-					},
-					{field:'configvalue',title:'属性值',width:260,
-						editor:{
-							type:'validatebox',
-							options:{
-								required:true,
-								missingMessage:'此处请填写内容，不能为空！'
-							}
-						}
-					},
-					{field:'configmemo',title:'属性描述',width:260,
-						styler:function(value,row,index){
-							return 'background-color:#efefef;';
-						}
+/*
+ * 参数设置
+ * guodh
+ * 2013/03/12
+*/
+$(function(){
+	$.ajax({
+		async : false,
+		url : "listConfig.action",
+		type : 'post',
+		dataType : 'script',
+		success : function(data) {
+			if (data != "error") {
+				var content = createSysConfigTable(sysList);
+				$("#configInfo").html(content);
+			} else {
+				alert("error");
+			}
+		},
+		error:function(){
+			window.location.href="../../common/logout.jsp";
+		}
+	});
+	
+	//修改
+	$("#upd_conf").click(function(){
+		var checks = "";
+		$("[name='conf_box']").each(function(){
+	        if($(this).attr("checked") == "checked"){
+	            checks += $(this).val() + "";
+	            alert($(this).val());
+	        }
+	    });
+	    
+	    if(checks == ""){
+	    	openalert("请选择一条记录！");
+	    }else{
+	    	$.ajax({
+				url : "getConfig.action",
+				type : 'post',
+				data: "par="+checks,
+				success : function(data) {
+					if (data != "error") {
+						alert(data);						
+					} else {
+						alert("error");
 					}
-				]],
-				toolbar:[{
-					id:'btnConfigSave',
-					text:'保存',
-					iconCls:'icon_save',
-					disabled:true,
-					handler:function(){
-						$('#configtable').datagrid('endEdit', lastIndex);
-						var rows = $('#configtable').datagrid('getChanges');
-						if (rows.length == 0) {
-							// 并且禁止保存、还原按钮
-							$('#btnConfigSave').linkbutton('disable');
-							$('#btnConfigReject').linkbutton('disable');
-		    				return;
-						}
-						var changesRows = {
-	    	    				updated : []
-	    	    		};
-						for(var i=0; i<rows.length; i++){
-							changesRows.updated.push(rows[i]);
-						}
-						//alert(JSON.stringify(changesRows));
-	   					var par = "par=" + JSON.stringify(changesRows);
-
-	   					$.post("saveConfig.action",par,function(data){
-		   						new $.Zebra_Dialog(data, {
-					  				'buttons':  false,
-					   			    'modal': false,
-					   			    'position': ['right - 20', 'top + 20'],
-					   			    'auto_close': 2500
-					            });
-   							}
-	   					);
-	   					
-	   					// 保存成功后，可以刷新页面，也可以：
-						//$('#configtable').datagrid('acceptChanges');
-						$('#configtable').datagrid('reload');
-
-						// 并且禁止保存、还原按钮
-						$('#btnConfigSave').linkbutton('disable');
-						$('#btnConfigReject').linkbutton('disable');
-					}
-				},'-',{
-					id	:'btnConfigReject',
-					text:'还原',
-					iconCls:'icon-reject',
-					disabled:true,
-					handler:function(){
-						$('#configtable').datagrid('rejectChanges');
-						// 并且禁止保存、还原按钮
-						$('#btnConfigSave').linkbutton('disable');
-						$('#btnConfigReject').linkbutton('disable');
-					}
-				},'-',{
-					id	:'btnConfigRefresh',
-					text:'刷新',
-					iconCls:'icon_refresh',
-					handler:function(){
-						$('#configtable').datagrid('reload');
-						lastIndex = -1;
-						// 并且禁止保存、还原按钮
-						$('#btnConfigSave').linkbutton('disable');
-						$('#btnConfigReject').linkbutton('disable');
-					}
-				}],
-				onBeforeLoad:function(){
-					$(this).propertygrid('rejectChanges');
-				},
-				onBeforeEdit:function(index,row){  
-					$('#btnConfigSave').linkbutton('enable');
-					$('#btnConfigReject').linkbutton('enable');
-			    },
-			    onClickRow:function(rowIndex){
-			    	if (lastIndex != rowIndex){
-						$('#configtable').datagrid('endEdit', lastIndex);
-						$('#configtable').datagrid('beginEdit', rowIndex);
-					}
-					lastIndex = rowIndex;
 				}
 			});
-		});
-		
+	    }
+	});
+});
+
+//创建参数设置Table
+function createSysConfigTable(configList){
+	var table = "<table class=\"table table-striped table-bordered\">";
+	table += "<thead>";
+	table += "<tr>";
+	table += "<th>#</th>";
+	table += "<th>属性名称</th>";
+	table += "<th>属性值</th>";
+	table += "<th>属性描述</th>";
+	table += "</tr>";
+	table += "</thead>";
+	tr = createSysConfig(configList);
+	table += tr;
+	table += "</table>";
+	return table;
+}
+function createSysConfig(configList){
+	var tr = "";
+	if (configList.length > 0) {
+		for (var i=0;i<configList.length;i++) {
+			//alert(configList[i].configid+'/'+sysList[i].configname);
+			tmp = "<tr>";
+			//tmp += "<td><input name=\"conf_box\" type=\"checkbox\" value=\""+configList[i].configid+"\"/></td>";
+			tmp += "<td>"+configList[i].configid+"</td>";
+			tmp += "<td>"+configList[i].configname+"</td>";
+			tmp += "<td><a href=\"\" id=>"+configList[i].configvalue+"</a></td>";
+			tmp += "<td>"+configList[i].configmemo+"</td>";
+			tmp += "</tr>";
+			tr += tmp;
+		}
+	}else{
+		tr = "";
+	}
+	return tr;
+}
+
+

@@ -355,7 +355,52 @@ public class CommonUtils {
         return new MimetypesFileTypeMap().getContentType(file);
     }
 
+    /**集合对象都不为NULL并且不为空("")
+	 * @param objs
+	 * @return
+	 */
+	public static boolean isNotNullAndEmpty(Object... objs){
+		if(CommonUtils.isNotEqNull(objs)&&CommonUtils.isNotEqEmpty(objs)){return true;}
+		return false;
+	}
+	/**集合所有对象不为NULL,则返回真,否则返回假
+	 * @param objs
+	 * @return
+	 */
+	public static boolean isNotEqNull(Object[] objs){
+		for (Object object : objs) {
+			return isNotEqNull(object);
+		}
+		return  true;
+	}
+	/**对象不为NULL,则返回真,否则返回假
+	 * @param obj
+	 * @return
+	 */
+	public static boolean isNotEqNull(Object obj){
+		if(obj==null)return false;return  true;
+	}
+	/**集合所有对象不为空(""),则返回真,否则返回假     (NULL!="")
+	 * @param objs
+	 * @return
+	 */
+	public static boolean isNotEqEmpty(Object[] objs){
+		for (Object object : objs) {
+			return isNotEqEmpty(object);
+		}
+		return  true;
+	}
+	
+	/**对象不为空(""),则返回真,否则返回假     (NULL!="")
+	 * @param obj
+	 * @return
+	 */
+	public static boolean isNotEqEmpty(Object obj){
+		if("".equals(obj.toString())){return false;}return  true;
+	}
+	
     public static void main(String[] args) {
 
     }
+    
 }

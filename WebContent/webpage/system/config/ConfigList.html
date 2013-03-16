@@ -1,3 +1,96 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+<script type="text/javascript" src="../../js/jquery-1.7.1.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="../../js/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css" />
+<script type="text/javascript"
+	src="../../js/jquery-ui/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="../../js/us.archive.search.js"></script>
+<script type="text/javascript" src="../../js/us.archive.ui.js"></script>
+<script type="text/javascript" src="../../js/us.archive.util.js"></script>
 
-	<script type="text/javascript" src="ConfigList.js"></script>
-	<table id="configtable"></table>
+<link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/adminia.css" rel="stylesheet"> 
+<link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+
+<script type="text/javascript" src="ConfigList.js"></script>
+<script type="text/javascript" src="../../js/account/account.js"></script>
+
+<style type="text/css">
+h3{margin-bottom: 0;}
+</style>
+<title></title>
+</head>
+<body>
+	<!-- margin: 0 auto; -->
+	<div style="padding-top: 8px;">&nbsp;</div>
+	<div class="container">
+		<div class="row">
+			<div class="span3">
+				<div id="account"></div>
+				<hr>
+				<ul class="nav nav-tabs nav-stacked" id="main-nav">
+					<li class="active">
+						<a href="ConfigList.html">
+							<i class="icon-home"></i>参数设置</a>
+					</li>
+					<li>
+						<a href="javascript::">
+							<i class="icon-home"></i>文件服务器</a>
+					</li>
+					<li>
+						<a href="RoleList.html">
+							<i class="icon-user"></i>角色管理</a>
+					</li>
+					<li>
+						<a href="SetSytem.html">
+							<i class="icon-th-large"></i>定制</a>
+					</li>
+				</ul>
+				<hr>
+			</div>
+			<div class="span9">
+				<h1 class="page-title">
+					<i class="icon-th-large"></i>
+					系统维护-系统配置				
+				</h1>
+				<!-- <div>
+					<input id="upd_conf" type="button" value="修改" />
+				</div> -->
+				<div class="widget">
+					<div class="widget-header">
+						<h3>参数设置</h3>
+					</div>
+					<div id="configInfo" class="widget-content">
+						
+					</div>
+				</div>
+			</div><!-- span9 end -->
+		</div><!-- row end -->
+	</div>
+	<!-- 账户信息 -->
+   	<div id="accountInfo"> </div>
+   	
+   	<div id="upInfo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 id="myModalLabel">修改属性值</h3>
+        </div>
+        <div class="modal-body">
+			<input type="text" id="" name="" value=""/>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">Close</button>
+          <button class="btn btn-primary">Save changes</button>
+        </div>
+   	</div>
+	<script src="../../js/bootstrap/js/bootstrap.js"></script>
+	<script src="../../js/bootbox.min.js"></script>
+</body>
+</html>

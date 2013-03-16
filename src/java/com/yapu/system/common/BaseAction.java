@@ -1,6 +1,9 @@
 package com.yapu.system.common;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.yapu.system.entity.SysAccount;
+import com.yapu.system.util.Constants;
+
 import org.apache.struts2.ServletActionContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,5 +72,16 @@ public class BaseAction extends ActionSupport {
         return out;
     }
 
+    protected SysAccount getAccount(){
+    	//读取session里的登录帐户
+		SysAccount account = (SysAccount) this.getHttpSession().getAttribute(Constants.user_in_session);
+		if (null == account) {
+			//TODO 这里因为session过期，以后处理
+			return null;
+		}else{
+			return account;
+		}
+    }
+    
 }
 

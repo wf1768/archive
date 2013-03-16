@@ -1,10 +1,12 @@
 
 var searchCommon = new us.archive.Search();
 
+//http://wrapbootstrap.com/preview/WB00958H8
+	
 $(function() {
 	$('.pagination').css('display','none');
 	
-	$('.tabs a:last').tab('show');
+	//$('.tabs a:last').tab('show');
 	//同步取当前session帐户能查询的档案类别
 	$.ajax({
 		async : false,
@@ -12,8 +14,9 @@ $(function() {
 		type : 'post',
 		dataType : 'script',
 		success : function(data) {
+			 $("#uid").html(account);
 			if (data != "error") {
-				searchCommon.treeList = eval(data);
+				searchCommon.treeList = eval(treList);
 			} else {
 				us.openalert('<span style="color:red">读取数据时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',
 						'系统提示',
@@ -42,8 +45,13 @@ $(function() {
 		$("#refinements").html(menuTxt);
 	});
 	
-	
-	
+/*
+	$("#headM0").click(function(){
+		//alert("ok");
+		$("#headM1").attr=("data-target","s");
+		alert($("#headM1").attr("data-target"));
+	});
+	*/
 });
 //创建搜索页左侧档案类别菜单
 function createleftmenu(treeid) {
@@ -51,8 +59,37 @@ function createleftmenu(treeid) {
 	for (var i=0;i<searchCommon.treeList.length;i++) {
 		if (treeid == "ALL" || treeid == searchCommon.treeList[i].treeid) {
 			if (searchCommon.treeList[i].parentid == 0) {
+				temp = "<div id=\"headM"+i+"\" data-target=\"#dashboard-menus\" data-toggle=\"collapse\" class=\"nav-header\">";
+				temp += searchCommon.treeList[i].treename+"</div>";
+				temp += "<ul class=\"nav nav-list in collapse\" id=\"dashboard-menu\" style=\"height: auto;\">";
+//				var parentNode = searchCommon.treeList[i].treenode;
+				for (var j=0;j<searchCommon.treeList.length;j++) {
+					if (searchCommon.treeList[j].treeid != searchCommon.treeList[i].treeid) {
+						if (searchCommon.treeList[j].treetype == "W" && searchCommon.treeList[j].treenode.indexOf(searchCommon.treeList[i].treenode) >= 0) {
+							temp += "<li><a href=\"#\" onClick=\"searchByTreeid('"+searchCommon.treeList[j].treeid+"','')\"><span class=\"refinementLink\" id=\"" + searchCommon.treeList[j].treeid + "-name" + "\">" + searchCommon.treeList[j].treename + "</span><span class=\"narrowValue\" id=\""+searchCommon.treeList[j].treeid+"\"></span></a></li>";
+						};
+					};
+				};
+				if (temp != "<ul>") {
+					menuList += temp + "</ul>";
+				}
+				else {
+					menuList += "<li>无档案<li></ul>";
+				}
+			};
+		}
+	};
+	return menuList;
+};
+
+/*
+function createleftmenu(treeid) {
+	var menuList = "";
+	for (var i=0;i<searchCommon.treeList.length;i++) {
+		if (treeid == "ALL" || treeid == searchCommon.treeList[i].treeid) {
+			if (searchCommon.treeList[i].parentid == 0) {
 				temp = "<h6>"+searchCommon.treeList[i].treename+"</h6>";
-				temp += "<ul>";
+				temp += "<ul class=\"nav_ul\">";
 //				var parentNode = searchCommon.treeList[i].treenode;
 				for (var j=0;j<searchCommon.treeList.length;j++) {
 					if (searchCommon.treeList[j].treeid != searchCommon.treeList[i].treeid) {
@@ -72,7 +109,7 @@ function createleftmenu(treeid) {
 	};
 	return menuList;
 };
-
+*/
 //翻页
 function selectPage(page) {
 	//把搜索框复位
@@ -212,7 +249,6 @@ function showSearchInfo(list) {
 	$("#searchList").html("");
 	$("#searchList").append(doc);
 	
-	
 	$("#currentPage").val(searchCommon.currentPage);
 	$("#pageinfo").html("第  "+searchCommon.currentPage +" 页 / 共 "+searchCommon.pages+" 页");
 	var searchInfo = "<strong>提示！</strong> 当前显示查询节点[ " + searchCommon.treename + " ]. 查询数量：[ " + searchCommon.rowCount + " ].";
@@ -334,5 +370,4 @@ function tabinfo(tabType,selectid) {
 		}
 		$("#data").html(content);
 	}
-	
 }

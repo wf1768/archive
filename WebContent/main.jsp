@@ -8,16 +8,19 @@
 <link rel="stylesheet" type="text/css" href="webpage/images/images.css"/>
 <link rel="stylesheet" type="text/css" href="webpage/js/jquery.layout/layout-default-latest.css"/>
 <script type="text/javascript" src="webpage/js/jquery-1.7.1.js"></script>
-<link rel="stylesheet" type="text/css" href="webpage/js/bootstrap/css/bootstrap.css"/>
-<%--<link rel="stylesheet" type="text/css" href="webpage/js/bootstrap/css/bootstrap-responsive.css"/>--%>
-<link rel="stylesheet" type="text/css" href="webpage/js/bootstrap/css/darkblue.css" />
-<script type="text/javascript" src="webpage/js/bootstrap/js/bootstrap.js"></script>
 
 <link rel="stylesheet" type="text/css" href="webpage/js/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css"/>
 <script type="text/javascript" src="webpage/js/jquery-ui/jquery-ui-1.8.16.custom.min.js"></script>
 
 <script type="text/javascript" src="webpage/js/jquery.layout/jquery.layout-latest.js"></script>
 <script type="text/javascript" src="webpage/js/us.archive.util.js"></script>
+
+<link href="webpage/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="webpage/js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="webpage/js/bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="webpage/js/bootstrap/css/adminia.css" rel="stylesheet"> 
+<link href="webpage/js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+
 <style type="text/css">
     .ifr {
         left: 0;
@@ -31,10 +34,21 @@
     }
 </style>
 <script language="javascript">
+	function setit(){
+		if(document.all){
+			document.getElementById("content").attachEvent("onfocus",dothis);
+		}else{
+		 	document.getElementById("content").contentWindow.addEventListener("focus",dothis,false);
+		}
+	}
+	function dothis(){
+		$("li").removeClass("open");
+	}
+	
     $(function () {
-        $("#ifr").focus(function(e){
-            alert('d');
-        });
+        //$("#ifr").focus(function(){
+          //  $("li").removeClass("open");
+        //});
         $("#dialog-form").dialog({
             autoOpen: false,
             height: 360,
@@ -96,9 +110,10 @@
             dataType: 'script',
             success: function (data) {
                 if (data != "error") {
-                    $("#welcome").html("欢迎您：" + account);
+                    //$("#welcome").html("欢迎您：" + account);
+                    $("#account_code").val(account);
                     var funList = eval(functionList);
-                    var funStr = "<li><a href=\"#\" onclick=\"javascript:$(window.parent.document).find('#ifr').attr('src','index.html')\">首页</a></li>";
+                    var funStr = "<li><a href=\"#\" onclick=\"javascript:$(window.parent.document).find('#content').attr('src','index.html')\">首页</a></li>";
                     for (var i = 0; i < funList.length; i++) {
                         var fun = funList[i];
                         if (fun.funparent == 0) {
@@ -108,7 +123,7 @@
                             for (var j = 0; j < funList.length; j++) {
                                 child = funList[j];
                                 if (child.funparent == fun.functionid) {
-                                    tmp += "<li><a href=\"javascript:void(0)\" onclick=\"javascript:$(window.parent.document).find('#ifr').attr('src','"
+                                    tmp += "<li><a href=\"javascript:void(0)\" onclick=\"javascript:$(window.parent.document).find('#content').attr('src','"
                                             + child.funpath
                                             + "')\">"
                                             + child.funchinesename
@@ -121,12 +136,12 @@
                             }
 
                             if (childFun != "") {
-                                funStr += "<li class=\"dropdown\"><a href=\"javascript:void(0)\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">"
+                                funStr += "<li class=\"divider-vertical\"></li><li class=\"dropdown\"><a href=\"javascript:void(0)\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">"
                                         + fun.funchinesename
                                         + " <b class=\"caret\"></b></a>";
                                 funStr += childFun + "</li>";
                             } else {
-                                funStr += "<li><a href=\"javascript:void(0)\" onclick=\"javascript:$(window.parent.document).find('#ifr').attr('src','"
+                                funStr += "<li><a href=\"javascript:void(0)\" onclick=\"javascript:$(window.parent.document).find('#content').attr('src','"
                                         + child.funpath
                                         + "')\">"
                                         + fun.funchinesename + "</a>";
@@ -134,6 +149,11 @@
                             }
                         }
                     }
+                    funStr += "<li class=\"divider-vertical\"></li><li class=\"dropdown\">";
+                    funStr += "<a href=\"account.html#\" class=\"dropdown-toggle \" data-toggle=\"dropdown\">";
+                    funStr += account+" <b class=\"caret\"></b></a>";
+                    funStr += "<ul class=\"dropdown-menu\"><li><a href=\"#\" onClick=\"openAccountInfo();\"><i class=\"icon-user\"></i> 账户信息  </a></li>";
+                    funStr += "<li class=\"divider\"></li><li><a href=\"#\" onclick=\"quit()\"><i class=\"icon-off\"></i> 退 出</a></li></ul></li>";
                     $("#fun").html(funStr);
 
                 } else {
@@ -169,7 +189,7 @@
             }
         });
         //解决菜单被遮挡的问题
-        $("#ifr").css("z-index", "1");
+        $("#content").css("z-index", "1");
         //解决iframe内pading过大的问题
         //$("#ifr").css("padding","0");
         //$("#ifr").addClass("ifr");
@@ -187,7 +207,7 @@
     }
     function ifrHeight() {
         var h = pageHeight();
-        $("#ifr").height(
+        $("#content").height(
                 h - $("#desktopFooter").height() - $("#menu").height() - 6);
     }
     function pageHeight() {
@@ -206,41 +226,39 @@
         }
     }
 </script>
-<title></title>
+<title>XXX档案管理系统</title>
 </head>
 <body>
-<div class="ui-layout-north">
-    <div id="menu" class="navbar navbar-inverse navbar-fixed-top" style="z-index: 10;">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="btn btn-navbar" data-toggle="collapse"
-                   data-target=".nav-collapse"> <span class="icon-bar"></span> <span
-                        class="icon-bar"></span> <span class="icon-bar"></span>
-                </a><a class="brand" href="#"><img src="webpage/images/logo.png" style="width:40px;"></a>
-                <div class="nav-collapse collapse">
-                <ul class="nav bar-root" id="fun">
+<div><input type="hidden" id="account_code" value="" /></div>
+<div class="navbar navbar-fixed-top">
+    <div id="menu" class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+				<span class="icon-bar"></span> 
+				<span class="icon-bar"></span> 
+				<span class="icon-bar"></span> 				
+			</a>
+			
+			<a class="brand" href="index.html">Adminia Admin</a>
+			<div class="nav-collapse">    
+                <ul class="nav pull-right" id="fun">
                 </ul>
-                <ul class="nav pull-right">
-                    <li><a href="#" onClick="openAccountInfo();" id="welcome">欢迎您</a></li>
-                    <li><a href="#" onclick="quit()">退出</a></li>
-                </ul>
-
-                </div>
-            </div>
+             </div>   
         </div>
     </div>
 </div>
 <!-- onload="ifrHeight()" -->
-<iframe id="ifr" class="ui-layout-center"
+<iframe id="content" class="ui-layout-center" style="padding-top: 70px;"
         name="ifr" frameborder="no" border="0" marginwidth="0"
         marginheight="0" scrolling="auto" allowtransparency="yes"
         src="index.html"></iframe>
-
+<!-- 
 <div id="desktopFooter" class="ui-layout-south">
     &copy; 2011-2015
     <!-- <a target="_blank" href="#">亚普软件（北京）有限公司</a> - <a id="licenseLink" href="#">www.upsoft.com</a> -->
+<!-- 
 </div>
-
+ -->
 <div id="dialog-form" title="帐户信息" style="display:none">
     <form class="form-horizontal" style="margin-top:40px;">
         <fieldset>
@@ -272,5 +290,13 @@
         </fieldset>
     </form>
 </div>
+<script type="text/javascript">
+	$(document).ready(function(){
+	  // 修改iframe的样式
+		$("#content").css("padding-top", "40px");
+		setit();
+	});
+</script>
+<script src="webpage/js/bootstrap/js/bootstrap.js"></script>
 </body>
 </html>

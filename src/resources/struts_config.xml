@@ -10,8 +10,6 @@
 		<!-- 保存角色-->
 		<action name="saveConfig" class="configAction" method="save"></action>
 		
-		
-		
 		<!-- 索引 -->
 		<action name="createIndexer" class="indexerAction" method="createIndexerOnCREATE"></action>
 		<action name="createFilesIndexer" class="indexerAction" method="createFilesIndexer"></action>

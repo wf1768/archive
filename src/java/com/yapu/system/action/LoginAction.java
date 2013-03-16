@@ -3,22 +3,19 @@ package com.yapu.system.action;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 import com.yapu.system.common.BaseAction;
 import com.yapu.system.entity.SysAccount;
 import com.yapu.system.entity.SysFunction;
-import com.yapu.system.entity.SysFunctionExample;
 import com.yapu.system.entity.SysOrg;
 import com.yapu.system.entity.SysRole;
 import com.yapu.system.service.itf.IAccountService;
 import com.yapu.system.service.itf.IFunctionService;
 import com.yapu.system.service.itf.IOrgService;
 import com.yapu.system.service.itf.IRoleService;
+import com.yapu.system.util.CommonUtils;
 import com.yapu.system.util.Constants;
 import com.yapu.system.util.Logger;
 
@@ -39,14 +36,17 @@ public class LoginAction extends BaseAction {
 	public String login(){
 //		setAccountcode("admin");
 //		setPassword("password");
-		
+		System.out.println("进入登录。。");
 		//登录时先判断session里是否有该账户,防止同一台机器有2个session登录
 		SysAccount accountTmp = (SysAccount)this.getHttpSession().getAttribute(Constants.user_in_session);
 		
 		if (accountTmp != null){
 			this.getHttpSession().removeAttribute(Constants.user_in_session);
 		}
-		
+		if(!CommonUtils.isNotNullAndEmpty(accountcode,password)){
+			//帐号或密码为""或NULL
+			return ERROR;
+		}
 		SysAccount account = new SysAccount();
 		account.setAccountcode(accountcode);
 		account.setPassword(password);
@@ -56,8 +56,7 @@ public class LoginAction extends BaseAction {
 			//用户登录成功，将用户实体存入session
 			getHttpSession().setAttribute(Constants.user_in_session, res);
 			return SUCCESS;
-		}
-		else {
+		}else {
 			getRequest().setAttribute("str", "输入的账户名 或密码错误，请重新输入。");
 			return ERROR;
 		}

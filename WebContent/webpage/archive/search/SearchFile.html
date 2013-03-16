@@ -11,63 +11,86 @@
 <script type="text/javascript" src="../../js/us.archive.search.js"></script>
 <script type="text/javascript" src="../../js/us.archive.ui.js"></script>
 <script type="text/javascript" src="../../js/us.archive.util.js"></script>
-<link rel="stylesheet" type="text/css"
-	href="../../js/bootstrap/css/bootstrap.css" />
-<script type="text/javascript" src="../../js/bootstrap/js/bootstrap.js"></script>
+
+<link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/adminia.css" rel="stylesheet"> 
+<link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+
 <script type="text/javascript" src="SearchFile.js"></script>
+<style type="text/css">
+	.form-horizontal .controls {margin-left: 0px;}
+</style>
 <title></title>
 </head>
 <body>
 	<!-- margin: 0 auto; -->
-	<div style="margin-top: 20px;"></div>
-	<div style="margin: 0 auto; padding: 0; height: 50px; width: 700px">
-		<form class="form-horizontal">
-			<fieldset>
-				<div class="control-group">
-					<label for="searchTxt" class="control-label">搜索</label>
-
-					<div class="controls">
-						<select class="span2" title="搜索范围" class="searchSelect"
-							id="searchDropdownBox">
-						</select>
-						<div class="input-append">
-							<input type="text" id="searchTxt" size="86"
-								onkeypress="if(event.keyCode==13) {$('#btn').click();return false;}"
-								class="span3">
-							<button type="button" id="btn" onClick="submitSearch()"
-								class="btn">搜索</button>
-						</div>
+	<div style="padding-top: 8px;">&nbsp;</div>
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<div align="center" style="margin: 0 auto; padding: 0;">
+					<form class="form-horizontal">
+						<fieldset>
+							<div class="control-group">
+								<div class="controls">
+									<select class="span2" title="搜索范围" class="searchSelect"
+										id="searchDropdownBox">
+									</select>
+									<div class="input-append">
+										<input type="text" id="searchTxt" size="86"
+											onkeypress="if(event.keyCode==13) {$('#btn').click();return false;}"
+											class="span4" placeholder="请输入要检索的关键词！">
+										<button type="button" id="btn" onClick="submitSearch()"
+											class="btn">搜&nbsp;索</button>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+				<hr><!-- 间隔线 -->
+				<div class="widget">
+					<div class="alert alert-info fade in">
+						<a class="close" data-dismiss="alert" href="#">×</a> <strong>提示！</strong>
+						欢迎使用档案查询模块。本系统对中文智能分词，您在模糊检索时，请尽量输入词组，例如"北京"、"南京"。对于英文，请输入完整单词。
+					</div>
+					<div class="alert alert-info fade in" id="searchInfo"><strong>提示！</strong>选择档案类型进行全文检索。</div>
+					<div class="widget-header">
+						<h3>查询结果</h3>
+					</div>
+					<div class="widget-content">
+						<div id="searchList" style="width: 100%"></div>
 					</div>
 				</div>
-			</fieldset>
-		</form>
+				
+				<div class="pagination">
+					<ul>
+						<li id="first" class=""><a href="javascript:void(0);"
+							onClick="selectPage('first');return false;">首页</a></li>
+						<li id="previous"><a href="javascript:void(0);"
+							onClick="selectPage('previous');return false;">上一页</a></li>
+						<li><a>第 <input id="currentPage" type="text" value="0"
+								onkeyup='this.value=this.value.replace(/\D/gi,"")'
+								onkeypress="if(event.keyCode==13) {selectPage(this.value);return false;}"
+								style="margin-bottom: 0px; margin-top: 0px; width: 25px; height: 10px; direction: rtl;">
+								页
+						</a></li>
+						<li id="next"><a href="javascript:void(0);"
+							onClick="selectPage('next');return false;">下一页</a></li>
+						<li id="over"><a href="javascript:void(0);"
+							onClick="selectPage('over');return false;">尾页</a></li>
+					</ul>
+					<ul class="pull-right">
+						<li class="disabled"><a id="pageinfo">第 0 页 / 共 0 页</a></li>
+					</ul>
+				</div>
+				<hr>
+			</div><!-- span12 end -->
+		</div><!-- row end -->
 	</div>
-
-	<div class="container" style="width: 940px;">
-		<div id="searchList" style="width: 100%"></div>
-		<div class="pagination">
-			<ul>
-				<li id="first" class=""><a href="javascript:void(0);"
-					onClick="selectPage('first');return false;">首页</a></li>
-				<li id="previous"><a href="javascript:void(0);"
-					onClick="selectPage('previous');return false;">上一页</a></li>
-				<li><a>第 <input id="currentPage" type="text"
-						onkeyup='this.value=this.value.replace(/\D/gi,"")'
-						onkeypress="if(event.keyCode==13) {selectPage(this.value);return false;}"
-						style="margin-bottom: 0px; margin-top: 0px; width: 25px; height: 10px; direction: rtl;">
-						页
-				</a></li>
-				<li id="next"><a href="javascript:void(0);"
-					onClick="selectPage('next');return false;">下一页</a></li>
-				<li id="over"><a href="javascript:void(0);"
-					onClick="selectPage('over');return false;">尾页</a></li>
-			</ul>
-			<ul class="pull-right">
-				<li class="disabled"><a id="pageinfo">第 页 / 共 页</a></li>
-			</ul>
-		</div>
-	</div>
-
+	
 	<div id="contentdialog" style="display: none;width:760px;left:40%;top:50%"   class="modal hide fade">
 		<div class="modal-header">
 			<a class="close" data-dismiss="modal">×</a>
@@ -80,6 +103,7 @@
 			<button class="btn" data-dismiss="modal">关闭</button>
 		</div>
 	</div>
-
+	
+	<script src="../../js/bootstrap/js/bootstrap.js"></script>
 </body>
 </html>

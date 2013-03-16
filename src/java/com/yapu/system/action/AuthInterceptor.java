@@ -42,10 +42,11 @@ public class AuthInterceptor extends AbstractInterceptor {
 				response.setCharacterEncoding("text/html;charset=utf-8");
 				response.setContentType("text/html;charset=utf-8");
 				flag = "9999";
-				pw.write(flag);
-
-				return null;
-
+				pw.write("window.location.href=\"../../common/logout.jsp\"");
+				
+//				return null;
+				System.out.println("应该跳到登录");
+				return null; 	
 				//不是异步请求的拦截
 				
 			}
@@ -53,7 +54,7 @@ public class AuthInterceptor extends AbstractInterceptor {
 				response.setCharacterEncoding("text/html;charset=utf-8");
 				response.sendRedirect("/login.jsp");
 				//对ajax请求的拦截 
-				return "login"; 		
+				return null; 		
 
 			}
 		}

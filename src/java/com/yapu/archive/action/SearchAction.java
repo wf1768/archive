@@ -62,10 +62,15 @@ private static final long serialVersionUID = 5004188718476484590L;
 	 */
 	public String getSearchTree() throws IOException {
 		PrintWriter out = this.getPrintWriter();
-		
+		SysAccount account = this.getAccount();
+		if(account==null){
+			out.write("error");
+			return null;
+		}
+		String result = "var account='" + account.getAccountcode() + "';";
 		List<SysTree> treeList = new ArrayList<SysTree>();
 		treeList = getTreeNode();
-		List list = new ArrayList();
+		List trelist = new ArrayList();
 		if (null != treeList || treeList.size() > 0) {
 			for (SysTree tree :treeList) {
 //				if ("0".equals(tree.getParentid())) {
@@ -75,7 +80,7 @@ private static final long serialVersionUID = 5004188718476484590L;
 					map.put("parentid", tree.getParentid());
 					map.put("treetype", tree.getTreetype());
 					map.put("treenode", tree.getTreenode());
-					list.add(map);
+					trelist.add(map);
 //				}
 			}
 		}
@@ -84,7 +89,8 @@ private static final long serialVersionUID = 5004188718476484590L;
 			return null;
 		}
 		Gson gson = new Gson();
-		out.write(gson.toJson(list));
+		result += "var treList=" + gson.toJson(trelist);
+		out.write(result);
 		
 		return null;
 	}
