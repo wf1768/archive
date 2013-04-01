@@ -12,6 +12,7 @@
 <script type="text/javascript" src="../../js/us.archive.ui.js"></script>
 <script type="text/javascript" src="../../js/us.archive.util.js"></script>
 
+<link href="../../js/bootstrap/css/bootstrap.css" rel="stylesheet">
 <link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
 <link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
@@ -37,13 +38,13 @@
 				<div id="account"></div>
 				<hr>
 				<ul class="nav nav-tabs nav-stacked" id="main-nav">
-					<li id="paramset">
+					<li>
 						<a href="ConfigList.html">
 							<i class="icon-home"></i>参数设置</a>
 					</li>
 					<li>
-						<a href="javascript::">
-							<i class="icon-file"></i>文件服务器</a>
+						<a href="DocserverList.html">
+							<i class="icon-home"></i>文件服务器</a>
 					</li>
 					<li class="active">
 						<a href="RoleList.html">
@@ -51,7 +52,7 @@
 					</li>
 					<li>
 						<a href="SetSytem.html">
-							<i class="icon-th-large"></i>定制</a>
+							<i class="icon-th-large"></i>定 制</a>
 					</li>
 				</ul>
 				<hr>
@@ -62,8 +63,11 @@
 					系统维护-系统配置				
 				</h1>
 				<div align="right">
-					<a class="btn btn-small" id="add" href="http://localhost/vitastock/index.php/buy/add">
+					<a class="btn btn-small" id="addRole" href="javascript::">
                         <i class="icon-plus"> 添加</i>
+                    </a>
+                    <a class="btn btn-small" id="delRole" href="javascript::">
+                        <i class="icon-minus"> 删除</i>
                     </a>
 				</div>
 				<div class="widget">
@@ -73,29 +77,56 @@
 					<div id="roleInfo" class="widget-content">
 						
 					</div>
-
-		          <div class="bs-docs-example" style="padding-bottom: 24px;">
-		            <a data-toggle="modal" href="#" onclick="modal();" class="btn btn-primary btn-large">Launch demo modal</a>
-		          </div>
 				</div>
 			</div><!-- span9 end -->
 		</div><!-- row end -->
 	</div>
 	<!-- 账户信息 -->
    	<div id="accountInfo"> </div>
-   	<div id="tree"></div>
-	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   	<!-- 添加/修改角色 -->	
+   	<div id="ad_up_role" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 id="myModalLabel">添加角色</h3>
+        </div>
+        <div class="modal-body">
+			<form class="bs-docs-example form-horizontal">
+				<input type="hidden" id="roleid">
+				<div id="nameInfo" class="control-group info">
+				   	<label for="rolename" class="control-label">角色名称</label>
+				    <div class="controls">
+				       <input type="text" id="rolename">
+				       <span class="help-inline">请输入角色名称！</span>
+				    </div>
+			   	</div>
+			   	<div id="memoInfo" class="control-group info">
+			      <label for="rolememo" class="control-label">角色属性</label>
+			      <div class="controls">
+			        <input type="text" id="rolememo">
+			        <span class="help-inline">请输入角色属性！</span>
+			      </div>
+			    </div>
+		    </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">取 消</button>
+          <button class="btn btn-primary" onclick="save();">保 存</button>
+        </div>
+   	</div>
+   	
+   
+	<div id="roleFunction" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
           <h3 id="myModalLabel">设定角色操作的功能</h3>
         </div>
         <div class="modal-body">
-			<div id="Rcont"></div>
+			<div id="functionList"></div>
         </div>
 
         <div class="modal-footer">
-          <button class="btn" data-dismiss="modal">Close</button>
-          <button class="btn btn-primary">Save changes</button>
+          <button class="btn" data-dismiss="modal">取 消</button>
+          <button class="btn btn-primary" onclick="saveRoleFun();">保 存</button>
         </div>
    	</div>
    	
@@ -104,77 +135,7 @@
 	
 	<!-- http://www.jstree.com/documentation/checkbox -->
 	<!-- http://www.jstree.com/documentation -->
-	
- <script type="text/javascript">
- 	   var tree = $("#tree").jstree({ 
-		//生成的jstree包含哪些插件功能
-		//json_data：采用json形式数据
-		//crrm：允许增加、改名、移动等操作
-		//search：允许检索
-		"plugins" : ["themes","json_data","checkbox","ui","types"],
-		//jstree的主题样式，可以更换
-		"themes" : {
-			"theme" : "default"
-		},
-		json_data:{
-			"ajax":{
-	            url:"getTree.action",
-	            async:false
-	        }
-		},
-		"types" : {
-				"valid_children" : [ "root" ],
-				"types" : {
-					//设置rel=root的参数
-					"root" : {
-						//图标
-						"icon" : { 
-							"image" : "../../images/icons/house.png"
-						},
-						"valid_children" : [ "folder","default	" ],
-						"max_depth" : 2,
-						"hover_node" : false,
-						"select_node" : function () {return false;}
+	<!-- http://blog.csdn.net/xushichang/article/details/5795532 -->
 
-					},
-					"default" : {
-						"valid_children" : [ "none" ],
-						"icon" : { 
-							"image" : "../../images/icons/page.png" 
-						}
-					},
-					"folder" : {
-						"valid_children" : [ "default", "folder" ],
-						"icon" : {
-							"image" : "../../images/icons/folder.png"
-						}
-					}
-				}
-		},
-		"ui" : {
-			// 设置初始化选择id为2的节点
-//			"initially_select" : [ "0" ]
-		},
-		// the core plugin - not many options here
-		"core" : { 
-			//设置默认打开id为1和4的节点
-			"initially_open" : [ "0"] 
-		}
-	})//单击事件
-     .bind('click.jstree', function(event) {               
-        var eventNodeName = event.target.nodeName;
-        if (eventNodeName == 'INS') {
-            return;               
-        } else if (eventNodeName == 'A') {                   
-            var $subject = $(event.target).parent();                   
-            if ($subject.find('ul').length > 0) {            
-            } else {
-            	var id = $(event.target).parents('li').attr('id');
-            	var text = $(event.target).text();
-            	showTreeList(tree,id,text);
-            }               
-        }           
-    });
- </script>
 </body>
 </html>

@@ -235,6 +235,47 @@ public class ImportAction extends BaseAction {
 		return null;
 	}
 	
+	public String deleteImport() throws IOException{
+		String result = "保存完毕。";
+		PrintWriter out = getPrintWriter();
+		Gson gson = new Gson();
+		List<HashMap<String,String>> archiveList = new ArrayList<HashMap<String, String>>();
+		
+		try {
+			//将传入的json字符串，转换成list
+			archiveList = (List)gson.fromJson(importData, new TypeToken<List<HashMap<String,String>>>(){}.getType());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			result = "保存失败，请重新尝试，或与管理员联系。";
+			out.write(result);
+			return null;
+		}
+		if (archiveList.size() <= 0) {
+			result = "没有找到数据，请重新尝试或与管理员联系。";
+			out.write(result);
+			return null;
+		}
+		List<SysTable> tableList = treeService.getTreeOfTable(archiveList.get(0).get("treeid").toString());
+		//sb存储update语句
+//		StringBuffer sb = new StringBuffer();
+		String tableName = "";
+		//得到表名
+		for (int i=0;i<tableList.size();i++) {
+			if (tableList.get(i).getTabletype().equals(tableType)) {
+				tableName = tableList.get(i).getTablename();
+				break;
+			}
+		}
+		List<SysTempletfield> fieldList = treeService.getTreeOfTempletfield(archiveList.get(0).get("treeid").toString(), tableType);
+
+        boolean b = dynamicService.update(archiveList,tableName,fieldList);
+		if (!b) {
+            result = "保存错误，操作中止，请检查数据。";
+        }
+		out.write(result);
+		return null;
+		
+	}
 	public String updateImport() throws IOException {
 		String result = "保存完毕。";
 		PrintWriter out = getPrintWriter();

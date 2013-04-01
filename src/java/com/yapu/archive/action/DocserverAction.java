@@ -2,9 +2,11 @@ package com.yapu.archive.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,6 +16,7 @@ import com.yapu.archive.entity.SysDocserver;
 import com.yapu.archive.entity.SysDocserverExample;
 import com.yapu.archive.service.itf.IDocserverService;
 import com.yapu.system.common.BaseAction;
+import com.yapu.system.entity.SysRole;
 
 public class DocserverAction extends BaseAction {
 	
@@ -22,6 +25,7 @@ public class DocserverAction extends BaseAction {
 	
 	private String par;
 	private String docserverid;
+	private SysDocserver docserver = new SysDocserver();
 	
 	/**
 	 * 返回角色的json
@@ -37,95 +41,89 @@ public class DocserverAction extends BaseAction {
 		
 		SysDocserverExample example = new SysDocserverExample();
 		List<SysDocserver> docserverList = docserverService.selectByWhereNotPage(example);
-		StringBuffer sb = new StringBuffer();
-		sb.append("{\"total\":").append(docserverList.size()).append(",\"rows\":[");
-		String resultStr = "";
+		List<Map> docserList = new ArrayList<Map>();
 		if(null!=docserverList && docserverList.size()>0){
-			
-			for (SysDocserver sysDocserver : docserverList) {
-				sb.append("{");
-				sb.append("\"docserverid\":\""+sysDocserver.getDocserverid()+"\",");
-				sb.append("\"servername\":\""+sysDocserver.getServername()+"\",");
-				sb.append("\"serverip\":\""+sysDocserver.getServerip()+"\",");
-				sb.append("\"ftpuser\":\""+sysDocserver.getFtpuser()+"\",");
-				sb.append("\"ftppassword\":\""+sysDocserver.getFtppassword()+"\",");
-				sb.append("\"serverport\":\""+sysDocserver.getServerport()+"\",");
-				sb.append("\"serverpath\":\""+sysDocserver.getServerpath()+"\",");
-				sb.append("\"servertype\":\""+sysDocserver.getServertype()+"\",");
-//				if (sysDocserver.getServerstate() == 1) {
-//					sb.append("\"serverstate\":\"启用\",");
-//				}
-//				else {
-//					sb.append("\"serverstate\":\"备用\",");
-//				}
-				sb.append("\"serverstate\":\""+sysDocserver.getServerstate()+"\",");
-				sb.append("\"servermemo\":\""+sysDocserver.getServermemo()+"\"");
-				sb.append("},");
+			for (SysDocserver sysDoc : docserverList) {
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("docserverid",sysDoc.getDocserverid());
+				map.put("servername",sysDoc.getServername());
+				map.put("serverip",sysDoc.getServerip());
+				map.put("ftpuser",sysDoc.getFtpuser());
+				map.put("ftppassword",sysDoc.getFtppassword());
+				map.put("serverport",sysDoc.getServerport());
+				map.put("serverpath",sysDoc.getServerpath());
+				map.put("servertype",sysDoc.getServertype());
+				if(sysDoc.getServerstate()==0){
+					map.put("serverstate","备用");
+				}else{
+					map.put("serverstate","已启用");
+				}
+				map.put("servermemo",sysDoc.getServermemo());
+				
+				docserList.add(map);
 			}
-			resultStr = sb.substring(0,sb.length()-1);
-			
 		}
 		else {
-			resultStr = sb.toString();
+			out.write("error");
+			return null;
 		}
-		resultStr += "]}";
-		out.write(resultStr);
+		Gson gson = new Gson();
+		String result = "var docList=" + gson.toJson(docserList);
+		out.write(result);
 		return null;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public String save() throws IOException {
 		HttpServletResponse response = getResponse();
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter out  = response.getWriter();
-		
-		String result = "保存完毕。";
-		try {
-			Gson gson = new Gson();
-			Map<String, List<SysDocserver>> docserverMap = new HashMap<String, List<SysDocserver>>();
-			try {
-				docserverMap = (Map)gson.fromJson(par, new TypeToken<Map<String, List<SysDocserver>>>(){}.getType());
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				result = "保存失败，请重新尝试，或与管理员联系。";
-				out.write(result);
-				return null;
-			}
-			//处理添加的
-			List<SysDocserver> insertDocserverList = docserverMap.get("inserted");
-			if (insertDocserverList.size() > 0) {
-				//循环保存添加
-				for (SysDocserver sysDocserver : insertDocserverList) {
-					sysDocserver.setServerstate(0);
-					addDocserver(sysDocserver);
-				}
-			}
-			//处理更新的
-			List<SysDocserver> updateDocserverList = docserverMap.get("updated");
-			if (updateDocserverList.size() > 0) {
-				//循环保存更新的
-				for (SysDocserver sysDocserver : updateDocserverList) {
-					updateDocserver(sysDocserver);
-				}
-			}
-			//处理删除帐户
-			List<SysDocserver> delDocserverList = docserverMap.get("deleted");
-			if (delDocserverList.size() > 0) {
-				//循环删除
-				for (SysDocserver sysDocserver : delDocserverList) {
-					delDocserver(sysDocserver.getDocserverid());
-				}
-			}
-		} catch (Exception e) {
-			result = "保存失败，请重新尝试，或与管理员联系。";
-			out.write(result);
-			return null;
+		String nam = getRequest().getParameter("docserver. Servername ");
+		String result = "error";
+		docserver.setServerstate(0); //初始状态，添加页不应该有
+		if(addDocserver(docserver)){
+			result = "succ";
 		}
-		
 		out.write(result);
+		
 		return null;
+	}
+	/**
+	 * @throws IOException 
+	 * 
+	 * */
+	public String getSysDocserver() throws IOException{
+		HttpServletResponse response = getResponse();
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter out  = response.getWriter();
+		SysDocserver docserver = docserverService.selectByPrimaryKey(docserverid);
+		if(docserver!=null){
+			List<Map> docserverList = new ArrayList<Map>();
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("docserverid",docserver.getDocserverid());
+			map.put("servername",docserver.getServername());
+			map.put("serverip",docserver.getServerip());
+			map.put("ftpuser",docserver.getFtpuser());
+			map.put("ftppassword",docserver.getFtppassword());
+			map.put("serverport",docserver.getServerport());
+			map.put("serverpath",docserver.getServerpath());
+			map.put("servertype",docserver.getServertype());
+
+			map.put("serverstate",docserver.getServerstate());
+			map.put("servermemo",docserver.getServermemo());
+			docserverList.add(map);
+			
+			Gson gson = new Gson();
+			String result = "var sysDocserver=" + gson.toJson(map);
+			out.write(result);
+		}else{
+			out.write("error");
+		}
+		return null;
+		
 	}
 	/**
 	 * 添加
@@ -135,8 +133,7 @@ public class DocserverAction extends BaseAction {
 	public boolean addDocserver(SysDocserver docserver) {
 		boolean result = false;
 		if (docserver != null) {
-//			docserver.setDocserverid(UUID.randomUUID().toString());
-			
+			docserver.setDocserverid(UUID.randomUUID().toString());
 			if(docserverService.insertDocserver(docserver)){
 				result=true;
 			}
@@ -147,21 +144,40 @@ public class DocserverAction extends BaseAction {
 	 * 更新
 	 * @param docserver
 	 * @return
+	 * @throws IOException 
 	 */
-	private boolean updateDocserver(SysDocserver docserver) {
-		boolean result = false;
+	public String updateDocserver() throws IOException {
+		HttpServletResponse response = getResponse();
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter out  = response.getWriter();
 		if (docserver != null) {
 			if(docserverService.updateDocserver(docserver) > 0){
-				result = true;
+				out.write("succ");
+				return null;
 			}
 		}
-		return result;
+		out.write("error");
+		return null;
 	}
 	/**
 	 * 删除
 	 * @param 
 	 * @return
 	 */
+	public String delete() throws IOException{
+		PrintWriter out  = this.getPrintWriter();
+		String result = "error";
+		String[] docserverid = par.split(",");
+		for(int i=0;i<docserverid.length;i++){
+			if(delDocserver(docserverid[i])){
+				result = "succ";
+			}
+		}
+		out.write(result);
+		return null;
+	}
 	public boolean delDocserver(String docserverid) {
 		boolean result = false;
 		if (null != docserverid && !"".equals(docserverid)) {
@@ -184,7 +200,7 @@ public class DocserverAction extends BaseAction {
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter out  = response.getWriter();
 		
-		String result = "服务器状态已更新完毕。";
+//		String result = "服务器状态已更新完毕。";
 		
 		try {
 			SysDocserverExample example = new SysDocserverExample();
@@ -198,10 +214,10 @@ public class DocserverAction extends BaseAction {
 			docserver.setDocserverid(docserverid);
 			docserverService.updateDocserver(docserver);
 		} catch (Exception e) {
-			result = "<span style='color:red'>服务器状态更新失败。</span><br> 请尝试重新操作，或与管理员联系。";
-			out.write(result);
+//			result = "<span style='color:red'>服务器状态更新失败。</span><br> 请尝试重新操作，或与管理员联系。";
+			out.write("error");
 		}
-		out.write(result);
+		out.write("succ");
 		return null;
 	}
 	
@@ -219,6 +235,12 @@ public class DocserverAction extends BaseAction {
 	}
 	public void setPar(String par) {
 		this.par = par;
+	}
+	public SysDocserver getDocserver() {
+		return docserver;
+	}
+	public void setDocserver(SysDocserver docserver) {
+		this.docserver = docserver;
 	}
 
 }

@@ -4,7 +4,7 @@
         "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<!-- 权限管理 -->
-	<package name="authority" extends="struts-default" >
+	<package name="authority" extends="struts-archive" >
 		
 		<!-- 读取组的权限信息-->
 		<action name="getOrgAuthorityInfo" class="authorityAction" method="getOrgAuthorityInfo"></action>

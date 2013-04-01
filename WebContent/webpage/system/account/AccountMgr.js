@@ -1,322 +1,446 @@
-	$(function(){
-          $('#orgtree').tree({
-              checkbox: false,   
-              url: 'orgtreeAction.action?nodeId=0',
-              onBeforeExpand:function(node,param){
-                  $('#orgtree').tree('options').url = "orgtreeAction.action?nodeId=" + node.id;// change the url                       
-              },               
-              //onClick:function(node){
-              //    showAccountList(node);
-              //},
-              onSelect:function(node) {
-            	  showAccountList(node);
-              },
-              onLoadSuccess: function(node, data) {
-                  //alert(node.id);
-            	  //onLoadSuccess(node, data);
-                  //if (node.id == 1) {
-            	  //	$('#orgtree').tree('expand',node.target);
-                  //}
-              }
-          });
-      });
-     function showAccountList(node){
-         var url = "showListAccount.action?orgid=" + node.id;
-         //var content = '<iframe scrolling="auto" frameborder="0" src="'+url+'" style="width:100%;height:100%;"></iframe>';
-         if ($('#tab').tabs('exists','帐户管理')){
-             $('#tab').tabs('select', '帐户管理');
-             var tab = $('#tab').tabs('getSelected');
- 			 $('#tab').tabs('update', {
- 				tab: tab,
- 				options:{
- 					href:url
- 				}
- 			 });
- 			tab.panel('refresh');
-			 
-         } else {
-        	 $('#tab').tabs('add',{ 
-             	 title:'帐户管理',
-             	 iconCls:'icon-user',
-            	 //content:content,
-            	 href:url,
-            	 closable:true 
-             });
-         }
-     }
-     function openMoveOrgWin() {
-    	 var node = $('#orgtree').tree('getSelected');
-   	     if (node){
-   	    	if (node.id == 1 || node.id == 2) {
-                return;
-            }
-   	    	var $win;
-	   	    $win = $('#moveOrgWindow').window({
-		   	    title:' 移动帐户组',
-	   	        width: 300,
-	   	        height: 450,
-	   	        shadow: true,
-	   	        modal:true,
-	   	        iconCls:'icon_group_go',
-	   	        closed:true,
-	   	        minimizable:false,
-	   	        maximizable:false,
-	   	        collapsible:false,
-	   	     	onBeforeOpen:function(){
-		   	    	$('#orgmovetree').tree({   
-		                checkbox: false,   
-		                url: 'orgtreeAction.action?nodeId=0',   
-		                onBeforeExpand:function(node,param){
-		                    $('#orgmovetree').tree('options').url = "orgtreeAction.action?nodeId=" + node.id;// change the url                       
-		                }  
-		            });
-		   	    } 
-	   	    });
-   	    	$("#moveOrgWindow").window('open');
-   	     }
-   	     else {
-   	    	new $.Zebra_Dialog('请先选择某个帐户组，再移动! ', {
-  				'buttons':  false,
-   			    'modal': false,
-   			    'position': ['right - 20', 'top + 20'],
-   			    'auto_close': 2500
-            });
-   	    	//$.messager.alert('系统提示','请先选择某个帐户组，再移动!','info');
-   	     }
-     }
-     function saveMoveOrg() {
-    	 var node = $('#orgtree').tree('getSelected');
-    	 var movenode = $('#orgmovetree').tree('getSelected');
-
-    	 if (!movenode){
-    		 new $.Zebra_Dialog('请先选择目标帐户组，再移动! ', {
-    			 'buttons':  false,
-   			     'modal': false,
-   			     'position': ['right - 20', 'top + 20'],
-   			     'auto_close': 2000
-             });
-    		 //$.messager.alert('系统提示','请先选择目标帐户组，再移动!','info');
-    		 return;
-    	 }
-
-    	 var par = "orgid=" + node.id + "&newParentid=" + movenode.id; 
-		 $.post("moveOrg.action",par,function(data){
-   				if (data == "success") {
-   					new $.Zebra_Dialog('移动成功! ', {
-   	   					'buttons':  false,
-	   	   			    'modal': false,
-	   	   			    'position': ['right - 20', 'top + 20'],
-	   	   			    'auto_close': 2500
-	   	             });
-   					//$.messager.alert('系统提示','保存成功。','info');
-   					
-   					var pnode = $('#orgtree').tree('getParent', node.target);
-   					$('#orgtree').tree('reload', pnode.target);
-   					$("#moveOrgWindow").window('close');
-   				}
-   				else if(data == "error") {
-   					new $.Zebra_Dialog('移动的目标帐户组不能是下级单位，请重新选择。 ', {
-   	   					'buttons':  false,
-	   	   			    'modal': false,
-	   	   			    'position': ['right - 20', 'top + 20'],
-	   	   			    'auto_close': 2500
-	   	             });
-   					//$.messager.alert('系统提示','移动的目标帐户组不能是下级单位，请重新选择。','info');
-   				}
-			}
-		 );
-    	 
-     }
-     var isEdit = 0;
-     function addOrg() {
-    	 var node = $('#orgtree').tree('getSelected');  
-   	     if (node){
-   	    	var $win;
-	   	    $win = $('#addOrgWindow').window({
-		   	    title:' 新建帐户组',
-	   	        width: 400,
-	   	        height: 200,
-	   	        //top:($(window).height() - 820) * 0.5,  
-	   	        //left:($(window).width() - 450) * 0.5,
-	   	        shadow: true,
-	   	        modal:true,
-	   	        iconCls:'icon_group_add',
-	   	        closed:true,
-	   	        minimizable:false,
-	   	        maximizable:false,
-	   	        collapsible:false
-	   	    });
-	   	 	$('#orgname').val('');
-   	    	$("#addOrgWindow").window('open');
-   	     }
-   	     else {
-   	    	new $.Zebra_Dialog('请先选择某个帐户组，再新建! ', {
- 				'buttons':  false,
-   			    'modal': false,
-   			    'position': ['right - 20', 'top + 20'],
-   			    'auto_close': 2500
-             });
-   	    	//$.messager.alert('系统提示','请先选择某个帐户组，再新建!','info');
-   	     }
-     }
-     //add a org to database
-     function saveAddOrg() {
-    	 var orgname = $('#orgname').val();
-    	 if (orgname == "") {
-    		 new $.Zebra_Dialog('请输入帐户组名称! ', {
-  				'buttons':  false,
-   			    'modal': false,
-   			    'position': ['right - 20', 'top + 20'],
-   			    'auto_close': 2500
-              });
-    		 //$.messager.alert('系统提示','请输入帐户组名称!','info');
-    		 return;
-    	 }
-         var node = $('#orgtree').tree('getSelected');
-         if (node){
-             if (isEdit == 0) {
-                 var par = "orgname=" + orgname + "&parentid=" + node.id + "&orgid="+UUID.prototype.createUUID (); 
-				 $.post("addOrg.action",par,function(data){
-		   				if (data == "success") {
-		   					new $.Zebra_Dialog('保存成功! ', {
-		   		  				'buttons':  false,
-		   		   			    'modal': false,
-		   		   			    'position': ['right - 20', 'top + 20'],
-		   		   			    'auto_close': 2500
-		   		              });
-		   					//$.messager.alert('系统提示','保存成功。','info');
-		   					//$("#addOrgWindow").window('close');
-		   					reload();
-		   				}
-					}
-				 );
-             }
-             else {
-                 isEdit = 0;
-                 if (orgname == node.text) {
-                     return;
-                 }
-                 else {
-                	 var par = "orgname=" + orgname + "&orgid=" + node.id; 
-    				 $.post("editOrg.action",par,function(data){
-    		   				if (data == "success") {
-    		   					new $.Zebra_Dialog('保存成功! ', {
-    		   		  				'buttons':  false,
-    		   		   			    'modal': false,
-    		   		   			    'position': ['right - 20', 'top + 20'],
-    		   		   			    'auto_close': 2500
-    		   		              });
-    		   					//$.messager.alert('系统提示','保存成功。','info');
-    		   					$("#addOrgWindow").window('close');
-    		   					var pnode = $('#orgtree').tree('getParent', node.target);
-    		   					$('#orgtree').tree('reload', pnode.target);
-    		   				}
-    		   				else {
-    		   					new $.Zebra_Dialog('保存失败，请尝试重新操作或与管理员联系! ', {
-    		   		  				'buttons':  false,
-    		   		   			    'modal': false,
-    		   		   			    'position': ['right - 20', 'top + 20'],
-    		   		   			    'auto_close': 2500
-    		   		              });
-    		   					//$.messager.alert('系统提示','保存失败，请尝试重新操作或与管理员联系。','info');
-    		   					var pnode = $('#orgtree').tree('getParent', node.target);
-    		   					$('#orgtree').tree('reload', pnode.target);
-    		   				}
-    					}
-    				 );
-                 }
-             }
-	 	 } else {
-	 		new $.Zebra_Dialog('没有得到帐户组节点编号，请尝试重新操作或与管理员联系! ', {
-  				'buttons':  false,
-   			    'modal': false,
-   			    'position': ['right - 20', 'top + 20'],
-   			    'auto_close': 2500
-            });
-	 		//$.messager.alert('系统提示','没有得到帐户组节点编号，请尝试重新操作或与管理员联系!','info');
-	 	 }
-     }
-     function editOrg() {
-    	 isEdit = 1;
-    	 var node = $('#orgtree').tree('getSelected');
-   	     if (node){
-   	    	var $win;
-	   	    $win = $('#addOrgWindow').window({
-		   	    title:' 修改帐户组',
-	   	        width: 400,
-	   	        height: 200,
-	   	        //top:($(window).height() - 820) * 0.5,  
-	   	        //left:($(window).width() - 450) * 0.5,
-	   	        shadow: true,
-	   	        modal:true,
-	   	        iconCls:'icon_group_edit',
-	   	        closed:true,
-	   	        minimizable:false,
-	   	        maximizable:false,
-	   	        collapsible:false
-	   	    });
-	   	 	$('#orgname').val(node.text);
-   	    	$("#addOrgWindow").window('open');
-	   	 }
-	   	 else {
-	   		new $.Zebra_Dialog('请先选择某个帐户组，再修改! ', {
-  				'buttons':  false,
-   			    'modal': false,
-   			    'position': ['right - 20', 'top + 20'],
-   			    'auto_close': 2500
-            });
-		   	 //$.messager.alert('系统提示','请先选择某个帐户组，再修改!','info');
-		 }
-     }
-     function delOrg() {
-         var node = $('#orgtree').tree('getSelected');
-		 if (node){
-			 if (node.id == 1 || node.id == 2) {
-	             return;
-	         }
-	         
-			 var pnode = $('#orgtree').tree('getParent', node.target);
-			 $.Zebra_Dialog('确定要删除选中的帐户组吗? <br><span style="color:red">注意：帐户组下的帐户将被移动到【默认组】下。</span>', {
-				 'type':     'question',
-                 'title':    '系统提示',
-                 'buttons':  ['确定', '取消'],
-                 'onClose':  function(caption) {
-                     if (caption == '确定') {
-                    	 var par = "orgid=" + node.id;
-    					 $.post("delOrg.action",par,function(data){
-    			   				if (data == "success") {
-    			   					new $.Zebra_Dialog('删除成功! ', {
-    			   		  				'buttons':  false,
-    			   		   			    'modal': false,
-    			   		   			    'position': ['right - 20', 'top + 20'],
-    			   		   			    'auto_close': 2500
-    			   		            });
-    			   					//$.messager.alert('系统提示','删除成功。','info');
-    			   					$('#orgtree').tree('select', pnode.target);
-    			   					$('#orgtree').tree('reload', pnode.target);
-    			   					//$('#tt').datagrid('reload');
-    			   				}
-    						}
-    					 );
-                     }
-                 }
-	         });
-		}
-		else {
-			new $.Zebra_Dialog('请先选择某个帐户组，再删除! ', {
-  				'buttons':  false,
-   			    'modal': false,
-   			    'position': ['right - 20', 'top + 20'],
-   			    'auto_close': 2500
-            });
-			//$.messager.alert('系统提示','请先选择某个帐户组，再删除!','info');
-		}
-     }
-     function reload(){
-		var node = $('#orgtree').tree('getSelected');
-		if (node){
-			$('#orgtree').tree('reload', node.target);
-		} else {
-			//$('#orgtree').tree('reload');
-		}
+var orgid = ""; //全局的，添删修，后刷新当前账户组下账户列表
+var newParentid =""; //全局的移动组的组节点ID
+function funcheck(){
+	var flag = true;
+	if(orgid==""){
+		openalert("请选择一个节点！");
+		flag = false;
 	}
+	if(orgid==1){
+		openalert("不能对根节点进行操作！");
+      		flag = false;
+	}
+	return flag;
+}
+$(function () {
+//http://blog.csdn.net/kdiller/article/details/6059700
+//http://blog.csdn.net/xushichang/article/details/5795532
+//http://hi.baidu.com/danghj/item/b3c123a99f172e706cd455bd
+//http://www.jstree.com/demo
+	
+	$("#demo").bind("before.jstree", function (e, data) {
+		if (data.func == "remove") {
+			if(funcheck()){
+				if(orgid==2){
+			        openalert("不能对默认组进行删除！");
+	        		return false;
+	        	}
+        	}else{
+        		return false;
+        	}
+		}
+		if (data.func == "rename") {
+			if(funcheck()){
+				if(orgid==2){
+			        openalert("不能对默认组进行重命名！");
+	        		return false;
+	        	}
+        	}else{
+        		return false;
+        	}
+		}
+	})
+	.jstree({
+	    //tree settings
+	    "json_data" : {
+			"ajax" : {
+				"url" : "orgtreeAction.action",
+				"data" : function (n) { 
+					return { nodeId : n.attr ? n.attr("id") : 0 };
+				}
+			}
+		},
+		"plugins" : [ "themes","json_data","ui","crrm"],
+		"core" : {
+			"initially_open" : [ "1" ]
+		}
+	}).bind("select_node.jstree",function(e,data) { 
+	    var node = data.rslt.obj, inst = data.inst;
+	    //账户列表
+	    orgid = node.attr("id")//选择后给全局orgid赋值
+	    accountListInfo(orgid);
+	    if(orgid!=1){
+	    	$("#funmenu").css("display","block"); //显示添删改
+	    }else{
+	    	$("#funmenu").css("display","none"); //显示添删改
+	    }
+	    if (node.hasClass('jstree-closed')) { return inst.open_node(node); }
+	    if (node.hasClass('jstree-open')) { return inst.close_node(node); }
+	}).bind("create.jstree", function (e, data) {
+        $.post(
+            "addOrg.action",
+            {
+                "operation" : "create_node",
+                "parentid" : data.rslt.parent.attr("id"),
+                "position" : data.rslt.position,
+                "orgname" : data.rslt.name,
+                "type" : data.rslt.obj.attr("rel")
+            },
+            function (r) {
+                if(r!="error") {
+                    $(data.rslt.obj).attr("id", r); //r.id :r为后台直接返回的roid
+                }else {
+                    $.jstree.rollback(data.rlbk);
+                }
+            }
+        );
+    }).bind("remove.jstree", function (e, data) {
+        data.rslt.obj.each(function () {
+        	bootbox.confirm("删除组后，该组下的账户会到默认组下，确定要删除吗？", function(result) {
+	            if(result){
+	                 $.ajax({
+		                async : false,
+		                type: 'POST',
+		                url: "delOrg.action",
+		                data : {
+		                    "operation" : "remove_node",
+		                    "orgid" : data.rslt.obj.attr("id")
+		                },
+		                success : function (r) {
+		                    if(r=="succ") {
+		                        openalert("删除成功！");
+		                    }else{
+		                    	$.jstree.rollback(data.rlbk);
+		                    	openalert("删除组出错，请重新尝试或与管理员联系。")
+		                    }
+		                }
+		            });
+	            }else{
+	            	$.jstree.rollback(data.rlbk);
+	            }
+	        });// bootbox end
+        });
+    })
+    .bind("rename.jstree", function (e, data) {
+        $.post(
+            "editOrg.action",
+            {
+                "operation" : "rename_node",
+                "orgid" : data.rslt.obj.attr("id"),
+                "orgname" : data.rslt.new_name
+            },
+            function (r) {
+                if(r!="succ") {
+                    $.jstree.rollback(data.rlbk);
+                }
+            }
+        );
+    })
+   /* .bind("move_node.jstree", function (e, data) {
+        data.rslt.o.each(function (i) {
+        	alert(data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id"));
+            $.ajax({
+                async : false,
+                type: 'POST',
+                url: "moveOrg.action",
+                data : {
+                    "operation" : "move_node",
+                    "orgid" : $(this).attr("id"),
+                    "ref" : data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id"),
+                    "position" : data.rslt.cp + i,
+                    "title" : data.rslt.name,
+                    "copy" : data.rslt.cy ? 1 : 0
+                },
+                success : function (r) {
+                    if(!r.status) {
+                        $.jstree.rollback(data.rlbk);
+                    }
+                    else {
+                        $(data.rslt.oc).attr("id", r.id);
+                        if(data.rslt.cy && $(data.rslt.oc).children("UL").length) {
+                            data.inst.refresh(data.inst._get_parent(data.rslt.oc));
+                        }
+                    }
+                    $("#analyze").click();
+                }
+            });
+        });
+    });*/
+    
+	//账户组操作
+	$("#mmenu a").click(function () {
+		switch(this.id) {
+			case "add_default":
+			case "add_folder":
+				$("#demo").jstree("create", null, "last", { "attr" : { "rel" : this.id.toString().replace("add_", "") } });
+				break;
+			case "search":
+				$("#demo").jstree("search", document.getElementById("text").value);
+				break;
+			case "text": break;
+			default:
+				$("#demo").jstree(this.id);
+				break;
+		}
+	});
+	
+	//添加
+	$("#addAcc").click(function(){
+		$("#account").val(""); //清空accountid，用于修改，添加判断
+		$("#accountForm").clearForm(); //表单清除
+		$("#pwd").css("display", "none"); //密码不可见
+		$("#state").css("display","none");//状态不可见
+		$("#ad_up_account").modal({backdrop:'static'});
+	});
+	//删除
+	$("#delAcc").click(function(){
+		var f_str = "";
+		$("input[name='account']").each(function(){
+		   if($(this).attr("checked")=="checked"){
+		    f_str += $(this).attr("value")+",";
+		   }
+		});
+		if(f_str==""){
+			openalert("请选择要删除的数据！");
+		}else{
+			bootbox.confirm("确定要删除选择的数据吗？", function(result) {
+	            if(result){
+	                f_str = f_str.substring(0,f_str.length-1);
+	                $.ajax({
+	                    type:"post",
+	                    url:"delAccount.action",
+	                    data: "par=" + f_str,
+	                    success: function(data){
+	                        if (data=="succ") {
+	                           	openalert("删除成功！");
+	                           	accountListInfo(orgid);//刷新列表
+	                            //window.location.reload();
+	                        }else {
+	                            openalert("删除账户出错，请重新尝试或与管理员联系。");
+	                        }
+	                    },
+	                    error: function() {
+	                        openalert("执行操作出错，请重新尝试或与管理员联系。");
+	                    }
+	                });
+	            }
+	        });
+		}
+	});
+	
+});
+
+//账户组移动
+function openMoveOrg(){
+	if(funcheck()){
+		newParentid = "";//清除
+		$("#orgOfaccountTree").jstree({
+		    "json_data" : {
+				"ajax" : {
+					"url" : "orgtreeAction.action",
+					"data" : function (n) { 
+						return { nodeId : n.attr ? n.attr("id") : 0 };
+					}
+				}
+			},
+			"plugins" : [ "themes","json_data","ui"],
+			"core" : {
+				"initially_open" : [ "1" ]
+			}
+		}).bind("select_node.jstree",function(e,data) { 
+		    var node = data.rslt.obj, inst = data.inst;
+		    newParentid = node.attr("id"); //
+		   	
+		});
+		$("#orgTree").modal('show');	
+	}
+	
+	
+	$("#demo4").jstree({ 
+		"crrm" : {
+			"move" : {
+				"default_position" : "first",
+				"check_move" : function (m) { return (m.o[0].id === "thtml_1") ? false : true;  }
+			}
+		},
+		"ui" : {
+			"initially_select" : [ "thtml_2" ]
+		},
+		"core" : { "initially_open" : [ "thtml_1" ] },
+		"plugins" : [ "themes", "html_data", "ui", "crrm" ]
+	});
+	
+}
+function saveMoveOrg(){
+
+	$.ajax({
+	   type: "POST",
+	   url: "moveOrg.action",
+	   data: "orgid="+orgid+"&newParentid="+newParentid,
+	   success: function(msg){
+	   		$("#orgTree").modal('hide');
+	   		if("succ"==msg){
+	   			openalert("移动成功！");
+	   			$("#demo").jstree("move_node","#"+orgid,"#"+newParentid);
+	   			//accountListInfo(orgid);//刷新列表
+	   		}else{
+	   			openalert("移动失败！");
+	   		}
+	   }
+	});
+}
+
+//用户列表
+function accountListInfo(orgid){
+	$.ajax({
+		async : false,
+		url : "listAccount.action?orgid="+orgid,
+		type : 'post',
+		dataType : 'script',
+		success : function(data) {
+			if (data != "error") {
+				var content = createAccountTable(accountList);
+				$("#accountList").html(content);
+			} else {
+				alert("error");
+			}
+		},error:function(){
+			var table = "<table class=\"table table-striped table-bordered\">";
+				table += "<thead>";
+				table += "<tr>";
+				table += "<th width=\"5%\">#</th>";
+				table += "<th>账户名称</th>";
+				table += "<th>状态</th>";
+				table += "<th>描述</th>";
+				table += "<th>操作</th>";
+				table += "</tr>";
+				table += "</thead>";
+				table += "</table>";
+			$("#accountList").html(table);
+		}
+	});
+}
+
+//创建Table
+function createAccountTable(accountList){
+	var table = "<table class=\"table table-striped table-bordered\">";
+	table += "<thead>";
+	table += "<tr>";
+	table += "<th width=\"5%\">#</th>";
+	table += "<th width=\"25%\">账户名称</th>";
+	table += "<th width=\"10%\">状态</th>";
+	table += "<th width=\"52%\">描述</th>";
+	table += "<th width=\"8%\">操作</th>";
+	table += "</tr>";
+	table += "</thead>";
+	tr = createAccountTr(accountList);
+	table += tr;
+	table += "</table>";
+	return table;
+}
+function createAccountTr(accountList){
+	var tr = "";
+	if (accountList.length > 0) {
+		for (var i=0;i<accountList.length;i++) {
+			tmp = "<tr>";
+			tmp += "<td><input name=\"account\" type=\"checkbox\" value=\""+accountList[i].accountid+"\"/></td>";
+			tmp += "<td>"+accountList[i].accountcode+"</td>";
+			tmp += "<td>"+accountList[i].accountstate+"</td>";
+			tmp += "<td>"+accountList[i].accountmemo+"</td>";
+			tmp += "<td><a href=\"javascript::\" onclick=\"getAccount('"+accountList[i].accountid+"')\">修改</a></td>";
+			tmp += "</tr>";
+			tr += tmp;
+		}
+	}else{
+		tr = "";
+	}
+	return tr;
+}
+
+//save
+function save(){
+	var accountid = $("#accountid").val();
+	if(accountid==""){
+		saveAccount();//添加
+	}else{
+		updateAccount();//修改
+	}
+}
+
+//保存-添加账户
+function saveAccount(){
+	var accountcode = $("#accountcode").val();
+	var accountmemo = $("#accountmemo").val();
+	if(checkInfo(accountcode,accountmemo)){
+		$.ajax({
+		   type: "POST",
+		   url: "saveAccount.action",
+		   data: "sysAccount.accountcode="+accountcode+"&sysAccount.accountmemo="+accountmemo+"&orgid="+orgid,
+		   success: function(msg){
+		   		if("succ"==msg){
+		   			$("#ad_up_account").modal('hide');
+		   			openalert("添加成功！");
+		   			accountListInfo(orgid);//刷新列表
+		   		}else{
+		   			openalert("添加失败！");
+		   		}
+		   }
+		});
+	}
+}
+//修改-获得一个role对象
+function getAccount(accountid){
+	$('#accountForm').clearForm(); //表单清除
+	$("#pwd").css("display", "block"); //密码可见
+	$("#state").css("display","block");//状态可见
+	//修改账户弹出框
+	$("#ad_up_account").modal('show');
+	$.ajax({
+		async : false,
+		url : "getAccount.action?accountid="+accountid,
+		type : 'post',
+		dataType : 'script',
+		success : function(data) {
+			if (data != "error") {
+				acc = eval(account);
+				$("#accountid").val(acc.accountid);
+				$("#accountcode").val(acc.accountcode);
+				$("#accountmemo").val(acc.accountmemo);
+			} else {
+				openalert("读取数据时出错,请重新登录尝试或与管理员联系!");
+			}
+		}
+	});
+}
+//修改
+function updateAccount(){
+	var accountid = $("#accountid").val();
+	var accountcode = $("#accountcode").val();
+	var accountmemo = $("#accountmemo").val();
+	var accountstate = $("#accountstate").val();
+	var password = $("#password").val();
+	
+	if(checkInfo(accountcode,accountmemo)){
+		$.ajax({
+		   type: "POST",
+		   url: "updAccount.action",
+		   data: "sysAccount.accountid="+accountid+"&sysAccount.accountcode="+accountcode+"&sysAccount.accountmemo="+accountmemo+"&sysAccount.accountstate="+accountstate+"&password="+password,
+		   success: function(msg){
+		   		if("succ"==msg){
+		   			$("#ad_up_account").modal('hide');
+		   			openalert("修改成功！");
+		   			accountListInfo(orgid);//刷新列表
+		   		}else{
+		   			openalert("修改失败，请重新登录尝试或与管理员联系!");
+		   		}
+		   }
+		});
+	}
+}
+
+//JS验证，不是很好
+function checkInfo(accountcode,accountmemo){
+	if(accountcode==""){
+		$("#codeInfo").removeClass('info').addClass('error');
+		return false;
+	}
+	if(accountmemo==""){
+		$("#memoInfo").removeClass('info').addClass('error');
+		return false;
+	}
+	return true;
+}
+//设置状态
+function setState(value){
+	$("#accountstate").val(value);
+}

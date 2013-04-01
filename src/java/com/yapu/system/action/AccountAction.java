@@ -11,10 +11,15 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yapu.archive.entity.SysAccountTree;
@@ -41,13 +46,14 @@ public class AccountAction extends BaseAction {
 	private IOrgService orgService;
 	private IConfigService configService;
 	private ITreeService treeService;
+	private SysAccount sysAccount = new SysAccount();
 	
 	private String accountid;
 	private String accountcode;
 	private String password;
 	private String par;
 	private String orgid;
-	
+	private String parentid;
 	private String selectAccounts;
 	private String targetorgid;
 	
@@ -62,41 +68,34 @@ public class AccountAction extends BaseAction {
 	public String list() throws IOException {
 		//如果得不到帐户组id，返回空字符
 		if (null == orgid || "".equals(orgid)) {
-			return "";
+			return null;
 		}
 		PrintWriter out  = this.getPrintWriter();
-		
 		//获得父节点为nodeId的账户节点
 		SysOrg sysOrg = new SysOrg();
 		sysOrg.setOrgid(orgid);
 		List<SysAccount> accounts =orgService.getOrgOfAccount(sysOrg);
-		StringBuffer sb = new StringBuffer();
-		sb.append("{\"total\":").append(accounts.size()).append(",\"rows\":[");
-		String resultStr = "";
+		List<Map> accountList = new ArrayList<Map>();
+		Gson gson = new Gson();
+		String result = "var accountList=";
 		if(null!=accounts && accounts.size()>0){
-			
 			for (SysAccount sysAccount : accounts) {
-				sb.append("{");
-				sb.append("\"accountid\":\""+sysAccount.getAccountid()+"\",");
-				sb.append("\"accountcode\":\""+sysAccount.getAccountcode()+"\",");
-				if (sysAccount.getAccountstate() == 1) {
-					sb.append("\"accountstate\":\"<img alt='1' src='../../images/icons/status_online.png' title='已启用'>\",");
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				map.put("accountid", sysAccount.getAccountid());
+				map.put("accountcode", sysAccount.getAccountcode());
+				if(sysAccount.getAccountstate()==1){
+					map.put("accountstate", "启用");
+				}else{
+					map.put("accountstate", "<span style=\"color: red\">已禁用</span>");
 				}
-				else {
-					sb.append("\"accountstate\":\"<img alt='0' src='../../images/icons/status_offline.png' title='已停用'>\",");
-				}
-				//sb.append("\"accountstate\":\""+sysAccount.getAccountstate()+"\",");
-				sb.append("\"accountmemo\":\""+sysAccount.getAccountmemo()+"\"");
-				sb.append("},");
+				map.put("accountmemo", sysAccount.getAccountmemo());
+				accountList.add(map);
 			}
-			resultStr = sb.substring(0,sb.length()-1);
-			
+		}else {
+			 result += gson.toJson(accountList);
 		}
-		else {
-			resultStr = sb.toString();
-		}
-		resultStr += "]}";
-		out.write(resultStr);
+		result += gson.toJson(accountList);
+		out.write(result);
 		return null;
 	}
 	
@@ -121,53 +120,24 @@ public class AccountAction extends BaseAction {
 		return null;
 	}
 	
-	public String save() throws IOException {
-		PrintWriter out  = this.getPrintWriter();
-		
-		String result = "保存完毕。";
-		Gson gson = new Gson();
-		Map<String, List<SysAccount>> accountMap = new HashMap<String, List<SysAccount>>();
-		try {
-			accountMap = (Map)gson.fromJson(par, new TypeToken<Map<String, List<SysAccount>>>(){}.getType());
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-		//处理添加的帐户
-		List<SysAccount> insertAccountList = accountMap.get("inserted");
-		if (insertAccountList.size() > 0) {
-			//循环保存添加的帐户
-			for (SysAccount sysAccount : insertAccountList) {
-				addAccount(sysAccount);
-			}
-		}
-		//处理更新的帐户
-		List<SysAccount> updateAccountList = accountMap.get("updated");
-		if (updateAccountList.size() > 0) {
-			//循环保存添加的帐户
-			for (SysAccount sysAccount : updateAccountList) {
-				updateAccount(sysAccount);
-			}
-		}
-		//处理删除帐户
-		List<SysAccount> delAccountList = accountMap.get("deleted");
-		if (delAccountList.size() > 0) {
-			//循环删除帐户
-			for (SysAccount sysAccount : delAccountList) {
-				delAccount(sysAccount.getAccountid());
-			}
-		}
-		out.write(result);
-		return null;
-	}
 	/**
 	 * 添加帐户
 	 * @param sysAccount
 	 * @return
 	 */
+	public String save() throws IOException {
+		PrintWriter out  = this.getPrintWriter();
+		String result = "error";
+		if(addAccount(sysAccount)){
+			result = "succ";
+		}
+		out.write(result);
+		return null;
+	}
 	private boolean addAccount(SysAccount sysAccount) {
 		boolean result = false;
 		if (sysAccount != null) {
-			//sysAccount.setAccountid(UUID.randomUUID().toString());
+			sysAccount.setAccountid(UUID.randomUUID().toString());
 //			sysAccount.setOrgBaseID(orgid);
 			//读取系统配置表，得到设置的默认密码
 			SysConfigExample example = new SysConfigExample();
@@ -179,32 +149,83 @@ public class AccountAction extends BaseAction {
 				String pass = MD5.encode(configList.get(0).getConfigvalue());
 				sysAccount.setPassword(pass);
 			}
-			
+			sysAccount.setAccountstate(1);//初始状态1为可用
 			if(accountService.insertAccount(sysAccount,orgid)){
 				result=true;
 			}
 		}
 		return result;
 	}
+	
+	/**
+	 * 查找账户
+	 * @throws IOException 
+	 * */
+	public String getSysaccount() throws IOException{
+		PrintWriter out  = this.getPrintWriter();
+		SysAccount account = accountService.selectByPrimaryKey(accountid);
+		if(account!=null){
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("accountid", account.getAccountid());
+			map.put("accountcode", account.getAccountcode());
+			map.put("accountstate", account.getAccountstate());
+			map.put("accountmemo", account.getAccountmemo());
+			
+			Gson gson = new Gson();
+			String result = "var account=" + gson.toJson(map);
+			out.write(result);
+		}else{
+			out.write("error");
+		}
+		return null;
+	}
+	
 	/**
 	 * 更新帐户
 	 * @param sysAccount
 	 * @return
+	 * @throws IOException 
 	 */
+	public String update() throws IOException{
+		PrintWriter out  = this.getPrintWriter();
+		if(updateAccount(sysAccount)){
+			out.write("succ");
+		}else{
+			out.write("error");
+		}
+		return null;
+	}
 	private boolean updateAccount(SysAccount sysAccount) {
 		boolean result = false;
 		if (sysAccount != null) {
+			//如果密码填写了则修改，否则为原密码
+			if(!password.equals("") || password!=null){
+				sysAccount.setPassword(MD5.encode(password));
+			}
 			if(accountService.updateAccount(sysAccount) > 0){
 				result = true;
 			}
 		}
 		return result;
 	}
+	
 	/**
 	 * 删除帐户
 	 * @param accountid
 	 * @return
 	 */
+	public String delete() throws IOException{
+		PrintWriter out  = this.getPrintWriter();
+		String result = "error";
+		String[] accountids = par.split(",");
+		for(int i=0;i<accountids.length;i++){
+			if(delAccount(accountids[i])){
+				result = "succ";
+			}
+		}
+		out.write(result);
+		return null;
+	}
 	public boolean delAccount(String accountid) {
 		boolean result = false;
 		if (null != accountid && !"".equals(accountid)) {
@@ -289,7 +310,8 @@ public class AccountAction extends BaseAction {
 	}
 	
 	/**
-	 * 读取档案节点树，全部读取。分别为组和帐户
+	 * 读取档案节点树.全部读取 账户
+	 * @author guodh 
 	 * @return
 	 * @throws IOException 
 	 */
@@ -299,76 +321,70 @@ public class AccountAction extends BaseAction {
 		SysAccount account = new SysAccount();
 		account.setAccountid(accountid);
 		List<SysAccountTree> treeList = accountService.getAccountOfTree(account);
-		
-		List temp = new ArrayList();
-		HashMap map = new HashMap();
-		map.put("id", "0");
-		map.put("text", "档案节点树");
-		map.put("iconCls", "");
-		map.put("state", "open");
-		List list = getTreeJson("0",treeList);
-		map.put("children", list);
-		temp.add(map);
-		Gson gson = new Gson();
-		out.write(gson.toJson(temp));
+		//创建根节点 档案树节点
+		//JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObject = new JSONObject();
+		String children_tree = getTreeJson(parentid, treeList);
+		if(parentid.equals("0")){
+			JSONObject attro = new JSONObject();
+			attro.put("id", "0");
+			attro.put("rel", "root");
+			jsonObject.put("data", "档案树节点");
+			jsonObject.put("attr", attro);
+			jsonObject.put("state", "open");
+			jsonObject.put("children", children_tree);
+			String json_tree = jsonObject.toString();
+			out.write(json_tree);
+		}else{
+			out.write(children_tree);
+		}
 		return null;
 	}
 	
-	/**  
-     * 无限递归获得tree的json字串  
-     *   
-     * @param parentId  
-     *            父权限id 
-     * @return  
-     */  
-    private List getTreeJson(String parentId,List<SysAccountTree> treeList)
-    {
+	/**
+	 * 加载档案树所有节点
+	 * */  
+    private String getTreeJson(String parentId,List<SysAccountTree> treeList){
+    	String jsonData = "";
     	//得到节点
 		SysTreeExample example = new SysTreeExample();
 		example.createCriteria().andParentidEqualTo(parentId);
 		List<SysTree> trees = treeService.selectByWhereNotPage(example);
-		List list = new ArrayList();
-		if(null!=trees && trees.size()>0){
-			for(int i=0;i<trees.size();i++){
-				HashMap temp = new HashMap();
-				SysTree tree =(SysTree)trees.get(i);
-				String ico = "";
-				if ("0".equals(tree.getParentid())) {
-					ico = "icon-book-open";
-				}
-				else if ("F".equals(tree.getTreetype())) {
-					ico = "";
-				}
-				else {
-					ico = "icon-page";
-				}
-				//判断该节点下是否有子节点
-				example.clear();
-				example.createCriteria().andParentidEqualTo(tree.getTreeid());
-				if (treeService.selectByWhereNotPage(example).size() >0) {
-					temp.put("id", tree.getTreeid());
-					temp.put("text", tree.getTreename());
-					temp.put("iconCls", ico);
-					temp.put("state", "closed");
-					temp.put("children", this.getTreeJson(tree.getTreeid(),treeList));
-				}
-				else {
-					temp.put("id", tree.getTreeid());
-					temp.put("text", tree.getTreename());
-					temp.put("iconCls", ico);
-					if (null != treeList) {
-						for (int j=0;j<treeList.size();j++) {
-							if (treeList.get(j).getTreeid().equals(tree.getTreeid())) {
-								temp.put("checked", true);
-							}
+		JSONArray jsonArray = new JSONArray();
+		for (Iterator iterator1 = trees.iterator(); iterator1.hasNext();){
+			SysTree tree = (SysTree)iterator1.next();
+			JSONObject jsonObject = new JSONObject();
+			JSONObject attro = new JSONObject();
+			
+			SysTreeExample example1 = new SysTreeExample();
+			example1.createCriteria().andParentidEqualTo(tree.getTreeid());
+			List<SysTree> trees1 = treeService.selectByWhereNotPage(example1);
+			if (trees1 != null && trees1.size() >= 1){
+				attro.put("id", (new StringBuilder("")).append(tree.getTreeid()).toString());
+				attro.put("rel", "folder");
+				jsonObject.put("attr", attro);
+				jsonObject.put("data", tree.getTreename());
+				String children_tree =getTreeJson(tree.getTreeid(), treeList);
+				jsonObject.put("children", children_tree);  //
+			}else{
+				attro.put("id", (new StringBuilder("")).append(tree.getTreeid()).toString());
+				attro.put("rel", "default");
+				//已经应有的权限--子节点
+				if(treeList!=null && treeList.size()>0){
+					for(SysAccountTree stree:treeList){
+						if(stree.getTreeid().equals(tree.getTreeid())){
+							attro.put("CLASS", "jstree-checked");//class不能为小写，可能是关键词的原因，搞了半天
 						}
 					}
 				}
-				list.add(temp);
+				jsonObject.put("attr", attro);
+				jsonObject.put("data", tree.getTreename());
 			}
+			jsonArray.add(jsonObject);
 		}
-        
-        return list;
+		jsonData = jsonArray.toString();
+		System.out.println((new StringBuilder(String.valueOf(jsonData))).append(":::::jsonArray").toString());
+		return jsonData;
     }
     
 
@@ -422,16 +438,32 @@ public class AccountAction extends BaseAction {
 		this.targetorgid = targetorgid;
 	}
 
-	public void setTreeService(ITreeService treeService) {
-		this.treeService = treeService;
-	}
-
 	public String getAccountid() {
 		return accountid;
 	}
 
 	public void setAccountid(String accountid) {
 		this.accountid = accountid;
+	}
+
+	public SysAccount getSysAccount() {
+		return sysAccount;
+	}
+
+	public void setSysAccount(SysAccount sysAccount) {
+		this.sysAccount = sysAccount;
+	}
+
+	public void setTreeService(ITreeService treeService) {
+		this.treeService = treeService;
+	}
+
+	public String getParentid() {
+		return parentid;
+	}
+
+	public void setParentid(String parentid) {
+		this.parentid = parentid;
 	}
 	
 }

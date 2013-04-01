@@ -73,25 +73,12 @@ public class ConfigAction extends BaseAction {
 		response.setContentType("text/html");
 		response.setHeader("Cache-Control", "no-cache");
 		PrintWriter out  = response.getWriter();
-		String result = "error";
-		
-		Gson gson = new Gson();
-		Map<String, List<SysConfig>> configMap = new HashMap<String, List<SysConfig>>();
-		try {
-			configMap = (Map)gson.fromJson(par, new TypeToken<Map<String, List<SysConfig>>>(){}.getType());
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+		int num = configService.updateConfig(sysConfig);
+		if(num>0){
+			out.write("succ");
+		}else{
+			out.write("error");
 		}
-		
-		//处理更新的
-		List<SysConfig> updateConfigList = configMap.get("updated");
-		if (updateConfigList.size() > 0) {
-			//循环保存更新的
-			for (SysConfig config : updateConfigList) {
-				configService.updateConfig(config);
-			}
-		}
-		out.write(result);
 		return null;
 	}
 	

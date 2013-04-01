@@ -10,8 +10,27 @@
     .pp {
         height: 40px;
     }
+    .titleN{margin: 8px 5px 5px 5px;}
+    .imgSize{width: 210px;height: 130px;}
+    
+    .thumbnails .actions {
+	    -moz-transition: opacity 0.3s ease-in-out 0s;
+	    background-color: #000000;
+	    border-radius: 5px 5px 5px 5px;
+	    height: 16px;
+	    left: 85%;
+	    margin-left: -24px;
+	    margin-top: -13px;
+	    opacity: 0;
+	    padding: 5px 8px;
+	    position: absolute;
+	    top: 70%;
+	    width: 36px;
+	}
 </style>
 <script type="text/javascript" src="MediaList.js"></script>
+<script type="text/javascript" src="../../js/account/account.js"></script>
+
 <div id="mediaGrid" class="gridC" style="position: relative; height:100%;overflow: hidden">
     <div id="grid_header_media" class="grid-header" style="width: 100%;height:20px">多媒体管理</div>
     <div style="width:100%; height:35px" class="grid-menu">
@@ -20,77 +39,36 @@
             <li><a href="javascript:void(0);" onClick="refresh()">刷新</a></li>
         </ul>
     </div>
-    <div id="meidadiv" class="grid-div container"
-         style="position: relative; width: 100%; height: 100%;overflow: auto;padding: 0px">
-        <div class="row-fluid">
-            <ul class="thumbnails">
-                <li class="span4">
-                    <div class="thumbnail">
-                        <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAADZ0lEQVR4nO3YMXLCMBRAwdz/KByOKyRtZmLAwjb2U7bYCmE+hd5Y+rrf798ABV9nDwCwlmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYE3idrv9sdf60We/O+9eMxwxL9cgWBNY2pTPNurI+tFnvzvvXjMcMS/XIVgTEKxj5+U6BGsCWzf0o89Go7dl3tH/8cl5uQ7BmtC7G/fsAAgWrwjWRNZcNB8VgKXfHrn4vvIbIdchWJM6IwBb7o8EizUEa2JnHLGW3rDemfNT89IiWBM7605o7THw1XM+NS8dgjWBkePUlYK1dY1g/T+CNYHR+5+RkG2J3h53YEfPS4tgTWDrm9Sz9UesvVJgaRGsSfw+ho0ctdasX7N26fNH31l63qs59p6XJsECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyfgCjVkWTkzIm1AAAAABJRU5ErkJggg==">
-                        <div class="caption">
-                            <h3>Thumbnail label</h3>
-                            <p class="pp">长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实践哲学的述评》长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实</p>
-                            <p><a class="btn btn-primary" href="#">Action</a> <a class="btn" href="#">Action</a></p>
-                        </div>
-                    </div>
-                </li>
-                <li class="span4">
-                    <div class="thumbnail">
-                        <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAADZ0lEQVR4nO3YMXLCMBRAwdz/KByOKyRtZmLAwjb2U7bYCmE+hd5Y+rrf798ABV9nDwCwlmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYE3idrv9sdf60We/O+9eMxwxL9cgWBNY2pTPNurI+tFnvzvvXjMcMS/XIVgTEKxj5+U6BGsCWzf0o89Go7dl3tH/8cl5uQ7BmtC7G/fsAAgWrwjWRNZcNB8VgKXfHrn4vvIbIdchWJM6IwBb7o8EizUEa2JnHLGW3rDemfNT89IiWBM7605o7THw1XM+NS8dgjWBkePUlYK1dY1g/T+CNYHR+5+RkG2J3h53YEfPS4tgTWDrm9Sz9UesvVJgaRGsSfw+ho0ctdasX7N26fNH31l63qs59p6XJsECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyfgCjVkWTkzIm1AAAAABJRU5ErkJggg==">
-                        <div class="caption">
-                            <h3>Thumbnail label</h3>
-                            <p class="pp">长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实践哲学的述评》长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实</p>
-                            <p><a class="btn btn-primary" href="#">Action</a> <a class="btn" href="#">Action</a></p>
-                        </div>
-                    </div>
-                </li>
-                <li class="span4">
-                    <div class="thumbnail">
-                        <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAADZ0lEQVR4nO3YMXLCMBRAwdz/KByOKyRtZmLAwjb2U7bYCmE+hd5Y+rrf798ABV9nDwCwlmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYE3idrv9sdf60We/O+9eMxwxL9cgWBNY2pTPNurI+tFnvzvvXjMcMS/XIVgTEKxj5+U6BGsCWzf0o89Go7dl3tH/8cl5uQ7BmtC7G/fsAAgWrwjWRNZcNB8VgKXfHrn4vvIbIdchWJM6IwBb7o8EizUEa2JnHLGW3rDemfNT89IiWBM7605o7THw1XM+NS8dgjWBkePUlYK1dY1g/T+CNYHR+5+RkG2J3h53YEfPS4tgTWDrm9Sz9UesvVJgaRGsSfw+ho0ctdasX7N26fNH31l63qs59p6XJsECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyfgCjVkWTkzIm1AAAAABJRU5ErkJggg==">
-                        <div class="caption">
-                            <h3>Thumbnail label</h3>
-                            <p class="pp">长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实践哲学的述评》长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实</p>
-                            <p><a class="btn btn-primary" href="#">Action</a> <a class="btn" href="#">Action</a></p>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="row-fluid">
-            <ul class="thumbnails">
-                <li class="span4">
-                    <div class="thumbnail">
-                        <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAADZ0lEQVR4nO3YMXLCMBRAwdz/KByOKyRtZmLAwjb2U7bYCmE+hd5Y+rrf798ABV9nDwCwlmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYE3idrv9sdf60We/O+9eMxwxL9cgWBNY2pTPNurI+tFnvzvvXjMcMS/XIVgTEKxj5+U6BGsCWzf0o89Go7dl3tH/8cl5uQ7BmtC7G/fsAAgWrwjWRNZcNB8VgKXfHrn4vvIbIdchWJM6IwBb7o8EizUEa2JnHLGW3rDemfNT89IiWBM7605o7THw1XM+NS8dgjWBkePUlYK1dY1g/T+CNYHR+5+RkG2J3h53YEfPS4tgTWDrm9Sz9UesvVJgaRGsSfw+ho0ctdasX7N26fNH31l63qs59p6XJsECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyfgCjVkWTkzIm1AAAAABJRU5ErkJggg==">
-                        <div class="caption">
-                            <h3>Thumbnail label</h3>
-                            <p class="pp">长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实践哲学的述评》长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实</p>
-                            <p><a class="btn btn-primary" href="#">Action</a> <a class="btn" href="#">Action</a></p>
-                        </div>
-                    </div>
-                </li>
-                <li class="span4">
-                    <div class="thumbnail">
-                        <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAADZ0lEQVR4nO3YMXLCMBRAwdz/KByOKyRtZmLAwjb2U7bYCmE+hd5Y+rrf798ABV9nDwCwlmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYE3idrv9sdf60We/O+9eMxwxL9cgWBNY2pTPNurI+tFnvzvvXjMcMS/XIVgTEKxj5+U6BGsCWzf0o89Go7dl3tH/8cl5uQ7BmtC7G/fsAAgWrwjWRNZcNB8VgKXfHrn4vvIbIdchWJM6IwBb7o8EizUEa2JnHLGW3rDemfNT89IiWBM7605o7THw1XM+NS8dgjWBkePUlYK1dY1g/T+CNYHR+5+RkG2J3h53YEfPS4tgTWDrm9Sz9UesvVJgaRGsSfw+ho0ctdasX7N26fNH31l63qs59p6XJsECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyfgCjVkWTkzIm1AAAAABJRU5ErkJggg==">
-                        <div class="caption">
-                            <h3>Thumbnail label</h3>
-                            <p class="pp">长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实践哲学的述评》长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实</p>
-                            <p><a class="btn btn-primary" href="#">Action</a> <a class="btn" href="#">Action</a></p>
-                        </div>
-                    </div>
-                </li>
-                <li class="span4">
-                    <div class="thumbnail">
-                        <img alt="300x200" data-src="holder.js/300x200" style="width: 300px; height: 200px;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAAADZ0lEQVR4nO3YMXLCMBRAwdz/KByOKyRtZmLAwjb2U7bYCmE+hd5Y+rrf798ABV9nDwCwlmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYAEZggVkCBaQIVhAhmABGYIFZAgWkCFYQIZgARmCBWQIFpAhWECGYE3idrv9sdf60We/O+9eMxwxL9cgWBNY2pTPNurI+tFnvzvvXjMcMS/XIVgTEKxj5+U6BGsCWzf0o89Go7dl3tH/8cl5uQ7BmtC7G/fsAAgWrwjWRNZcNB8VgKXfHrn4vvIbIdchWJM6IwBb7o8EizUEa2JnHLGW3rDemfNT89IiWBM7605o7THw1XM+NS8dgjWBkePUlYK1dY1g/T+CNYHR+5+RkG2J3h53YEfPS4tgTWDrm9Sz9UesvVJgaRGsSfw+ho0ctdasX7N26fNH31l63qs59p6XJsECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyBAvIECwgQ7CADMECMgQLyBAsIEOwgAzBAjIEC8gQLCBDsIAMwQIyfgCjVkWTkzIm1AAAAABJRU5ErkJggg==">
-                        <div class="caption">
-                            <h3>Thumbnail label</h3>
-                            <p class="pp">长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实践哲学的述评》长期从事马克思主义文化哲学、国外马克思主义的研究工作，主要研究领域：马克思的实践哲学、当代马克思主义、现代化进程中的日常生活批判理论。主要著作有：《实践派的探索与实</p>
-                            <p><a class="btn btn-primary" href="#">Action</a> <a class="btn" href="#">Action</a></p>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
+    <div class="widget-content">
+		<ul id="meidadiv" class="thumbnails">
+			<li class="span3">
+				<div class="thumbnail">
+					<a class="thumbnail" href="gallery.html#">
+						<img class="imgSize" src="../../media/53ab476d-e08a-4c28-b4f6-0694f15f45c1.jpg">
+					</a>
+					<div class="actions">
+						<a href="gallery.html#" title=""><i class="icon-pencil icon-white"></i></a>
+						<a href="gallery.html#" title=""><i class="icon-remove icon-white"></i></a>
+					</div>
+					<div class="titleN">题名：XXXXX</div>
+				</div>
+			</li>
+			<li class="span3">
+				<div class="thumbnail">
+					<a class="thumbnail" href="gallery.html#">
+						<img class="imgSize" src="../../media/53ab476d-e08a-4c28-b4f6-0694f15f45c1.jpg">
+					</a>
+					<div class="actions">
+						<a href="gallery.html#" title=""><i class="icon-pencil icon-white"></i></a>
+						<a href="gallery.html#" title=""><i class="icon-remove icon-white"></i></a>
+					</div>
+					<div class="titleN">题名：XXXXX</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	
+        
     <div id="pager_media" class="grid-pager" style="width: 100%; height: 20px;"></div>
 </div>
 
@@ -98,4 +76,24 @@
     <form class="form-horizontal" id="addMediaDialog">
 
     </form>
+</div>
+
+<div id="updMedia" title="添加多媒体库">
+    <form class="form-horizontal" id="updMediaDialog">
+
+    </form>
+</div>
+
+<div id="updateMedia" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	  <h3 id="myModalLabel">修改多媒体库</h3>
+	</div>
+    <div class="modal-body">
+		<div id="functionList"></div>
+    </div>
+    <div class="modal-footer">
+    	<button class="btn" data-dismiss="modal">取 消</button>
+    	<button class="btn btn-primary" onclick="saveRoleFun();">保 存</button>
+    </div>
 </div>

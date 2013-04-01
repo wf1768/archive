@@ -8,23 +8,21 @@ package com.yapu.system.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import com.google.gson.Gson;
 import com.yapu.archive.entity.SysOrgTree;
 import com.yapu.archive.entity.SysTree;
 import com.yapu.archive.entity.SysTreeExample;
 import com.yapu.archive.service.itf.ITreeService;
-import com.yapu.publics.service.PublicAccountService;
-import com.yapu.publics.service.PublicOrgService;
 import com.yapu.system.common.BaseAction;
-import com.yapu.system.entity.SysFunction;
-import com.yapu.system.entity.SysFunctionExample;
 import com.yapu.system.entity.SysOrg;
 import com.yapu.system.entity.SysOrgExample;
 import com.yapu.system.service.itf.IOrgService;
@@ -48,26 +46,57 @@ public class OrgAction extends BaseAction {
 	 * @return
 	 */
 	public String loadOrgTreeData() throws IOException {
-		
 		PrintWriter out  = this.getPrintWriter();
-		
 		//获得父节点为nodeId的子节点
 		SysOrgExample example = new SysOrgExample();
 		example.createCriteria().andParentidEqualTo(nodeId);
 		List<SysOrg> orgs = orgService.selectByWhereNotPage(example);
 
-		List<HashMap<String, String>> temp = new ArrayList<HashMap<String, String>>();
-		for (SysOrg org :orgs) {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("id", org.getOrgid());
-			map.put("text", org.getOrgname());
-			map.put("iconCls", "");
-			map.put("state", "closed");
-			temp.add(map);
-		}
-		Gson gson = new Gson();
-        out.write(gson.toJson(temp));
+		String tree = getTree(nodeId, orgs);
+		out.write(tree);
 		return null;
+	}
+	public String getTree(String id,List<SysOrg> orgs){
+		String jsonData = "";
+		if (id.equals("0")){ //初始时只加载根节点
+			JSONArray jsonArray = new JSONArray();
+			JSONObject jsonObject = new JSONObject();
+			for (Iterator iterator = orgs.iterator(); iterator.hasNext();){
+				SysOrg tree = (SysOrg)iterator.next();
+				if (tree.getOrgid().equals("1")){
+					JSONObject attro = new JSONObject();
+					attro.put("id", (new StringBuilder("")).append(tree.getOrgid()).toString());
+					attro.put("rel", "default");
+					jsonObject.put("data", tree.getOrgname());
+					jsonObject.put("attr", attro);
+					jsonObject.put("state", "closed");
+					jsonArray.add(jsonObject);
+				}
+			}
+			jsonData = jsonArray.toString();
+		} else{
+			JSONArray jsonArray = new JSONArray();
+			JSONObject jsonObject = new JSONObject();
+			for (Iterator iterator1 = orgs.iterator(); iterator1.hasNext(); jsonArray.add(jsonObject)){
+				SysOrg tree = (SysOrg)iterator1.next();
+				JSONObject attro = new JSONObject();
+				attro.put("id", (new StringBuilder("")).append(tree.getOrgid()).toString());
+				attro.put("rel", "default");
+				jsonObject.put("data", tree.getOrgname());
+				jsonObject.put("attr", attro);
+				
+				SysOrgExample example = new SysOrgExample();
+				example.createCriteria().andParentidEqualTo(tree.getOrgid());
+				List<SysOrg> orgss = orgService.selectByWhereNotPage(example);
+				//如果还有子节点添加状态
+				if (orgss != null && orgss.size() >= 1)
+					jsonObject.put("state", "closed");
+			}
+
+			jsonData = jsonArray.toString();
+		}
+		System.out.println((new StringBuilder(String.valueOf(jsonData))).append(":::::jsonArray").toString());
+		return jsonData;
 	}
 	/**
 	 * 新建帐户组
@@ -75,22 +104,20 @@ public class OrgAction extends BaseAction {
 	 * @throws IOException
 	 */
 	public String addOrg() throws IOException {
-		String result =	"failure";
-		
+		String result =	"error";
 		PrintWriter out  = this.getPrintWriter();
-		
 		if (orgname == null) {
 			out.write(result);
 			return null;
 		}
 		SysOrg org = new SysOrg();
-		
+		String orgid = UUID.randomUUID().toString();
 		org.setOrgid(orgid);
 		org.setOrgname(orgname);
 		org.setParentid(parentid);
 		org.setOrgorder(1);
 		if(orgService.insertOrg(org)){
-			result="success";
+			result=orgid;
 		}
 		out.write(result);
 		return null;
@@ -111,7 +138,7 @@ public class OrgAction extends BaseAction {
 			SysOrg org = orgService.selectByPrimaryKey(orgid);
 			org.setOrgname(orgname);
 			if (orgService.updateOrg(org) > 0) {
-				result = "success";
+				result = "succ";
 			}
 		}
 		
@@ -134,7 +161,7 @@ public class OrgAction extends BaseAction {
 		if (null != orgid && !"".equals(orgid)) {
 			int num = orgService.deleteOrg(orgid);
 			if (num >0) {
-				result = "success";
+				result = "succ";
 			}
 		}
 		out.write(result);
@@ -159,7 +186,7 @@ public class OrgAction extends BaseAction {
 			//判断
 			//获得父节点为orgid的子节点
 			SysOrgExample example = new SysOrgExample();
-			example.createCriteria().andParentidEqualTo(nodeId);
+			example.createCriteria().andParentidEqualTo(newParentid); //nodeId
 			List<SysOrg> childOrgsList = orgService.selectByWhereNotPage(example);
 			if (childOrgsList.size() > 0) {
 				for (SysOrg sysOrg : childOrgsList) {
@@ -175,7 +202,7 @@ public class OrgAction extends BaseAction {
 			org.setParentid(newParentid);
 			int num = orgService.updateOrg(org);
 			if (num > 0) {
-				result = "success";
+				result = "succ";
 			}
 		}
 		out.write(result);
@@ -194,90 +221,86 @@ public class OrgAction extends BaseAction {
 	}
 	
 	/**
-	 * 读取档案节点树，全部读取。分别为组和帐户
+	 * 读取档案节点树.全部读取 组
+	 * @author guodh 
 	 * @return
 	 * @throws IOException 
 	 */
 	public String loadOrgOfTreeData() throws IOException {
 		PrintWriter out  = this.getPrintWriter();
-		
 		SysOrg org = new SysOrg();
 		org.setOrgid(orgid);
 		List<SysOrgTree> treeList = orgService.getOrgOfTree(org);
+		//创建根节点 档案树节点
+		//JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObject = new JSONObject();
+		String children_tree = getTreeJson(parentid, treeList);
+		if(parentid.equals("0")){
+			JSONObject attro = new JSONObject();
+			attro.put("id", "0");
+			attro.put("rel", "root");
+			jsonObject.put("data", "档案树节点");
+			jsonObject.put("attr", attro);
+			jsonObject.put("state", "open");
+			jsonObject.put("children", children_tree);
+			String json_tree = jsonObject.toString();
+			out.write(json_tree);
+		}else{
+			out.write(children_tree);
+		}
 		
-//		StringBuilder resultStr = new StringBuilder();
-//		//创建根节点
-//		resultStr.append("[{\"id\":\"0\",\"text\":\"档案节点树\",\"iconCls\":\"\",\"state\":\"open\",\"children\":");
-		List temp = new ArrayList();
-		HashMap map = new HashMap();
-		map.put("id", "0");
-		map.put("text", "档案节点树");
-		map.put("iconCls", "");
-		map.put("state", "open");
-		List list = getTreeJson("0",treeList);
-		map.put("children", list);
-		temp.add(map);
-		Gson gson = new Gson();
-		out.write(gson.toJson(temp));
 		return null;
 	}
-	
-	/**  
-     * 无限递归获得tree的json字串  
-     *   
-     * @param parentId  
-     *            父权限id 
-     * @return  
-     */  
-    private List getTreeJson(String parentId,List<SysOrgTree> treeList)
-    {
-    	//得到节点
+	/**
+	 * 加载档案树所有节点
+	 * */
+	public String getTreeJson(String parentId,List<SysOrgTree> treeList){
+		String jsonData = "";
+		//得到节点
 		SysTreeExample example = new SysTreeExample();
 		example.createCriteria().andParentidEqualTo(parentId);
 		List<SysTree> trees = treeService.selectByWhereNotPage(example);
-		List list = new ArrayList();
-		if(null!=trees && trees.size()>0){
-			for(int i=0;i<trees.size();i++){
-				HashMap temp = new HashMap();
-				SysTree tree =(SysTree)trees.get(i);
-				String ico = "";
-				if ("0".equals(tree.getParentid())) {
-					ico = "icon-book-open";
-				}
-				else if ("F".equals(tree.getTreetype())) {
-					ico = "";
-				}
-				else {
-					ico = "icon-page";
-				}
-				//判断该节点下是否有子节点
-				example.clear();
-				example.createCriteria().andParentidEqualTo(tree.getTreeid());
-				if (treeService.selectByWhereNotPage(example).size() >0) {
-					temp.put("id", tree.getTreeid());
-					temp.put("text", tree.getTreename());
-					temp.put("iconCls", ico);
-					temp.put("state", "closed");
-					temp.put("children", this.getTreeJson(tree.getTreeid(),treeList));
-				}
-				else {
-					temp.put("id", tree.getTreeid());
-					temp.put("text", tree.getTreename());
-					temp.put("iconCls", ico);
-					if (null != treeList) {
-						for (int j=0;j<treeList.size();j++) {
-							if (treeList.get(j).getTreeid().equals(tree.getTreeid())) {
-								temp.put("checked", true);
-							}
+		JSONArray jsonArray = new JSONArray();
+		
+		for (Iterator iterator1 = trees.iterator(); iterator1.hasNext(); ){
+			SysTree tree = (SysTree)iterator1.next();
+			JSONObject jsonObject = new JSONObject();
+			JSONObject attro = new JSONObject();
+			
+			SysTreeExample example1 = new SysTreeExample();
+			example1.createCriteria().andParentidEqualTo(tree.getTreeid());
+			List<SysTree> trees1 = treeService.selectByWhereNotPage(example1);
+			if (trees1 != null && trees1.size() >= 1){
+				attro.put("id", (new StringBuilder("")).append(tree.getTreeid()).toString());
+				attro.put("rel", "folder");
+				jsonObject.put("attr", attro);
+				jsonObject.put("data", tree.getTreename());
+				//jsonObject.put("state", "closed");
+				String children_tree = getTreeJson(tree.getTreeid(), treeList);
+				jsonObject.put("children", children_tree);
+			}else{
+				
+				attro.put("id", (new StringBuilder("")).append(tree.getTreeid()).toString());
+				attro.put("rel", "default");
+				//已经应有的权限
+				if(treeList!=null && treeList.size()>0){
+					for(SysOrgTree orgTree:treeList){
+						if(orgTree.getTreeid().equals(tree.getTreeid())){
+							attro.put("CLASS", "jstree-checked");//class不能为小写，可能是关键词的原因，搞了半天
 						}
 					}
 				}
-				list.add(temp);
+				jsonObject.put("attr", attro);
+				jsonObject.put("data", tree.getTreename());
 			}
+			jsonArray.add(jsonObject);
 		}
-        
-        return list;
-    }
+		
+		jsonData = jsonArray.toString();
+//		System.out.println((new StringBuilder(String.valueOf(jsonData))).append(":::::jsonArray账户组").toString());
+		return jsonData;
+	}
+	
 	
 	public void setOrgService(IOrgService orgService) {
 		this.orgService = orgService;

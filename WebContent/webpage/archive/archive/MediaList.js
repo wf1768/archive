@@ -39,7 +39,7 @@ var mediaCommon = {
     showAddDialog: function () {
         //处理动态字段，创建dialog里的添加html
         if (this.field.length > 0) {
-            var html = "";
+            var html = "<form class=\"form-horizontal\">";
             for (var i = 0; i < this.field.length; i++) {
                 if (this.field[i].isgridshow == 1) {
                     html += "<div class=\"control-group\" id=\"" + this.field[i].englishname + "div\">";
@@ -81,8 +81,9 @@ var mediaCommon = {
                     html += "</div>";
                 }
             }
-
-            $('#addMediaDialog').html(html);
+			html += "</form>";
+            //$('#addMediaDialog').html(html);
+            return html;
         }
     },
     picHandle: function () {
@@ -127,6 +128,28 @@ var mediaCommon = {
         //    显示多媒体数据
         var html = "";
         for (var i = 0; i < mediaCommon.data.length; i++) {
+         	var imgsrc = "";
+            if (mediaCommon.data[i].SLT == "") {
+                imgsrc = "../../media/no_photo_135.png";
+            }else {
+                imgsrc = "../../media/" + mediaCommon.data[i].SLT;
+            }
+        	html +='<li class="span3">';
+			html +='	<div class="thumbnail">';
+			html +='		<a class="thumbnail" href="javascript::" onclick="showMediaWjTab(\''+mediaCommon.data[i].ID+'\')">';
+			html +='			<img class="imgSize" src="'+imgsrc+'">';
+			html +='		</a>';
+			html +='		<div class="actions">';
+			html +='			<a href="javascript::" onclick="updateMedia()" title="修改"><i class="icon-pencil icon-white"></i></a>';
+			html +='			<a href="javascript::" title=""><i class="icon-remove icon-white"></i></a>';
+			html +='		</div>';
+			html +='		<div class="titleN">题名：'+mediaCommon.data[i].AJH+'</div>';
+			html +='	</div>';
+			html +='</li>';
+        }
+        /*
+        var html = "";
+        for (var i = 0; i < mediaCommon.data.length; i++) {
             var row = mediaCommon.data[i];
             var n = (i) % 3;
             if (n == 0) {
@@ -166,7 +189,7 @@ var mediaCommon = {
                 html += "</ul>";
                 html += "</div>";
             }
-        }
+        }*/
         $('#meidadiv').html(html);
 //        this.picHandle();
     },
@@ -234,13 +257,78 @@ var mediaCommon = {
 
             }
         });
+        
+        //
+        $("#updMedia").dialog({
+            autoOpen: false,
+            height: 470,
+            width: 560,
+            modal: true,
+            buttons: {
+                "保存": function () {
+                    var items = [];
+                    var item = {};
+                    item.id = "";
+                    item.isdoc = 0;
+                    item.treeid = archiveCommon.selectTreeid;
+                    item.slt = 'no_photo_135.png';
+                    for (var i = 0; i < mediaCommon.field.length; i++) {
+                        var field = mediaCommon.field[i];
+                        if (field.isgridshow == 1) {
+                            $('#' + field.englishname + "div").removeClass("error");
+                            if (null != $('#' + field.englishname).val() || "" != $('#' + field.englishname).val()) {
+                                if (field.fieldtype == "INT") {
+                                    //判断值是否正常
+                                    var isnum = isNaN($('#' + field.englishname).val());
+                                    if (isnum) {
+                                        us.openalert('请填写正确的数字类型! ', '系统提示', 'alertbody alert_Information');
+                                        $('#' + field.englishname).focus();
+                                        $('#' + field.englishname + "div").addClass("error");
+                                        return;
+                                    }
+                                }
+                                item[field.englishname.toLowerCase()] = $('#' + field.englishname).val();
+                            }
+                            else {
+                                if (field.fieldtype == "INT") {
+                                    item[field.englishname.toLowerCase()] = '0';
+                                }
+                                else {
+                                    item[field.englishname.toLowerCase()] = '';
+                                }
+
+                            }
+                        }
+                    }
+                    items.push(item);
+                    $.ajax({
+                        async: false,
+                        url: "updateImportArchive.action",
+                        type: 'post',
+                        dataType: 'text',
+                        data: {importData: JSON.stringify(items), tableType: '01'},
+                        success: function (data) {
+                            us.openalert(data, '系统提示', 'alertbody alert_Information');
+                        }
+                    });
+
+                },
+                "关闭": function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function () {
+
+            }
+        });
     }
 };
 /**
  * 新建 相册 (案卷级)
  */
 function addMedia() {
-    mediaCommon.showAddDialog();
+   var html = mediaCommon.showAddDialog();
+    $('#addMediaDialog').html(html);
     $("#addMedia").dialog("open");
 }
 
@@ -260,3 +348,66 @@ $(function () {
     mediaCommon.showData();
 
 })
+
+/**
+* 修改多媒体库
+*/
+function updateMedia(){
+	var html = mediaCommon.showAddDialog();
+    $('#updMediaDialog').html(html);
+    $("#updMedia").dialog("open");
+    
+	//var html = mediaCommon.showAddDialog();
+	//modalCommon(html);
+	
+}
+function update(){
+	 var items = [];
+     var item = {};
+     item.id = "C5A2836C40A00001DCA2B200117011E6";
+     item.isdoc = 0;
+     item.treeid = archiveCommon.selectTreeid;
+     item.slt = 'no_photo_135.png';
+     for (var i = 0; i < mediaCommon.field.length; i++) {
+         var field = mediaCommon.field[i];
+         if (field.isgridshow == 1) {
+             $('#' + field.englishname + "div").removeClass("error");
+             if (null != $('#' + field.englishname).val() || "" != $('#' + field.englishname).val()) {
+                 if (field.fieldtype == "INT") {
+                     //判断值是否正常
+                     var isnum = isNaN($('#' + field.englishname).val());
+                     if (isnum) {
+                         us.openalert('请填写正确的数字类型! ', '系统提示', 'alertbody alert_Information');
+                         $('#' + field.englishname).focus();
+                         $('#' + field.englishname + "div").addClass("error");
+                         return;
+                     }
+                 }
+                 alert(field.englishname.toLowerCase());
+                 item[field.englishname.toLowerCase()] = $('#' + field.englishname).val();
+                 alert(field.englishname);
+             }
+             else {
+                 if (field.fieldtype == "INT") {
+                     item[field.englishname.toLowerCase()] = '0';
+                 }
+                 else {
+                     item[field.englishname.toLowerCase()] = '';
+                 }
+
+             }
+         }
+     }
+     items.push(item);
+     $.ajax({
+         async: false,
+         url: "updateImportArchive.action",
+         type: 'post',
+         dataType: 'text',
+         data: {importData: JSON.stringify(items), tableType: '01'},
+         success: function (data) {
+             us.openalert(data, '系统提示', 'alertbody alert_Information');
+         }
+     });
+
+}

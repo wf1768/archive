@@ -14,6 +14,14 @@
 		<action name="listDocserver" class="docserverAction" method="list"></action>
 		<!-- 保存-->
 		<action name="saveDocserver" class="docserverAction" method="save"></action>
+		<!-- 根据id查找-->
+		<action name="getDocserver" class="docserverAction" method="getSysDocserver"></action>
+		<!-- 修改 -->
+		<action name="updDocserver" class="docserverAction" method="updateDocserver"></action>
+		<!-- 删除 -->
+		<action name="delDocserver" class="docserverAction" method="delete"></action>
+		
+		
 		<!-- 更改服务器状态 -->
 		<action name="setDocserverState" class="docserverAction" method="setDocserverState"></action>
 		

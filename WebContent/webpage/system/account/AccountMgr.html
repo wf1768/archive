@@ -1,66 +1,166 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html >
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" type="text/css" href="../../css/style.css" />
-<link rel="stylesheet" type="text/css" href="../../images/images.css" />
-<link rel="stylesheet" type="text/css" href="../../js/jquery-easyui/themes/gray/easyui.css" />
 <script type="text/javascript" src="../../js/jquery-1.7.1.js"></script>
-<script type="text/javascript" src="../../js/json2.js"></script>
-<script type="text/javascript" src="../../js/jquery-easyui/jquery.easyui.min.js"></script>
-<link rel="stylesheet" type="text/css" href="../../js/zebra-dialog/css/zebra_dialog.css" />
-<script type="text/javascript" src="../../js/zebra-dialog/js/zebra_dialog.js"></script>
-<script type="text/javascript" src="AccountMgr.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="../../js/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css" />
+<script type="text/javascript"
+	src="../../js/jquery-ui/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="../../js/us.archive.search.js"></script>
+<script type="text/javascript" src="../../js/us.archive.ui.js"></script>
+<script type="text/javascript" src="../../js/us.archive.util.js"></script>
 
-<script type="text/javascript" src="../../js/uuid.js"></script>
+<!-- tree -->
+<link type="text/css" href="../../js/jstree/themes/default/style.css" rel="stylesheet">
+<script type="text/javascript" src="../../js/jstree/jquery.jstree.js"></script>
+
+<link href="../../js/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/adminia.css" rel="stylesheet"> 
+<link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+
+<script type="text/javascript" src="AccountMgr.js"></script>
+<script type="text/javascript" src="../../js/account/account.js"></script>
+
 <title></title>
 </head>
-<body class="easyui-layout">
-	<div region="west" iconCls="icon-group" title="帐户管理" split="true" style="width:220px;padding1:0px;overflow:hidden;">
-		<div style="background:#efefef;padding:0px;width:100%;text-align:right;">
-			<a href="#" onClick="addOrg()" title="新建账户组" class="easyui-linkbutton" plain="true" iconCls=icon_group_add></a>
-			<a href="#" onClick="editOrg()" title="编辑账户组" class="easyui-linkbutton" plain="true" iconCls=icon_group_edit></a>
-			<a href="#" onClick="delOrg()" title="删除账户组" class="easyui-linkbutton" plain="true" iconCls=icon_group_delete></a>
-			<a href="#" onClick="openMoveOrgWin()" title="移动账户组" class="easyui-linkbutton" plain="true" iconCls=icon_group_go></a>
-			<a href="#" onClick="reload()" title="刷新" class="easyui-linkbutton" plain="true" iconCls=icon_refresh></a>
-		</div>
-		<ul id="orgtree" class="easyui-tree"></ul>
-	</div>
-	<div region="center"  style="overflow:hidden;" border="true">
-		<div id="tab" class="easyui-tabs" fit="true" border="false" plain="false">
-			<div title="操作帮助" style="padding:20px;overflow:hidden;"> 
-				<div style="margin-top:20px;">
-					<h3>帐户组操作：</h3>
-					<li>1.移动帐户组后，请手动刷新相关帐户组节点。</li> 
-					<li>2.移动帐户组，不能选择子几点。</li> 
-					<li></li> 
+<body>
+	<!-- margin: 0 auto; -->
+	<div style="padding-top: 8px;">&nbsp;</div>
+	<div class="container">
+		<div class="row">
+			<div class="span3">
+				<div id="account"></div>
+				<hr>
+				<div class="widget-header">
+					<h3 id="title">账户管理</h3>
 				</div>
+				<div class="widget-content">
+					<div id="demo"></div>
+				</div>	
+				<hr>
 			</div>
-		</div>
+			<div class="span9">
+				<h1 class="page-title">
+					<i class="icon-th-large"></i>
+					系统维护-账户管理				
+				</h1>
+				<div id="mmenu" style="float: left;">
+					<a class="btn btn-small" id="add_folder" href="javascript::">
+                        <i class="icon-plus"> 添加组</i>
+                    </a>
+                    <a class="btn btn-small" id="remove" href="javascript::">
+                        <i class="icon-minus"> 删除组</i>
+                    </a>
+                    <a class="btn btn-small" id="rename" href="javascript::">
+                        <i class="icon-edit">重命名</i>
+                    </a>
+                   
+                    <a class="btn btn-small" href="javascript::" onclick="openMoveOrg();">
+                        <i class="icon-past">移动组</i>
+                    </a>
+                    
+				</div>
+				<div id="funmenu" style="display: none;float: right;">
+					<a class="btn btn-small" id="addAcc" href="javascript::">
+                        <i class="icon-plus"> 添加账户</i>
+                    </a>
+                    <a class="btn btn-small" id="delAcc" href="javascript::">
+                        <i class="icon-minus"> 删除账户</i>
+                    </a>
+				</div>
+				<div class="widget">
+					<div class="widget-header">
+						<h3 id="title">账户管理</h3>
+					</div>
+					<div id="accountList" class="widget-content">
+						<h3>帐户组操作：</h3>
+						<ul>
+							<li>1.移动帐户组后，请手动刷新相关帐户组节点。</li>
+							<li>2.移动帐户组，不能选择子几点。</li>
+						</ul>
+					</div>
+				</div>
+			</div><!-- span9 end -->
+		</div><!-- row end -->
 	</div>
-	<div id="moveOrgWindow" class="easyui-window" title="移动帐户组" closed="true" modal="true" iconCls="icon_group_go" style="width:300px;height:200px;padding:5px;">
-		<div class="easyui-layout" fit="true">
-			<div region="center" border="false" style="padding:10px;background:#fff;border:1px solid #ccc;">
-				<ul id="orgmovetree" class="easyui-tree"></ul>
-			</div>
-			<div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
-				<a class="easyui-linkbutton" iconCls="icon_ok" href="javascript:void(0)" plain="true" onclick="saveMoveOrg()">移动</a>
-				<a class="easyui-linkbutton" iconCls="icon_cancel" href="#" plain="true" onclick="$('#moveOrgWindow').window('close');">取消</a>
-			</div>
-		</div>
-	</div>
-	<div id="addOrgWindow" class="easyui-window" closed="true" title="新建帐户组" style="width:300px;height:150px;padding:5px;">
-		<div class="easyui-layout" fit="true">
-			<div region="center" border="false" style="padding:5px;background:#fff;border:1px solid #ccc;">
-				<form style="padding:40px 30px 10px 40px;">
-			        <p>帐户组名称: <input type="text" id="orgname" name="orgname"></p>  
-			    </form> 
-			</div>
-		    <div region="south" border="false" style="text-align:right;height:30px;line-height:30px;">
-	            <a href="#" class="easyui-linkbutton" icon="icon_ok" onclick="saveAddOrg()" plain="true">保存</a>
-	            <a href="#" class="easyui-linkbutton" icon="icon_cancel" onclick="$('#addOrgWindow').window('close');" plain="true">取消</a>
-	        </div> 
+	<!-- 账户信息 -->
+	<div id="accountInfo"></div>
+	
+	<!-- 添加/修改账户 -->	
+   	<div id="ad_up_account" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 id="myModalLabel">添加账户</h3>
         </div>
-	</div>
+        <div class="modal-body">
+			<form id="accountForm" class="bs-docs-example form-horizontal">
+				<input type="hidden" id="accountid">
+				<input type="hidden" id="accountstate">
+				<div class="alert alert-info">
+	              <button data-dismiss="alert" class="close" type="button">×</button>
+	              <strong>提示!</strong>&nbsp;如不输入密码，密码为原密码，不会进行修改。
+	            </div>
+				<div id="codeInfo" class="control-group info">
+				   	<label for="accountcode" class="control-label">账户名称</label>
+				    <div class="controls">
+				       <input type="text" id="accountcode">
+				       <span class="help-inline">请输入账户名称！</span>
+				    </div>
+			   	</div>
+			   	<div id="pwd" style="display: block;" class="control-group info">
+			      <label class="control-label">账户密码</label>
+			      <div class="controls">
+			        <input type="password" id="password">
+			      </div>
+			    </div>
+			    <div id="state" style="display: block;" class="control-group info">
+			      <label class="control-label">账户状态</label>
+			      <div class="controls">
+			      	<div style="float: left;"></div>
+			        <label class="radio">
+						<input type="radio" name="accountstate" onclick="setState('1');" value="1"/> 启用
+					</label>
+					<label class="radio">
+						<input type="radio" name="accountstate" onclick="setState('0')" value="0"/> 禁用
+					</label>
+			      </div>
+			    </div>
+			   	<div id="memoInfo" class="control-group info">
+			      <label for="accountmemo" class="control-label">账户描述</label>
+			      <div class="controls">
+			        <input type="text" id="accountmemo">
+			        <span class="help-inline">请输入账户描述！</span>
+			      </div>
+			    </div>
+		    </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">取 消</button>
+          <button class="btn btn-primary" onclick="save();">保 存</button>
+        </div>
+   	</div>
+	
+	<!-- 账户组Tree -->
+	<div id="orgTree" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 id="myModalLabel">账户组-移动</h3>
+        </div>
+        <div class="modal-body">
+			<div id="orgOfaccountTree"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">取 消</button>
+          <button class="btn btn-primary" onclick="saveMoveOrg();">保 存</button>
+        </div>
+   	</div>
+	<script src="../../js/bootstrap/js/bootstrap.js"></script>
+	<script src="../../js/bootbox.min.js"></script>
+	<script type="text/javascript" src="../../js/jquery.form.js"></script>
 </body>
 </html>

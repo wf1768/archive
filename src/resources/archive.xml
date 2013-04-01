@@ -199,6 +199,7 @@
         <property name="orgService" ref="publicOrgService" />
         <property name="roleService" ref="roleService" />
         <property name="functionService" ref="functionService" />
+        <property name="configService" ref="configService" />
     </bean>
     <bean id="orgAction" class="com.yapu.system.action.OrgAction">
         <property name="orgService" ref="publicOrgService" />

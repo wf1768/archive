@@ -16,7 +16,7 @@
 
     <title>XXX案管理系统</title>
 </head>
-<body>
+<body style="background:url(webpage/css/images/index.jpg) no-repeat center; no-repeat;)">
 	<div class="navbar navbar-fixed-top">
 	
 	<div class="navbar-inner">
@@ -29,8 +29,8 @@
 				<span class="icon-bar"></span> 				
 			</a>
 			
-			<a class="brand" href="#">Adminia Admin</a>
-			
+			<a class="brand" href="#">xxx档案管理系统</a>
+			<!-- 
 			<div class="nav-collapse">
 			
 				<ul class="nav pull-right">
@@ -41,8 +41,8 @@
 					</li>
 				</ul>
 				
-			</div> <!-- /nav-collapse -->
-			
+			</div>--> <!-- /nav-collapse -->
+			 
 		</div> <!-- /container -->
 		
 	</div> <!-- /navbar-inner -->
@@ -51,39 +51,36 @@
 
 <div id="login-container">
 	<div id="login-header">
-		<h3>Login</h3>
+		<h3>登 录</h3>
 	</div> <!-- /login-header -->
 	
 	<div id="login-content" class="clearfix">
 		<form action="login.action" method="post">
 			<fieldset>
 				<div class="control-group">
-					<label class="control-label" for="username">Username</label>
+					<label class="control-label" for="username">用户名</label>
 					<div class="controls">
 						<input type="text" id="accountcode" name="accountcode" value="admin">
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label" for="password">Password</label>
+					<label class="control-label" for="password">密 码</label>
 					<div class="controls">
 						<input type="password" id="password" name="password" value="password">
 					</div>
 				</div>
 			</fieldset>
 			
-			<div id="remember-me" class="pull-left">
-				<input type="checkbox" name="remember" id="remember" />
-				<label id="remember-label" for="remember">Remember Me</label>
-			</div>
-			
 			<div class="pull-right">
 				<button type="submit" class="btn btn-warning btn-large">
-					Login
+					登录
 				</button>
 			</div>
 		</form>
 	</div> <!-- /login-content -->
-
+	<div style="margin-top: 30px;">
+		温馨提示：本系统用于浏览器IE8以上版本...
+	</div>
 </div> <!-- /login-wrapper -->
 
 <script src="js/bootstrap.js"></script>

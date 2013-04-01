@@ -8,16 +8,20 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.yapu.system.common.BaseAction;
 import com.yapu.system.entity.SysAccount;
+import com.yapu.system.entity.SysConfig;
+import com.yapu.system.entity.SysConfigExample;
 import com.yapu.system.entity.SysFunction;
 import com.yapu.system.entity.SysOrg;
 import com.yapu.system.entity.SysRole;
 import com.yapu.system.service.itf.IAccountService;
+import com.yapu.system.service.itf.IConfigService;
 import com.yapu.system.service.itf.IFunctionService;
 import com.yapu.system.service.itf.IOrgService;
 import com.yapu.system.service.itf.IRoleService;
 import com.yapu.system.util.CommonUtils;
 import com.yapu.system.util.Constants;
 import com.yapu.system.util.Logger;
+import com.yapu.system.util.MD5;
 
 
 public class LoginAction extends BaseAction {
@@ -30,6 +34,7 @@ public class LoginAction extends BaseAction {
 	private IOrgService orgService;
 	private IRoleService roleService;
 	private IFunctionService functionService;
+	private IConfigService configService;
 	private String accountcode;
 	private String password;
 	
@@ -82,8 +87,19 @@ public class LoginAction extends BaseAction {
 			out.write("error");
 			return null;
 		}
-		
 		String result = "var account='" + account.getAccountcode() + "';";
+		
+		//读取系统配置表，得到设置的系统名称
+		SysConfigExample example = new SysConfigExample();
+		example.createCriteria().andConfigkeyEqualTo("SYSNAME");
+		List<SysConfig> configList = configService.selectByWhereNotPage(example);
+		if (configList.size() == 1) {
+			String sysname = configList.get(0).getConfigvalue();
+			result += "var sysname='"+sysname+"';";
+		}
+		
+		
+		
 		//得到帐户的角色
 		SysRole role = new SysRole();
 		role = accountService.getAccountOfRole(account);
@@ -209,6 +225,10 @@ public class LoginAction extends BaseAction {
 
 	public void setOrgService(IOrgService orgService) {
 		this.orgService = orgService;
+	}
+
+	public void setConfigService(IConfigService configService) {
+		this.configService = configService;
 	}
 	
 }

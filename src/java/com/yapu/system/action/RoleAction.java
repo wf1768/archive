@@ -4,20 +4,24 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.yapu.system.common.BaseAction;
 import com.yapu.system.entity.SysAccount;
 import com.yapu.system.entity.SysFunction;
 import com.yapu.system.entity.SysFunctionExample;
+import com.yapu.system.entity.SysOrg;
+import com.yapu.system.entity.SysOrgExample;
 import com.yapu.system.entity.SysRole;
 import com.yapu.system.entity.SysRoleExample;
+import com.yapu.system.entity.SysRoleFunction;
 import com.yapu.system.service.itf.IFunctionService;
 import com.yapu.system.service.itf.IRoleService;
 
@@ -30,7 +34,8 @@ public class RoleAction extends BaseAction {
 	private String par;
 	private String roleid;
 	private String functionids;
-	
+	private String functionid;
+	private SysRole sysRole = new SysRole();
 	/**
 	 * 返回角色的json
 	 * @return
@@ -68,38 +73,9 @@ public class RoleAction extends BaseAction {
 
 	public String save() throws IOException {
 		PrintWriter out  = this.getPrintWriter();
-		
-		String result = "保存完毕。";
-		Gson gson = new Gson();
-		Map<String, List<SysRole>> roleMap = new HashMap<String, List<SysRole>>();
-		try {
-			roleMap = (Map)gson.fromJson(par, new TypeToken<Map<String, List<SysRole>>>(){}.getType());
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-		//处理添加的角色
-		List<SysRole> insertRoleList = roleMap.get("inserted");
-		if (insertRoleList.size() > 0) {
-			//循环保存添加
-			for (SysRole sysRole : insertRoleList) {
-				addRole(sysRole);
-			}
-		}
-		//处理更新的
-		List<SysRole> updateRoleList = roleMap.get("updated");
-		if (updateRoleList.size() > 0) {
-			//循环保存更新的
-			for (SysRole sysRole : updateRoleList) {
-				updateRole(sysRole);
-			}
-		}
-		//处理删除帐户
-		List<SysRole> delRoleList = roleMap.get("deleted");
-		if (delRoleList.size() > 0) {
-			//循环删除
-			for (SysRole sysRole : delRoleList) {
-				delRole(sysRole.getRoleid());
-			}
+		String result = "error";
+		if(addRole(sysRole)){
+			result = "succ";
 		}
 		out.write(result);
 		return null;
@@ -112,8 +88,7 @@ public class RoleAction extends BaseAction {
 	public boolean addRole(SysRole role) {
 		boolean result = false;
 		if (role != null) {
-//			role.setRoleid(UUID.randomUUID().toString());
-			
+			role.setRoleid(UUID.randomUUID().toString());
 			if(roleService.insertRole(role)){
 				result=true;
 			}
@@ -124,8 +99,18 @@ public class RoleAction extends BaseAction {
 	 * 更新
 	 * @param SysRole
 	 * @return
+	 * @throws IOException 
 	 */
-	private boolean updateRole(SysRole role) {
+	public String update() throws IOException{
+		PrintWriter out  = this.getPrintWriter();
+		String result = "error";
+		if(updateRole(sysRole)){
+			result = "succ";
+		}
+		out.write(result);
+		return null;
+	}
+	public boolean updateRole(SysRole role) {
 		boolean result = false;
 		if (role != null) {
 			if(roleService.updateRole(role) > 0){
@@ -134,11 +119,45 @@ public class RoleAction extends BaseAction {
 		}
 		return result;
 	}
+	
+	/**
+	 * 根据roleid获得对象 
+	 * */
+	public String getRole() throws IOException{
+		PrintWriter out  = this.getPrintWriter();
+		SysRole role = roleService.selectByPrimaryKey(roleid);
+		if(role!=null){
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("roleid",role.getRoleid());
+			map.put("rolename",role.getRolename());
+			map.put("rolememo",role.getRolememo());
+			
+			Gson gson = new Gson();
+			String result = "var role=" + gson.toJson(map);
+			out.write(result);
+		}else{
+			out.write("error");
+		}
+		return null;
+	}
 	/**
 	 * 删除
 	 * @param 
 	 * @return
+	 * @throws IOException 
 	 */
+	public String delete() throws IOException{
+		PrintWriter out  = this.getPrintWriter();
+		String result = "error";
+		String[] roleids = par.split(",");
+		for(int i=0;i<roleids.length;i++){
+			if(delRole(roleids[i])){
+				result = "succ";
+			}
+		}
+		out.write(result);
+		return null;
+	}
 	public boolean delRole(String roleid) {
 		boolean result = false;
 		if (null != roleid && !"".equals(roleid)) {
@@ -166,12 +185,15 @@ public class RoleAction extends BaseAction {
 		//得到角色id对应的功能
 		List<SysFunction> roleFunctionList = roleService.getRoleOfFunction(role);
 		
-		StringBuilder resultStr = new StringBuilder();
-		//创建根节点
-		resultStr.append("[{\"id\":\"0\",\"text\":\"系统功能\",\"iconCls\":\"icon_role_go\",\"state\":\"open\",\"children\":");
-		String json = getTreeJson("0",roleFunctionList);
-		resultStr.append(json).append("}]");
-		out.write(resultStr.toString());
+//		StringBuilder resultStr = new StringBuilder();
+//		//创建根节点
+//		resultStr.append("[{\"id\":\"0\",\"text\":\"系统功能\",\"iconCls\":\"icon_role_go\",\"state\":\"open\",\"children\":");
+//		String json = getTreeJson("0",roleFunctionList);
+//		resultStr.append(json).append("}]");
+//		out.write(resultStr.toString());
+		
+		String jsonTree = getTree(functionid, roleFunctionList);
+		out.write(jsonTree);
 		return null;
 	}
 	
@@ -182,6 +204,59 @@ public class RoleAction extends BaseAction {
      *            父权限id 
      * @return  
      */  
+	public String getTree(String id,List<SysFunction> roleFunctionList){
+		String jsonData = "";
+		//得到节点
+		SysFunctionExample example = new SysFunctionExample();
+		example.createCriteria().andFunparentEqualTo(id);
+		List<SysFunction> functions = functionService.selectByWhereNotPage(example);
+		
+		if (id.equals("0")){ //初始时只加载根节点
+			JSONArray jsonArray = new JSONArray();
+			JSONObject jsonObject = new JSONObject();
+			
+			for (Iterator iterator = functions.iterator(); iterator.hasNext();){
+				SysFunction fun = (SysFunction)iterator.next();
+					JSONObject attro = new JSONObject();
+					attro.put("id", (new StringBuilder("")).append(fun.getFunctionid()).toString());
+					attro.put("rel", "default");
+					jsonObject.put("data", fun.getFunchinesename());
+					jsonObject.put("attr", attro);
+					jsonObject.put("state", "closed");
+					jsonArray.add(jsonObject);
+			}
+			jsonData = jsonArray.toString();
+		} else{
+			JSONArray jsonArray = new JSONArray();
+			JSONObject jsonObject = new JSONObject();
+			for (Iterator iterator1 = functions.iterator(); iterator1.hasNext(); jsonArray.add(jsonObject)){
+				SysFunction fun = (SysFunction)iterator1.next();
+				JSONObject attro = new JSONObject();
+				attro.put("id", (new StringBuilder("")).append(fun.getFunctionid()).toString());
+				attro.put("rel", "default");
+				//已经应有的权限
+				if(roleFunctionList!=null && roleFunctionList.size()>0){
+					for(SysFunction function:roleFunctionList){
+						if(function.getFunctionid().equals(fun.getFunctionid())){
+							attro.put("CLASS", "jstree-checked");//class不能为小写，可能是关键词的原因，搞了半天
+						}
+					}
+				}
+				jsonObject.put("data", fun.getFunchinesename());
+				jsonObject.put("attr", attro);
+				
+				SysFunctionExample example1 = new SysFunctionExample();
+				example1.createCriteria().andFunparentEqualTo(fun.getFunctionid());
+				List<SysFunction> funs = functionService.selectByWhereNotPage(example1);
+				if (funs != null && funs.size() >= 1)
+					jsonObject.put("state", "closed");
+			}
+
+			jsonData = jsonArray.toString();
+		}
+		System.out.println((new StringBuilder(String.valueOf(jsonData))).append(":::::jsonArray").toString());
+		return jsonData;
+	}
     private String getTreeJson(String parentId,List<SysFunction> roleFunctionList)
     {
     	String str ="";
@@ -238,13 +313,13 @@ public class RoleAction extends BaseAction {
 	 * @return
 	 */
 	public String saveRoleFun() throws IOException {
-		
 		PrintWriter out  = this.getPrintWriter();
 		String result =	"failure";
 		if (null != roleid && !"".equals(roleid)) {
+			System.out.println(functionids);
 			boolean boo = roleService.insertRoleOfFunction(roleid, functionids);
 			if (boo) {
-				result = "success";
+				result = "succ";
 			}
 		}
 		out.write(result);
@@ -275,4 +350,21 @@ public class RoleAction extends BaseAction {
 	public void setFunctionids(String functionids) {
 		this.functionids = functionids;
 	}
+
+	public SysRole getSysRole() {
+		return sysRole;
+	}
+
+	public void setSysRole(SysRole sysRole) {
+		this.sysRole = sysRole;
+	}
+
+	public String getFunctionid() {
+		return functionid;
+	}
+
+	public void setFunctionid(String functionid) {
+		this.functionid = functionid;
+	}
+	
 }

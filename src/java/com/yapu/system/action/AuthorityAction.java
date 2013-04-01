@@ -6,10 +6,7 @@ package com.yapu.system.action;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import com.google.gson.Gson;
@@ -20,7 +17,6 @@ import com.yapu.archive.entity.SysOrgTree;
 import com.yapu.archive.entity.SysOrgTreeExample;
 import com.yapu.archive.entity.SysTree;
 import com.yapu.archive.entity.SysTreeExample;
-import com.yapu.archive.entity.SysTreeTempletExample.Criteria;
 import com.yapu.archive.service.itf.ITreeService;
 import com.yapu.system.common.BaseAction;
 import com.yapu.system.entity.SysAccount;
@@ -127,10 +123,11 @@ public class AuthorityAction extends BaseAction {
 		return null;
 	}
 	
+	/**
+	 * 设置组角色
+	 * */
 	public String setOrgRole() throws IOException {
 		PrintWriter out = this.getPrintWriter();
-		
-		
 		boolean result = false;
 		if (null != orgid && null != roleid) {
 			List<String> orgIDList = new ArrayList<String>();
@@ -138,21 +135,19 @@ public class AuthorityAction extends BaseAction {
 			result = orgService.updateOrgOfRole(orgIDList, roleid);
 		}
 		if (result) {
-			SysRole role = new SysRole();
-			role = roleService.selectByPrimaryKey(roleid);
-			out.write("<font color=red>" + role.getRolename() + "</font>");
-		}
-		else {
+			out.write("succ");
+		}else {
 			out.write("error");
 		}
 		
 		return null;
 	}
 	
+	/**
+	 * 设置账户的角色
+	 * */
 	public String setAccountRole() throws IOException {
 		PrintWriter out = this.getPrintWriter();
-		
-		
 		boolean result = false;
 		if (null != accountid && null != accountid) {
 			SysAccount account = new SysAccount();
@@ -160,11 +155,8 @@ public class AuthorityAction extends BaseAction {
 			result = accountService.updateAccountOfRole(account, roleid);
 		}
 		if (result) {
-			SysRole role = new SysRole();
-			role = roleService.selectByPrimaryKey(roleid);
-			out.write("<font color=red>" + role.getRolename() + "</font>");
-		}
-		else {
+			out.write("succ");
+		}else {
 			out.write("error");
 		}
 		
@@ -216,14 +208,14 @@ public class AuthorityAction extends BaseAction {
 			
 			cr.andOrgidEqualTo(orgTree.getOrgid()).andTreeidIn(idList);
 			if (orgService.updateOrgOfTree(record, ex) > 0) {
-				result = "SUCCESS";
+				result = "succ";
 			}
 			
 		}
 		else {
 			record.setOrgTreeId(orgTreeid);
 			if (orgService.updateOrgOfTree(record) > 0) {
-				result = "SUCCESS";
+				result = "succ";
 			}
 		}
 		
@@ -232,6 +224,9 @@ public class AuthorityAction extends BaseAction {
 		return null;
 	}
 	
+	/**
+	 * 档案节点的帐户组访问权限
+	 * */
 	public String insertOrgTree() throws IOException {
 		PrintWriter out = this.getPrintWriter();
 		
@@ -240,7 +235,7 @@ public class AuthorityAction extends BaseAction {
 			SysOrgTreeExample ex = new SysOrgTreeExample();
 			ex.createCriteria().andOrgidEqualTo(orgid);
 			orgService.deleteOrgOfTree(ex);
-			result = "SUCCESS";
+			result = "succ";
 			out.write(result);
 			return null;
 		}
@@ -259,7 +254,7 @@ public class AuthorityAction extends BaseAction {
 			orgService.deleteOrgOfTree(ex);
 			//插入
 			orgService.insertOrgOfTree(list);
-			result = "SUCCESS";
+			result = "succ";
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -275,7 +270,7 @@ public class AuthorityAction extends BaseAction {
 			SysAccountTreeExample ex = new SysAccountTreeExample();
 			ex.createCriteria().andAccountidEqualTo(accountid);
 			accountService.deleteAccountOfTree(ex);
-			result = "SUCCESS";
+			result = "succ";
 			out.write(result);
 			return null;
 		}
@@ -294,7 +289,7 @@ public class AuthorityAction extends BaseAction {
 			accountService.deleteAccountOfTree(ex);
 			//插入
 			accountService.insertAccountOfTree(list);
-			result = "SUCCESS";
+			result = "succ";
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -347,14 +342,14 @@ public class AuthorityAction extends BaseAction {
 			
 			cr.andAccountidEqualTo(accountTree.getAccountid()).andTreeidIn(idList);
 			if (accountService.updateAccountOfTree(record, ex) > 0) {
-				result = "SUCCESS";
+				result = "succ";
 			}
 			
 		}
 		else {
 			record.setAccountTreeId(accountTreeid);
 			if (accountService.updateAccountOfTree(record) > 0) {
-				result = "SUCCESS";
+				result = "succ";
 			}
 		}
 		

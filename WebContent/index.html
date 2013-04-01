@@ -12,23 +12,91 @@
 <script type="text/javascript" src="webpage/js/us.archive.ui.js"></script>
 <script type="text/javascript" src="webpage/js/us.archive.util.js"></script>
 
+<link href="webpage/js/bootstrap/css/bootstrap.css" rel="stylesheet">
 <link href="webpage/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="webpage/js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
 <link href="webpage/js/bootstrap/css/font-awesome.css" rel="stylesheet">
 <link href="webpage/js/bootstrap/css/adminia.css" rel="stylesheet"> 
 <link href="webpage/js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+<link href="webpage/js/bootstrap/css/unicorn.main.css" rel="stylesheet">
 
+<style type="text/css">
+.mini-layout {
+    margin-bottom: 20px;
+    padding: 9px;
+}
+
+.mini-layout, .mini-layout .mini-layout-body, .mini-layout.fluid .mini-layout-sidebar {
+    height: 356px;
+}
+
+.mini-layout {
+    border-radius: 6px 6px 6px 6px;
+}
+.mini-layout .mini-layout-body {
+    margin: 98px auto;
+    width: 15%;
+}
+.mini-layout div {
+    border-radius: 3px 3px 3px 3px;
+}
+</style>
 <title></title>
 </head>
-<body>
+<body style="background:url(webpage/css/images/index.jpg) no-repeat center; no-repeat;)">
 	<!-- margin: 0 auto; -->
 	<div style="padding-top: 8px;">&nbsp;</div>
 	<div class="container">
 		<div class="row">
-			<div class="span12">
-				ssss
-				<hr><!-- 间隔线 -->
-			</div><!-- span12 end -->
+			<div class="mini-layout">
+				<div class="mini-layout-body">
+					<img src="webpage/css/images/welcome_text.png" />
+				</div>
+			</div>
+				<div class="row-fluid">
+					<div style="text-align: center;" class="span12 center">					
+						<ul class="quick-actions">
+							<li>
+								<a href="webpage/system/config/ConfigMgr.html">
+									<i class="icon-database"></i>
+									系统配置
+								</a>
+							</li>
+							<li>
+								<a href="webpage/system/account/AccountMgr.html">
+									<i class="icon-people"></i>
+									账户管理
+								</a>
+							</li>
+							<li>
+								<a href="webpage/system/authority/AuthorityMgr.html">
+									<i class="icon-lock"></i>
+									权限管理
+								</a>
+							</li>
+							<li>
+								<a href="webpage/archive/archive/ArchiveMgr.html">
+									<i class="icon-cabinet"></i>
+									档案管理
+								</a>
+							</li>
+							<li>
+								<a href="webpage/archive/search/SearchMgr.html">
+									<i class="icon-search"></i>
+									智能检索
+								</a>
+							</li>
+							<li>
+								<a href="webpage/archive/search/SearchFile.html">
+									<i class="icon-book"></i>
+									全文检索
+								</a>
+							</li>
+							
+						</ul>
+					</div>	
+				</div><!-- row-fluid -->
+				
 		</div><!-- row end -->
 	</div>
 	

@@ -49,6 +49,7 @@
         //$("#ifr").focus(function(){
           //  $("li").removeClass("open");
         //});
+        
         $("#dialog-form").dialog({
             autoOpen: false,
             height: 360,
@@ -110,7 +111,8 @@
             dataType: 'script',
             success: function (data) {
                 if (data != "error") {
-                    //$("#welcome").html("欢迎您：" + account);
+                    $("#sysname").html(sysname); //系统名称
+                    document.title = sysname;	 //title
                     $("#account_code").val(account);
                     var funList = eval(functionList);
                     var funStr = "<li><a href=\"#\" onclick=\"javascript:$(window.parent.document).find('#content').attr('src','index.html')\">首页</a></li>";
@@ -226,7 +228,7 @@
         }
     }
 </script>
-<title>XXX档案管理系统</title>
+<title></title>
 </head>
 <body>
 <div><input type="hidden" id="account_code" value="" /></div>
@@ -239,7 +241,7 @@
 				<span class="icon-bar"></span> 				
 			</a>
 			
-			<a class="brand" href="index.html">Adminia Admin</a>
+			<a id="sysname" class="brand" href="javascript::">Adminia Admin</a>
 			<div class="nav-collapse">    
                 <ul class="nav pull-right" id="fun">
                 </ul>
