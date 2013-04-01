@@ -1,0 +1,32 @@
+<!-- 账户信息 - 修改密码 -->
+<div id="dialog-form" title="帐户信息" style="display:none">
+    <form class="form-horizontal" style="margin-top:40px;">
+        <fieldset>
+            <div class="control-group" id="oldpassdiv">
+                <label for="oldpassword" style="font-size:13px" class="control-label">原密码</label>
+
+                <div class="controls">
+                    <input type="password" id="oldpassword" class="span2" onMouseOut="updatePassMouseOut('old')">
+                    <span class="help-inline" id="oldpasserror"></span>
+                </div>
+            </div>
+            <div class="control-group" id="newpassdiv">
+                <label for="newpassword" style="font-size:13px" class="control-label">更改内容</label>
+
+                <div class="controls">
+                    <input type="password" id="newpassword" class="span2" onMouseOut="updatePassMouseOut('new')">
+                    <span class="help-inline" id="newpasserror"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="confirmpassword" style="font-size:13px" class="control-label">重复密码</label>
+
+                <div class="controls">
+                    <input type="password" id="confirmpassword" class="span2"
+                           onMouseOut="updatePassMouseOut('confirm')">
+                    <span class="help-inline" id="confirmpasserror"></span>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
