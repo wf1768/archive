@@ -1,0 +1,146 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../js/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/adminia.css" rel="stylesheet"> 
+<link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+
+<script type="text/javascript" src="../../js/jquery-1.7.1.js"></script>
+
+<script type="text/javascript" src="../../js/account/account.js"></script>
+
+<script>
+	function createIndex() {
+		$("#loading").modal({backdrop:'static'});
+		var par = "";
+		$.post("createIndexer.action", par, function(data) {
+			$("#loading").modal('hide');
+			openalert("数据库索引创建完毕！");
+		});
+	}
+
+	function createFilesIndex() {
+		$("#loading").modal({backdrop:'static'});
+		
+		//同步创建电子全文索引
+		$.ajax({
+			async : false,
+			url : "createFilesIndexer.action",
+			type : 'post',
+			dataType : 'script',
+			success : function(data) {
+				var aa = eval(data);
+				if (aa.toString() == "success") {
+					$("#loading").modal('hide');
+					openalert("数据库索引创建完毕！");
+				} else {
+					openalert("读取数据时出错！请关闭浏览器，重新登录尝试或与管理员联系!");
+				}
+			}
+		});
+		
+	}
+	
+	function deleteIndexer() {
+		var par = "";
+		$.post("deleteIndexer.action", par, function(data) {
+
+		});
+	}
+	function appendIndexer() {
+		var par = "";
+		$.post("appendIndexer.action", par, function(data) {
+
+		});
+	}
+	function updateIndexer() {
+		var par = "";
+		$.post("updateIndexer.action", par, function(data) {
+
+		});
+	}
+</script>
+
+<title></title>
+</head>
+<body>
+	<!-- margin: 0 auto; -->
+	<div style="padding-top: 8px;">&nbsp;</div>
+	<div class="container">
+		<div class="row">
+			<div class="span3">
+				<div id="account"></div>
+				<hr>
+				<ul class="nav nav-tabs nav-stacked" id="main-nav">
+					<li>
+						<a href="ConfigList.html">
+							<i class="icon-home"></i>参数设置</a>
+					</li>
+					<li>
+						<a href="DocserverList.html">
+							<i class="icon-home"></i>文件服务器</a>
+					</li>
+					<li>
+						<a href="RoleList.html">
+							<i class="icon-user"></i>角色管理</a>
+					</li>
+					<li class="active">
+						<a href="SetSytem.html">
+							<i class="icon-th-large"></i>定 制</a>
+					</li>
+				</ul>
+				<hr>
+			</div>
+			<div class="span9">
+				<h1 class="page-title">
+					<i class="icon-th-large"></i>
+					系统维护-系统配置				
+				</h1>
+				<div class="widget">
+					<div class="widget-header">
+						<h3>定 制</h3>
+					</div>
+					<div id="configInfo" class="widget-content">
+						<div class="bs-docs-example">
+				            <div style="max-width: 400px; margin: 0 auto 10px;" class="well">
+				              <button class="btn btn-large btn-block btn-primary" type="button" onClick="createIndex()">创建数据库索引</button>
+				              <button class="btn btn-large btn-block btn-primary" type="button" onClick="createFilesIndex()">创建电子全文索引</button>
+				              
+				              <!-- 
+				              <button class="btn btn-large btn-block" type="button" onClick="deleteIndexer()">测试删除数据库索引</button>
+				              <button class="btn btn-large btn-block" type="button" onClick="updateIndexer()">测试更新数据库索引</button>
+				              <button class="btn btn-large btn-block" type="button" onClick="appendIndexer()">测试追加数据库索引</button>
+				               -->
+				            </div>
+				        </div>
+					</div>
+			        
+				</div>
+			</div><!-- span9 end -->
+		</div><!-- row end -->
+	</div>
+	<div id="loading" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 id="myModalLabel">系统提示</h3>
+        </div>
+        <div align="center" class="modal-body">
+			<table><tr>
+				<td><img src="../../images/loading.gif" /></td>
+				<td>&nbsp;</td>
+				<td>正在创建索引,请耐心等待......</td>
+			</tr></table>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">Close</button>
+        </div>
+   	</div>
+	<!-- 账户信息 -->
+   	<div id="accountInfo"> </div>
+   	<script src="../../js/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>

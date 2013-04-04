@@ -1,0 +1,105 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../js/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/adminia.css" rel="stylesheet"> 
+<link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+
+<script type="text/javascript" src="../../js/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="../../js/jquery.form.js"></script>
+
+
+<script type="text/javascript" src="../../js/account/account.js"></script>
+<script type="text/javascript" src="DocserverList.js"></script>
+
+<style type="text/css">
+	#docform {
+	    background-color: #FFFFFF;
+	    border: 1px solid #DDDDDD;
+	    border-radius: 4px 4px 4px 4px;
+	    padding: 20px;
+	}
+</style>
+<title></title>
+</head>
+<body>
+	<!-- margin: 0 auto; -->
+	<div style="padding-top: 8px;">&nbsp;</div>
+	<div class="container">
+		<div class="row">
+			<div class="span3">
+				<div id="account"></div>
+				<hr>
+				<ul class="nav nav-tabs nav-stacked" id="main-nav">
+					<li>
+						<a href="ConfigList.html">
+							<i class="icon-home"></i>参数设置</a>
+					</li>
+					<li class="active">
+						<a href="DocserverList.html">
+							<i class="icon-home"></i>文件服务器</a>
+					</li>
+					<li>
+						<a href="RoleList.html">
+							<i class="icon-user"></i>角色管理</a>
+					</li>
+					<li>
+						<a href="SetSytem.html">
+							<i class="icon-th-large"></i>定 制</a>
+					</li>
+				</ul>
+				<hr>
+			</div>
+			<div class="span9">
+				<h1 class="page-title">
+					<i class="icon-th-large"></i>
+					系统维护-系统配置				
+				</h1>
+				<div align="right">
+					<a class="btn btn-small" id="addDocS" href="javascript::">
+                        <i class="icon-plus"> 添加</i>
+                    </a>
+                    <a class="btn btn-small" id="delDocS" href="javascript::">
+                        <i class="icon-minus"> 删除</i>
+                    </a>
+				</div>
+				<div class="widget">
+					<div class="widget-header">
+						<h3>文件服务器</h3>
+					</div>
+					<div id="docserverList" class="widget-content">
+						文件服务器列表
+					</div>
+				</div>
+			</div><!-- span9 end -->
+		</div><!-- row end -->
+	</div>
+	<!-- 账户信息 -->
+   	<div id="accountInfo"> </div>
+   	<!-- 更改服务器状态(是否启用) -->
+   	<div id="serverState" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 id="myModalLabel">更改文件服务器状态</h3>
+        </div>
+        <div class="modal-body">
+        	<input type="hidden" value="" id="docserverid" name="docserverid" />
+			<div style="color: red;">注意：更改文件服务器的状态，涉及电子文件的存储位置。系统中只能有一个服务器状态为【启用】。<br>确定要更改选择的服务器状态为【启用】吗？</div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">取 消</button>
+          <button class="btn btn-primary" onclick="startDocServer()">启 用</button>
+        </div>
+   	</div>
+   	
+   	<script src="../../js/bootstrap/js/bootstrap.js"></script>
+   	<script src="../../js/bootbox.min.js"></script>
+   	<script src="../../js/bootstrap/js/bootstrap-validation.js"></script>
+   	<script src="../../js/bootstrap/js/bootstrap-validation.min.js"></script>
+   	
+</body>
+</html>

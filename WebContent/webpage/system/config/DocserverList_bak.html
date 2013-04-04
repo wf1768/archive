@@ -1,0 +1,163 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="../../js/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/adminia.css" rel="stylesheet"> 
+<link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+
+<script type="text/javascript" src="../../js/jquery-1.7.1.js"></script>
+
+<script type="text/javascript" src="../../js/account/account.js"></script>
+<script type="text/javascript" src="DocserverList.js"></script>
+<title></title>
+</head>
+<body>
+	<!-- margin: 0 auto; -->
+	<div style="padding-top: 8px;">&nbsp;</div>
+	<div class="container">
+		<div class="row">
+			<div class="span3">
+				<div id="account"></div>
+				<hr>
+				<ul class="nav nav-tabs nav-stacked" id="main-nav">
+					<li>
+						<a href="ConfigList.html">
+							<i class="icon-home"></i>参数设置</a>
+					</li>
+					<li class="active">
+						<a href="DocserverList.html">
+							<i class="icon-home"></i>文件服务器</a>
+					</li>
+					<li>
+						<a href="RoleList.html">
+							<i class="icon-user"></i>角色管理</a>
+					</li>
+					<li>
+						<a href="SetSytem.html">
+							<i class="icon-th-large"></i>定 制</a>
+					</li>
+				</ul>
+				<hr>
+			</div>
+			<div class="span9">
+				<h1 class="page-title">
+					<i class="icon-th-large"></i>
+					系统维护-系统配置				
+				</h1>
+				<div align="right">
+					<a class="btn btn-small" id="addDocS" href="javascript::">
+                        <i class="icon-plus"> 添加</i>
+                    </a>
+                    <a class="btn btn-small" id="delDocS" href="javascript::">
+                        <i class="icon-minus"> 删除</i>
+                    </a>
+                    <a class="btn btn-small" id="updDocS" href="javascript::">
+                        <i class="icon-pencil"> 修改</i>
+                    </a>
+				</div>
+				<div class="widget">
+					<div class="widget-header">
+						<h3>文件服务器</h3>
+					</div>
+					<div id="docserverList" class="widget-content">
+						文件服务器列表
+					</div>
+			        
+				</div>
+			</div><!-- span9 end -->
+		</div><!-- row end -->
+	</div>
+	<!-- 账户信息 -->
+   	<div id="accountInfo"> </div>
+   	
+   	<!-- 添加/修改角色 -->	
+   	<div id="ad_up_docserver" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 id="myModalLabel">添加文件服务器</h3>
+        </div>
+        <div class="modal-body">
+			<form class="bs-docs-example form-horizontal">
+				<input type="hidden" id="roleid">
+				<div id="nameInfo" class="control-group info">
+				   	<label for="servername" class="control-label">服务器名称</label>
+				    <div class="controls">
+				       <input type="text" id="servername">
+				       <span class="help-inline"></span>
+				    </div>
+			   	</div>
+			   	<div id="ipInfo" class="control-group info">
+			      <label for="serverip" class="control-label">服务器IP</label>
+			      <div class="controls">
+			        <input type="text" id="serverip">
+			        <span class="help-inline"></span>
+			      </div>
+			    </div>
+			    <div id="ftpuserInfo" class="control-group info">
+			      <label for="ftpuser" class="control-label">Ftp账户名称</label>
+			      <div class="controls">
+			        <input type="text" id="ftpuser">
+			        <span class="help-inline"></span>
+			      </div>
+			    </div>
+			    <div id="passwordInfo" class="control-group info">
+			      <label for="ftppassword" class="control-label">Ftp密码</label>
+			      <div class="controls">
+			        <input type="text" id="ftppassword">
+			        <span class="help-inline"></span>
+			      </div>
+			    </div>
+			    <div id="portInfo" class="control-group info">
+			      <label for="serverport" class="control-label">Ftp端口</label>
+			      <div class="controls">
+			        <input type="text" id="serverport">
+			        <span class="help-inline"></span>
+			      </div>
+			    </div>
+			    <div id="pathInfo" class="control-group info">
+			      <label for="serverpath" class="control-label">服务器路径</label>
+			      <div class="controls">
+			        <input type="text" id="serverpath">
+			        <span class="help-inline"></span>
+			      </div>
+			    </div>
+			    <div id="typeInfo" class="control-group info">
+			      <label for="servertype" class="control-label">类型</label>
+			      <div class="controls">
+			        <input type="text" id="servertype">
+			        <span class="help-inline"></span>
+			      </div>
+			    </div>
+			    <div id="stateInfo" class="control-group info">
+			      <label for="serverstate" class="control-label">状态</label>
+			      <div class="controls">
+			        <input type="text" id="serverstate">
+			        <span class="help-inline"></span>
+			      </div>
+			    </div>
+			    <div id="memoInfo" class="control-group info">
+			      <label for="servermemo" class="control-label">服务器描述</label>
+			      <div class="controls">
+			        <input type="text" id="servermemo">
+			        <span class="help-inline"></span>
+			      </div>
+			    </div>
+			    <div class="control-group">
+					<div class="controls">
+						<button class="btn" type="submit">登录</button>
+						<button class="btn" type="submit">登录</button>
+					</div>
+				</div>
+		    </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">取 消</button>
+          <button class="btn btn-primary" >保 存</button>
+        </div>
+   	</div>
+   	<script src="../../js/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>
