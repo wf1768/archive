@@ -10,6 +10,8 @@
         <action name="getFieldList" class="archiveAction" method="getFieldForMedia"></action>
         <!-- 读取原始的档案数据。不为grid-->
         <action name="listForMediaArchive" class="archiveAction" method="listForMedia"></action>
+		<!-- 读取原始的档案数据。不为grid 案卷-文件-->
+        <action name="listForMediaWjArchive" class="archiveAction" method="listForMediaWj"></action>
 
         <!-- 多媒体上传 -->
         <action name ="uploadMedia" class ="mediaAction" method="uploadMedia">

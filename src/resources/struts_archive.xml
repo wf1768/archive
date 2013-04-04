@@ -89,8 +89,18 @@
         <action name="upload" class="importAction" method="upload"></action>
         <!-- 保存-->
 		<action name="saveImportArchive" class="importAction" method="insertImport"></action>
+		<!-- 删除 案卷（文件）-->
+		<action name="deleteImportArchive" class="importAction" method="deleteImport"></action>
+		<!-- 删除 文件 -->
+		<action name="deleteImportArchiveF" class="importAction" method="deleteFile"></action>
+		
+		<!-- 查找-->
+		<action name="getImportArchive" class="importAction" method="getImport"></action>
 		<!-- 更新-->
 		<action name="updateImportArchive" class="importAction" method="updateImport"></action>
+		<!-- 设置封页图片-->
+		<action name="setCoverPic" class="importAction" method="setCoverPic"></action>
+		
 		
 		<!-- 保存批量挂接-->
 		<action name="saveBatchAttArchive" class="attachmentAction" method="insertBatchAttachmentArchive"></action>

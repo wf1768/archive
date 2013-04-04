@@ -21,17 +21,18 @@
 
         jQuery(function ($) {
             var treeid = $(window.parent.document).find("#selectTreeid");
+            var selectid = $(window.parent.document).find("#selectid");
+            
             var mediaList = {
                 data : {}
             }
-
             //同步读取当前节点的原始数据
             $.ajax({
                 async : false,
-                url : "listForMediaArchive.action",
+                url : "listForMediaWjArchive.action",
                 type : 'post',
                 dataType : 'json',
-                data:{treeid:treeid.val(),tableType:'02'},
+                data:{treeid:treeid.val(),parentid:selectid.val(),tableType:'02'},
                 success : function(data) {
                     if (data != "error") {
                         mediaList.data = eval(data);

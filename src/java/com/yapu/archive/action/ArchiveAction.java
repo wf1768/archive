@@ -22,6 +22,7 @@ public class ArchiveAction extends BaseAction {
 	private IDynamicService dynamicService;
 	private ITempletfieldService templetfieldService;
 	private String treeid;
+	private String parentid;
 	private String tableType;
     private String selectAid;
     private String isAllWj;
@@ -290,7 +291,36 @@ public class ArchiveAction extends BaseAction {
         out.write(gson.toJson(dynamicList));
         return null;
     }
+    /**
+     * 案卷对应的文件-图片
+     * */
+    public String listForMediaWj() throws IOException {
+        PrintWriter out = this.getPrintWriter();
 
+        //如果没有得到树节点id，返回error
+        if (null == treeid || "".equals(treeid)) {
+            out.write("error");
+            return null;
+        }
+        //得到树节点对应的表集合
+        List<SysTable> tableList = treeService.getTreeOfTable(treeid);
+
+        DynamicExample de = new DynamicExample();
+        DynamicExample.Criteria criteria = de.createCriteria();
+        criteria.andEqualTo("treeid",treeid);
+        criteria.andEqualTo("parentid", parentid);
+        for (int i=0;i<tableList.size();i++) {
+            if (tableList.get(i).getTabletype().equals(tableType)) {
+                de.setTableName(tableList.get(i).getTablename());
+                break;
+            }
+        }
+        List dynamicList = dynamicService.selectByExample(de);
+        Gson gson = new Gson();
+        out.write(gson.toJson(dynamicList));
+        return null;
+    }
+    
 	public String delete() throws IOException {
 		String result = "SUCCESS";
 		PrintWriter out = getPrintWriter();
@@ -435,6 +465,14 @@ public class ArchiveAction extends BaseAction {
 
 	public void setIsAllWj(String isAllWj) {
 		this.isAllWj = isAllWj;
+	}
+
+	public String getParentid() {
+		return parentid;
+	}
+
+	public void setParentid(String parentid) {
+		this.parentid = parentid;
 	}
 
 

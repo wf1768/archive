@@ -11,89 +11,81 @@
         height: 40px;
     }
     .titleN{margin: 8px 5px 5px 5px;}
-    .imgSize{width: 210px;height: 130px;}
+    .imgSize{width: 249px;height: 139px;}
     
     .thumbnails .actions {
 	    -moz-transition: opacity 0.3s ease-in-out 0s;
-	    background-color: #000000;
+	    background-color: #FFFFFF;
 	    border-radius: 5px 5px 5px 5px;
 	    height: 16px;
-	    left: 85%;
+	    left: 77%;
 	    margin-left: -24px;
 	    margin-top: -13px;
 	    opacity: 0;
 	    padding: 5px 8px;
 	    position: absolute;
 	    top: 70%;
-	    width: 36px;
+	    width: 52px;
 	}
+	.widget-content{height:430px; overflow: auto;}
 </style>
+
 <script type="text/javascript" src="MediaList.js"></script>
 <script type="text/javascript" src="../../js/account/account.js"></script>
 
-<div id="mediaGrid" class="gridC" style="position: relative; height:100%;overflow: hidden">
-    <div id="grid_header_media" class="grid-header" style="width: 100%;height:20px">多媒体管理</div>
-    <div style="width:100%; height:35px" class="grid-menu">
-        <ul class="nav nav-pills" style="background-color: #F5F5F5; border: 1px solid #D3D3D3">
-            <li><a href="javascript:void(0);" onClick="addMedia()">添加</a></li>
-            <li><a href="javascript:void(0);" onClick="refresh()">刷新</a></li>
-        </ul>
-    </div>
-    <div class="widget-content">
-		<ul id="meidadiv" class="thumbnails">
-			<li class="span3">
-				<div class="thumbnail">
-					<a class="thumbnail" href="gallery.html#">
-						<img class="imgSize" src="../../media/53ab476d-e08a-4c28-b4f6-0694f15f45c1.jpg">
-					</a>
-					<div class="actions">
-						<a href="gallery.html#" title=""><i class="icon-pencil icon-white"></i></a>
-						<a href="gallery.html#" title=""><i class="icon-remove icon-white"></i></a>
-					</div>
-					<div class="titleN">题名：XXXXX</div>
+<div id="grid_header_media" class="grid-header" style="width: 100%;height:20px">多媒体管理</div>
+<div style="width:100%; height:35px" class="grid-menu">
+    <ul class="nav nav-pills" style="background-color: #F5F5F5; border: 1px solid #D3D3D3">
+        <li><a href="javascript:void(0);" onClick="addMedia()">添加</a></li>
+    </ul>
+</div>
+
+<div class="widget-content">
+	<ul id="meidadiv" class="thumbnails">
+		<li class="span3">
+			<div class="thumbnail">
+				<a class="thumbnail" href="gallery.html#">
+					<img class="imgSize" src="../../media/53ab476d-e08a-4c28-b4f6-0694f15f45c1.jpg">
+				</a>
+				<div class="actions">
+					<a href="gallery.html#" title=""><i class="icon-pencil icon-white"></i></a>
+					<a href="gallery.html#" title=""><i class="icon-remove icon-white"></i></a>
 				</div>
-			</li>
-			<li class="span3">
-				<div class="thumbnail">
-					<a class="thumbnail" href="gallery.html#">
-						<img class="imgSize" src="../../media/53ab476d-e08a-4c28-b4f6-0694f15f45c1.jpg">
-					</a>
-					<div class="actions">
-						<a href="gallery.html#" title=""><i class="icon-pencil icon-white"></i></a>
-						<a href="gallery.html#" title=""><i class="icon-remove icon-white"></i></a>
-					</div>
-					<div class="titleN">题名：XXXXX</div>
-				</div>
-			</li>
-		</ul>
+				<div class="titleN">题名：XXXXX</div>
+			</div>
+		</li>
+	</ul>
+</div><!-- widget-content end  meidadiv -->
+<!-- 分页 -->
+<div id="pager_media" class="grid-pager" style="width: 100%; height: 20px;"></div>
+
+
+<div id="addMedia" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	  <h3 id="myModalLabel">添加多媒体库</h3>
 	</div>
-	
-        
-    <div id="pager_media" class="grid-pager" style="width: 100%; height: 20px;"></div>
+    <div class="modal-body">
+		<div id="addMediaDialog"></div>
+    </div>
+    <div class="modal-footer">
+    	<button class="btn" data-dismiss="modal">取 消</button>
+    	<button class="btn btn-primary" onclick="insert()">保 存</button>
+    </div>
 </div>
-
-<div id="addMedia" title="添加多媒体库">
-    <form class="form-horizontal" id="addMediaDialog">
-
-    </form>
-</div>
-
-<div id="updMedia" title="添加多媒体库">
-    <form class="form-horizontal" id="updMediaDialog">
-
-    </form>
-</div>
-
-<div id="updateMedia" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="updMedia" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-header">
 	  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 	  <h3 id="myModalLabel">修改多媒体库</h3>
 	</div>
     <div class="modal-body">
-		<div id="functionList"></div>
+    	<input type="hidden" id="ID" >
+		<div id="updMediaDialog"></div>
     </div>
     <div class="modal-footer">
     	<button class="btn" data-dismiss="modal">取 消</button>
-    	<button class="btn btn-primary" onclick="saveRoleFun();">保 存</button>
+    	<button class="btn btn-primary" onclick="update()">保 存</button>
     </div>
 </div>
+
+<script src="../../js/bootbox.min.js"></script>
