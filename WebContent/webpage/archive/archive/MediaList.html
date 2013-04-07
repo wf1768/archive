@@ -34,6 +34,9 @@
 <script type="text/javascript" src="../../js/account/account.js"></script>
 
 <div id="grid_header_media" class="grid-header" style="width: 100%;height:20px">多媒体管理</div>
+
+<input type="text" value="02-16-2012" id="datepicker">
+
 <div style="width:100%; height:35px" class="grid-menu">
     <ul class="nav nav-pills" style="background-color: #F5F5F5; border: 1px solid #D3D3D3">
         <li><a href="javascript:void(0);" onClick="addMedia()">添加</a></li>
@@ -89,3 +92,10 @@
 </div>
 
 <script src="../../js/bootbox.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$('#datepicker').datepicker({
+		    format: 'mm-dd-yyyy'
+		});
+	});
+</script>

@@ -27,7 +27,7 @@ public class ArchiveAction extends BaseAction {
     private String selectAid;
     private String isAllWj;
     //如果是导入类型，读取字段时，去掉文件级标识
-    private String importType;
+    private String importType; 
 
 
 	private String par;

@@ -4,6 +4,7 @@ $(function(){
     $('#grid_header_media').html(archiveCommon.selectTreeName + "_多媒体文件管理");
 	readData();
 	var tableField = readField();
+    
 });
 
 //同步读取当前节点的原始数据
@@ -43,6 +44,7 @@ function readField() {
 }
 //显示多媒体数据
 function showData(data) {
+//日期控件
 	var html = "";
 	for (var i = 0; i < data.length; i++) {
 	 	var imgsrc = "";
@@ -103,7 +105,18 @@ function addOrUpdInfoHtml(field) {
                 if (field[i].fieldtype == "INT") {
                     html += "<input type=\"text\" id=\"" + field[i].englishname + "\" value=\"0\">";
                 }else {
-                    html += "<input type=\"text\" id=\"" + field[i].englishname + "\" value=\"\" >";
+               		if(field[i].englishname == "GDRQ"){
+                		//html += "<input type=\"text\" id=\"" + field[i].englishname + "\" value=\"\" >"+
+                		//"<a href=\"javascript:;\" id=\"datepic\"><span class=\"add-on\"><i title=\"点击选择日期\" class=\"icon-calendar\"></i></span></a>";
+                		
+                    	html += '<div class="input-append date" id="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy">'+
+						    '<input size="16" type="text" value="12-02-2012" readonly>'+
+						    '<span class="add-on"><i class="icon-th"></i></span>'+
+						'</div>';
+                		
+                	}else{
+                    	html += "<input type=\"text\" id=\"" + field[i].englishname + "\" value=\"\" >";
+                    }
                 }
             }
             html += "</div>";
@@ -227,6 +240,17 @@ function getMedia(id){
 	            }
 				$("#center").css("z-index",""); //解决modal弹出和jquery.layout的冲突 费劲啊
 				$("#updMedia").modal('show');
+				
+				
+				//$('#datepicker').datepicker();
+				
+				 $('#datepicker').datepicker().on('changeDate', function(ev) {
+			        $(this).datepicker('hide')
+			    });
+			    $('#datepicker').datepicker().on('show', function(ev) {
+			        $('.datepicker').css('z-index','1052');
+			    });
+			    
 	        } else {
 	            us.openalert('读取数据时出错，请尝试重新操作或与管理员联系! ', '系统提示', 'alertbody alert_Information');
 	        }
@@ -260,3 +284,7 @@ function showMediaWjTab(id) {
     url = "dispatch.action?page=/webpage/archive/archive/MediaWjList.html";
     us.addtab($('#mediawj'), '多媒体--文件管理', 'ajax', url);
 }
+
+/**
+ * 日期控件
+ */

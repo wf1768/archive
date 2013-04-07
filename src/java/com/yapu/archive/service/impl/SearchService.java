@@ -15,6 +15,7 @@ import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
@@ -25,6 +26,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.highlight.Highlighter;
@@ -32,6 +34,7 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleFragmenter;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 import org.apache.struts2.ServletActionContext;
@@ -112,6 +115,54 @@ public class SearchService implements ISearchService {
 		}
 		return null;
 	}
+	
+	public HashMap searchNumber(String tableName,BooleanQuery booleanQuery, String treeid) {
+		try {  
+//        	String path = "E:\\Program Files\\apache-tomcat-6.0.29\\webapps\\archive1\\LUCENE\\A_C50BD8FC_01";
+			
+			String path = indexDir + "/" + tableName;
+			String tableIndexDir = ServletActionContext.getServletContext()
+			.getRealPath(path) + File.separator;
+			File file = new File(tableIndexDir);
+            Directory mdDirectory = FSDirectory.open(file);  
+            IndexReader reader = IndexReader.open(mdDirectory);  
+            IndexSearcher searcher = new IndexSearcher(reader);  
+            
+            
+            TopDocs tops = searcher.search(booleanQuery, null, 10);  
+            
+            int count = tops.totalHits;  
+            System.out.println("totalHits="+count);  //数量
+            
+            HashMap<String, Integer> resultMap = new HashMap<String, Integer>();
+			resultMap.put(treeid, tops.totalHits);
+			
+//            ScoreDoc[] docs = tops.scoreDocs;  
+//            for(int i=0;i<docs.length;i++){  
+//                Document doc = searcher.doc(docs[i].doc);  
+//                //int id = Integer.parseInt(doc.get("id"));  
+//                String title = doc.get("gddw");  
+//                String tm = doc.get("tm");  
+////                String publishTime = doc.get("publishTime");  
+////                String source = doc.get("source");  
+////                String category = doc.get("category");  
+////                float reputation = Float.parseFloat(doc.get("reputation"));  
+//                  
+//                System.out.println("归档单位："+title+"  题名："+tm);  
+//            }  
+              
+            reader.close();  
+            searcher.close();  
+            return resultMap;
+            
+        } catch (CorruptIndexException e) {  
+            e.printStackTrace();  
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        }  
+		return null;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see com.yapu.archive.service.itf.ISearchService#search(java.lang.String, java.util.List, java.lang.String, int, int)

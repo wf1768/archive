@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.BooleanQuery;
 
 import com.yapu.archive.entity.SysTempletfield;
 import com.yapu.archive.entity.SysTree;
@@ -16,6 +17,14 @@ import com.yapu.archive.entity.SysTree;
  *
  */
 public interface ISearchService {
+	/**
+	 * 根据查询关键字，得到树节点的符合查询条件的数量
+	 * @param tableName
+	 * @param booleanQuery //条件
+	 * @param treeid
+	 * @return
+	 */
+	HashMap searchNumber(String tableName,BooleanQuery booleanQuery, String treeid);
 	/**
 	 * 根据查询关键字，得到树节点的符合查询条件的数量
 	 * @param tableName
