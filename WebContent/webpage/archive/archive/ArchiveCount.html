@@ -1,0 +1,99 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+<script type="text/javascript" src="../../js/jquery-1.7.1.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="../../js/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css" />
+<script type="text/javascript"
+	src="../../js/jquery-ui/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="../../js/us.archive.search.js"></script>
+<script type="text/javascript" src="../../js/us.archive.ui.js"></script>
+<script type="text/javascript" src="../../js/us.archive.util.js"></script>
+
+<!-- tree -->
+<link type="text/css" href="../../js/jstree/themes/default/style.css" rel="stylesheet">
+<script type="text/javascript" src="../../js/jstree/jquery.jstree.js"></script>
+
+<link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/adminia.css" rel="stylesheet"> 
+<link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+
+<link href="../../js/bootstrap/js/datepicker/datepicker.css" rel="stylesheet"> 
+<script src="../../js/bootstrap/js/datepicker/bootstrap-datepicker.js"></script>
+
+<script type="text/javascript" src="ArchiveCount.js"></script>
+<script type="text/javascript" src="../../js/account/account.js"></script>
+
+
+<!-- http://www.cnblogs.com/dozer/archive/2012/10/25/dynamic-query.html -->
+<title></title>
+</head>
+<body>
+	<!-- margin: 0 auto; -->
+	<div style="padding-top: 8px;">&nbsp;</div>
+	<div class="container">
+		<div class="row">
+			<div class="span3">
+				<div id="account"></div>
+				<hr>
+				<div class="widget-header">
+					<h3 id="title">档案管理</h3>
+				</div>
+				<div class="widget-content">
+					<div id="archiveTree"></div>
+				</div>	
+				<hr>
+			</div>
+			<div class="span9">
+				<h1 class="page-title">
+					<i class="icon-th-large"></i>
+					档案管理-统计				
+				</h1>
+				<div class="widget">
+					<div class="widget-header">
+						<h3 id="title">统计</h3>
+					</div>
+					<div class="widget-content">
+					    <div class="query-group-template">
+					        <div class="query-group well">
+					            <div class="query-title">
+					                <span class="help-inline">匹配以下</span>
+					                <select id="selectField" onchange="selectField(this.options[this.selectedIndex].text,this.value)" class="input-small group-type span2">
+					                </select>
+					                <button type="button" class="btn btn-mini btn-success add-query-item" onclick="addTerm();" title="增加一个条件">
+					                    <i class="icon-plus icon-white"></i>
+					                </button>
+					            </div>
+					        </div>
+					    </div>
+						
+						<div class="widget-content">
+							<input type="hidden" id="fieldName" value="">
+							<input type="hidden" id="fieldNameId" value="">
+							<div class="form-horizontal">
+								<div class="control-group">
+									<label for="servername" class="control-label">归档日期</label>
+									<div class="controls">
+										<input type="text" id="startTime" value="" class="span2">--
+					        			<input type="text" id="endTime" value="" class="span2">
+					        			<button class="btn btn-primary" onclick="search();">查询</button>
+									</div>
+								</div>
+							</div>
+							<div>统计结果：<span id="resultCount"></span>条</div>
+						</div>
+					</div>
+				</div>
+			</div><!-- span9 end -->
+		</div><!-- row end -->
+	</div>
+	<!-- 账户信息 -->
+	<div id="accountInfo"></div>
+	
+	<script src="../../js/bootstrap/js/bootstrap.js"></script>
+</body>
+</html>
