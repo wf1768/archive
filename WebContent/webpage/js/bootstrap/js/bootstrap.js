@@ -20,7 +20,7 @@
 !function( $ ) {
 
   $(function () {
-
+	parent.setit(); //菜单消失
     "use strict"
 
     /* CSS TRANSITION SUPPORT (https://gist.github.com/373874)

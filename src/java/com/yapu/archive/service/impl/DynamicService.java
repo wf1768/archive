@@ -17,7 +17,10 @@ public class DynamicService implements IDynamicService {
 	public List selectByExample(DynamicExample example) {
 		return dynamicDao.selectByExample(example);
 	}
-
+	
+	public int rowCount(String sql){
+		return dynamicDao.countByExample(sql);
+	}
     @Override
     public boolean insert(List<HashMap<String, String>> list,String tableName,List<SysTempletfield> fieldList) {
 

@@ -1,10 +1,24 @@
 var tableField; //表字段
 var selectMediaid;
+jQuery.fn.limit=function(){ 
+    var self = $("div[limit]"); 
+    self.each(function(){ 
+        var objString = $(this).text(); 
+        var objLength = $(this).text().length; 
+        var num = $(this).attr("limit"); 
+        if(objLength > num){ 
+		$(this).attr("title",objString); 
+            objString = $(this).text(objString.substring(0,num) + "..."); 
+        } 
+    }) 
+}
 $(function(){
     $('#grid_header_media').html(archiveCommon.selectTreeName + "_多媒体文件管理");
 	readData();
 	var tableField = readField();
-    
+
+    $(document.body).limit(); 
+
 });
 
 //同步读取当前节点的原始数据
@@ -63,7 +77,7 @@ function showData(data) {
 		html +='			<a href="javascript::" onclick="deleteMedia(\''+data[i].ID+'\')" title="删除"><i class="icon-remove icon-white"></i></a>';
 		html +='   			<a href="javascript::" onclick="showMediaWjTab(\''+data[i].ID+'\')" title="查看"><i class="icon-search icon-white"></i></a>';
 		html +='		</div>';
-		html +='		<div class="titleN">题名：'+data[i].TM+'</div>';
+		html +='		<div limit="20" class="titleN">题名：'+data[i].TM+'</div>';
 		html +='	</div>';
 		html +='</li>';
 	}
@@ -108,12 +122,7 @@ function addOrUpdInfoHtml(field) {
                		if(field[i].englishname == "GDRQ"){
                 		//html += "<input type=\"text\" id=\"" + field[i].englishname + "\" value=\"\" >"+
                 		//"<a href=\"javascript:;\" id=\"datepic\"><span class=\"add-on\"><i title=\"点击选择日期\" class=\"icon-calendar\"></i></span></a>";
-                		
-                    	html += '<div class="input-append date" id="datepicker" data-date="12-02-2012" data-date-format="dd-mm-yyyy">'+
-						    '<input size="16" type="text" value="12-02-2012" readonly>'+
-						    '<span class="add-on"><i class="icon-th"></i></span>'+
-						'</div>';
-                		
+                    	html += '<input type="text" value="" readonly="readonly" id="GDRQ">';
                 	}else{
                     	html += "<input type=\"text\" id=\"" + field[i].englishname + "\" value=\"\" >";
                     }
@@ -241,14 +250,13 @@ function getMedia(id){
 				$("#center").css("z-index",""); //解决modal弹出和jquery.layout的冲突 费劲啊
 				$("#updMedia").modal('show');
 				
-				
-				//$('#datepicker').datepicker();
-				
-				 $('#datepicker').datepicker().on('changeDate', function(ev) {
+				//时间控件
+				$('#GDRQ').datepicker().on('changeDate', function(ev) {
 			        $(this).datepicker('hide')
 			    });
-			    $('#datepicker').datepicker().on('show', function(ev) {
-			        $('.datepicker').css('z-index','1052');
+			    $('#GDRQ').datepicker().on('show', function(ev) {
+			   		$('.modal').css('z-index','9999');
+			        $('.datepicker').css('z-index','99999');
 			    });
 			    
 	        } else {

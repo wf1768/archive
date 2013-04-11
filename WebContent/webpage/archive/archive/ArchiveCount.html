@@ -58,33 +58,27 @@
 						<h3 id="title">统计</h3>
 					</div>
 					<div class="widget-content">
-					    <div class="query-group-template">
-					        <div class="query-group well">
-					            <div class="query-title">
-					                <span class="help-inline">匹配以下</span>
-					                <select id="selectField" onchange="selectField(this.options[this.selectedIndex].text,this.value)" class="input-small group-type span2">
-					                </select>
-					                <button type="button" class="btn btn-mini btn-success add-query-item" onclick="addTerm();" title="增加一个条件">
-					                    <i class="icon-plus icon-white"></i>
-					                </button>
-					            </div>
-					        </div>
-					    </div>
-						
-						<div class="widget-content">
-							<input type="hidden" id="fieldName" value="">
-							<input type="hidden" id="fieldNameId" value="">
+						<div class="query-group well">
 							<div class="form-horizontal">
 								<div class="control-group">
-									<label for="servername" class="control-label">归档日期</label>
+									<label for="servername" class="control-label">匹配以下</label>
 									<div class="controls">
-										<input type="text" id="startTime" value="" class="span2">--
-					        			<input type="text" id="endTime" value="" class="span2">
-					        			<button class="btn btn-primary" onclick="search();">查询</button>
+										<div class="span3"><select id="selectField" class="input-small group-type span2"></select>
+						                <button type="button" class="btn btn-mini btn-success add-query-item" onclick="addTerm();" title="增加一个条件">
+						                    <i class="icon-plus icon-white"></i>
+						                </button></div>
+						                <div class="span1"><button class="btn btn-primary" onclick="doSearch();">查询</button></div>
 									</div>
 								</div>
 							</div>
-							<div>统计结果：<span id="resultCount"></span>条</div>
+						</div>
+						
+						<div class="widget-content">
+							<div class="form-horizontal">
+								<div class="control-group">
+									
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -93,7 +87,12 @@
 	</div>
 	<!-- 账户信息 -->
 	<div id="accountInfo"></div>
-	
+	<input type="hidden" class="span4 datepicker" value="">
+	<script type="text/javascript">
+		$(document).ready(function() {								
+			//$('.datepicker').datepicker();				
+		});
+	</script>
 	<script src="../../js/bootstrap/js/bootstrap.js"></script>
 </body>
 </html>

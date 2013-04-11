@@ -1,11 +1,26 @@
 var tableField; //表字段
 var tableValue; //字段值
+jQuery.fn.limit=function(){ 
+    var self = $("div[limit]"); 
+    self.each(function(){ 
+        var objString = $(this).text(); 
+        var objLength = $(this).text().length; 
+        var num = $(this).attr("limit"); 
+        if(objLength > num){ 
+		$(this).attr("title",objString); 
+            objString = $(this).text(objString.substring(0,num) + "..."); 
+        } 
+    }) 
+}
 $(function(){
     $('#grid_header_mediawj').html(archiveCommon.selectTreeName + "_多媒体管理");
     
 	readData();
 	uploadmmedia(); //上传控件加载
 	var tableField = readField();
+	
+	$(document.body).limit(); 
+	
 });
 
 //同步读取当前节点的原始数据
@@ -64,7 +79,7 @@ function showData(data) {
 		html +='			<a href="javascript::" onclick="createWjInfo(\''+data[i].ID+'\')" title="修改"><i class="icon-pencil icon-white"></i></a>';
 		html +='			<a href="javascript::" onclick="deleteMediaWj(\''+data[i].ID+'\',\''+data[i].SLT+'\')" title="删除"><i class="icon-remove icon-white"></i></a>';
 		html +='		</div>';
-		html +='		<div class="titleN">题名：'+data[i].TM+'</div>';
+		html +='		<div limit="20" class="titleN">题名：'+data[i].TM+'</div>';
 		html +='	</div>';
 		html +='</li>';
 	}
@@ -199,9 +214,12 @@ function createWjInfo(id) {
                 else {
                     if (tableField[i].fieldtype == "INT") {
                         html += "<input type=\"text\" id=\""+tableField[i].englishname+"\" value=\"0\">";
-                    }
-                    else {
-                        html += "<input type=\"text\" id=\""+tableField[i].englishname+"\" value=\""+row[tableField[i].englishname]+"\">";
+                    }else {
+                    	if(tableField[i].englishname == "GDRQ"){
+                    		html += '<input type="text" readonly="readonly" value=\""+row[tableField[i].englishname]+"\" id="GDRQ">';
+	                	}else{
+	                    	html += "<input type=\"text\" id=\""+tableField[i].englishname+"\" value=\""+row[tableField[i].englishname]+"\">";
+	                    }
                     }
 
                 }
@@ -212,10 +230,21 @@ function createWjInfo(id) {
         }
     }
     html += "</form>";
+    $("#updMediaDialog").html("");//把修改的内容清空，否则ID有冲突 静态的就是费劲啊
     $("#updMediaWjDialog").html(html);
     $("#center").css("z-index",""); //解决modal弹出和jquery.layout的冲突 费劲啊
-	$("#updMediaWj").modal('show');    
+	$("#updMediaWj").modal('show');
+	
+	//时间控件
+	$('#GDRQ').datepicker().on('changeDate', function(ev) {
+        $(this).datepicker('hide')
+    });
+    $('#GDRQ').datepicker().on('show', function(ev) {
+        $('.modal').css('z-index','9999');
+        $('.datepicker').css('z-index','99999');
+    });    
 }
+
 function updateMediaWj() {
 	$("#updMediaDialog").html("");//把修改的内容清空，否则ID有冲突 静态的就是费劲啊
     var items = [];

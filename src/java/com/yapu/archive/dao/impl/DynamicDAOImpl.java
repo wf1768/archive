@@ -80,6 +80,12 @@ public class DynamicDAOImpl extends SqlMapClientDaoSupport implements DynamicDAO
 		return list;
 	}
 	
+	public int countByExample(String sql){
+		HashMap map = new HashMap();
+		map.put("sql", sql);
+		Integer count = (Integer)  getSqlMapClientTemplate().queryForObject("Dynamic.countBySql", map);
+        return count.intValue();
+	}
 	@SuppressWarnings("unchecked")
 	private String createQuerySql(DynamicExample example) {
 		StringBuilder sql = new StringBuilder("select * from ").append(example.getTableName());

@@ -8,6 +8,9 @@ $(function(){
 				"url" : "getTree.action",
 				"data" : function (n) { 
 					return { nodeId : n.attr ? n.attr("id") : 0 }; //没用（该为动态加载用）
+				},
+				error:function(n){
+					window.location.href="../../common/logout.jsp";
 				}
 			}
 		},
@@ -48,19 +51,16 @@ $(function(){
 	    var node = data.rslt.obj, inst = data.inst;
 	    orgid = node.attr("id");//选择后给全局orgid赋值
 	    readField(orgid);
+	    $(".query-item").remove(); //清空条件
 	});
-	//动态条件
-	$('button.add-query-item').live('click', function () {
-	    $(this).parent().parent().append($('.query-item-template>.query-item').clone());
-	    
-	    return false;
-	});
-	 
+	
+	//删除动态条件
 	$('button.delete-query-item').live('click', function () {
 	    $(this).parent().remove();
 	    return false;
 	});
 
+	//时间控件
     var nowTemp = new Date();
     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
      
@@ -84,6 +84,7 @@ $(function(){
     }).on('changeDate', function(ev) {
     	checkout.hide();
     }).data('datepicker');
+    
     
 });
 
@@ -110,75 +111,103 @@ function readField(treeid) {
 function talbeField(tableField){
 	var html = "";
 	if (tableField.length > 0) {
-		//html += "<select class=\"span3\">";
         for (var i=0;i<tableField.length;i++) {
         	html += "<option value=\""+tableField[i].englishname+"\">"+tableField[i].chinesename+"</option>";
         }
-        //html += "</select>";
     }
     $("#selectField").html(html);
 }
-//选择字段
-function selectField(fieldName,fieldNameId){
-	$("#fieldName").val(fieldName);
-	$("#fieldNameId").val(fieldNameId);
-}
+
 //添加条件
 function addTerm(){
-	var fieldName = $("#fieldName").val();
-	var fieldNameId = $("#fieldNameId").val();
-	var html = "";
-    html += '<div class="query-item">';
-	html += '    <input type="text" value="'+fieldName+'" title="字段名" class="span2" />';
-	html += '    <select class="input-mini operate-type" title="条件">';
-	html += '        <option value="1">==</option>';
-	html += '        <option value="2">!=</option>';
-	html += '        <option value="3">></option>';
-	html += '        <option value="4">>=</option>';
-	html += '        <option value="5"><</option>';
-	html += '        <option value="6"><=</option>';
-	html += '        <option value="7">LK</option>';
-	html += '    </select>';
-	html += '    <input type="text" class="span3" id="'+fieldNameId+'" value="" title="值" />';
-	html += '    <select class="input-medium value-type">';
-	html += '        <option value="3">String</option>';
-	html += '        <option value="1">Int</option>';
-	html += '        <option value="2">Double</option>';
-	html += '        <option value="4">DateTime</option>';
-	html += '    </select>';
-	html += '    <button type="button" style="margin-bottom: 9px;" class="btn btn-mini btn-danger delete-query-item" title="删除条件">';
-	html += '        <i class="icon-minus icon-white"></i>';
-	html += '    </button>';
-	html += '</div>';
-	
-	$(".query-title").append(html);
-	$("#fieldName").val("");
-	$("#fieldNameId").val("");
+	var fieldNameId = $("#selectField").val();
+	var fieldName = $("#selectField option:selected").text();
+	if(fieldNameId!='' && fieldName!=''){
+		var html = "";
+	    html += '<div class="query-item">';
+		html += '    <input type="text" readonly="readonly" value="'+fieldName+'" title="字段名" class="span2" />';
+		html += '    <select class="input-small operate-type" title="条件">';
+		html += '        <option value="1">等于</option>';
+		html += '        <option value="2">不等于</option>';
+		html += '        <option value="3">大于</option>';
+		html += '        <option value="4">大于等于</option>';
+		html += '        <option value="5">小于</option>';
+		html += '        <option value="6">小于等于</option>';
+		html += '        <option value="7">包含</option>';
+		html += '    </select>';
+		html += '    <input type="text" class="input-large" id="'+fieldNameId+'" value="" title="值" />';
+		html += '    <select class="input-medium value-type" onchange="getDatepicker(\''+fieldNameId+'\',this.value)">';
+		html += '        <option value="1">字符串</option>';
+		html += '        <option value="2">数字</option>';
+		html += '        <option value="3">时间</option>';
+		html += '    </select>';
+		html += '    <button type="button" style="margin-bottom: 9px;" class="btn btn-mini btn-danger delete-query-item" title="删除条件">';
+		html += '        <i class="icon-minus icon-white"></i>';
+		html += '    </button>';
+		html += '</div>';
+		
+		$(".query-group").append(html);
+	}else{
+		openalert("请选择档案节点并添加过滤条件!");
+	}
 }
 
-function search() {
+/**
+ * 时间控件  效果不理想
+ */
+function getDatepicker(id_v,value){
+	if(value=="3"){
+		$('.input-large').tab().addClass('datepicker');
+		$('.datepicker').datepicker();
+		
+		//$('.input-large').click(function () {
+		    //$(this).addClass('datepicker');
+		//});
+	}
+	
+    //$('.modal').css('z-index','9999');
+    //$('.datepicker').css('z-index','99999');
+}
+/**
+ * 条件对象
+ */
+function QueryItem() {
+    this.name = '';
+    this.operatorType = 0;
+    this.value = '';
+    this.valueType = 0;
+}
+/**
+ * 获得条件
+ */
+function GetQueryGroup(group) {
+    group = $(group);
+    var queryItems = group.children('.query-item');
     var items = [];
-    var item = {};
-    //item.treeid = archiveCommon.selectTreeid;
-    for (var i = 0; i < tableFields.length; i++) {
-        var field = tableFields[i];
-        if (field.isgridshow == 1) {
-            if (null != $('#' + field.englishname).val() || "" != $('#' + field.englishname).val()) {
-                item[field.englishname.toLowerCase()] = $('#' + field.englishname).val();
-            }
-        }
+    for (var k = 0; k < queryItems.length; k++) {
+        var queryItem = new QueryItem();
+        queryItem.name = $(queryItems[k]).find('.input-large').attr('id');
+        queryItem.operatorType = parseInt($(queryItems[k]).find('.operate-type').val());
+        queryItem.value = $(queryItems[k]).find('.input-large').val();
+        queryItem.valueType = parseInt($(queryItems[k]).find('.value-type').val());
+        items.push(queryItem);
     }
-    items.push(item);
-    var startTime = $("#startTime").val();
-    var endTime = $("#endTime").val();
-    $.ajax({
+    return items;
+}
+/**
+ * 根据选择的树节点 查找统计
+ */
+function doSearch(){
+	var qg = GetQueryGroup('.query-group');
+	var item = JSON.stringify(qg);
+	$.ajax({
 	     async: false,
-	     url: "archiveCount.action",
+	     url: "queryGroup.action",
 	     type: 'post',
 	     dataType: 'text',
-	     data: {importData: JSON.stringify(items),treeid:orgid,startTime:startTime,endTime:endTime, tableType: '01'},
+	     data: {groupitem: item},
 	     success: function (data) {
-	     	$("#resultCount").html(data);
+	     	openalert("共检索到 "+data+" 条");
 	     }
 	});
 }

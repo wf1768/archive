@@ -44,7 +44,6 @@ public class AuthInterceptor extends AbstractInterceptor {
 				flag = "9999";
 				pw.write("window.location.href=\"../../common/logout.jsp\"");
 				
-//				return null;
 				System.out.println("应该跳到登录");
 				return null; 	
 				//不是异步请求的拦截

@@ -119,6 +119,6 @@
         <!-- 统计 -->
         <action name="getCountField" class="countAction" method="getCountField" />
         <action name="archiveCount" class="countAction" method="archiveCount" />
-        
+        <action name="queryGroup" class="countAction" method="getQueryGroups" />
     </package>
 </struts>

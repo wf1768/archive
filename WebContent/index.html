@@ -40,7 +40,63 @@
 .mini-layout div {
     border-radius: 3px 3px 3px 3px;
 }
+.qxkz{display: none}
 </style>
+<script type="text/javascript">
+	$(function(){
+		$("#xtpz").css("display","none");
+		$("#zhgl").css("display","none");
+		$("#qxgl").css("display","none");
+		$("#dagl").css("display","none");
+		$("#znjs").css("display","none");
+		$("#qwjs").css("display","none");
+		$.ajax({
+	        async: false,
+	        url: "menu.action",
+	        type: 'post',
+	        dataType: 'script',
+	        success: function (data) {
+	            if (data != "error") {
+	                var funList = eval(functionList);
+	                for (var i = 0; i < funList.length; i++) {
+	                    var fun = funList[i];
+	                    if (fun.funparent == 0) {
+	                        for (var j = 0; j < funList.length; j++) {
+	                            child = funList[j];
+	                            if (child.funparent == fun.functionid) {
+	                                //alert(child.funchinesename);//child.funpath
+	                                switch(child.funchinesename){
+	                                	case '系统配置':
+	                                		$("#xtpz").css("display","inline-block");
+	                                		break;
+	                                	case '帐户管理':
+	                                		$("#zhgl").css("display","inline-block");
+	                                		break;
+	                                	case '权限管理':
+		                                	$("#qxgl").css("display","inline-block");
+		                                	break;
+	                                	case '档案管理':
+		                                	$("#dagl").css("display","inline-block");
+		                                	break;
+	                                	case '智能检索':
+		                                	$("#znjs").css("display","inline-block");
+		                                	break;
+	                                	case '全文检索':
+		                                	$("#qwjs").css("display","inline-block");
+		                                	break;
+	                                }
+	                            }
+	                        }
+	                    }
+	                }
+	            } else {
+	                openalert('<span style="color:red">读取功能信息时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!');
+	            }
+	        }
+	    });
+	});
+	
+</script>
 <title></title>
 </head>
 <body style="background:url(webpage/css/images/index.jpg) no-repeat center; no-repeat;)">
@@ -56,37 +112,37 @@
 				<div class="row-fluid">
 					<div style="text-align: center;" class="span12 center">					
 						<ul class="quick-actions">
-							<li>
+							<li id="xtpz">
 								<a href="webpage/system/config/ConfigMgr.html">
 									<i class="icon-database"></i>
 									系统配置
 								</a>
 							</li>
-							<li>
+							<li id="zhgl">
 								<a href="webpage/system/account/AccountMgr.html">
 									<i class="icon-people"></i>
 									账户管理
 								</a>
 							</li>
-							<li>
+							<li id="qxgl">
 								<a href="webpage/system/authority/AuthorityMgr.html">
 									<i class="icon-lock"></i>
 									权限管理
 								</a>
 							</li>
-							<li>
+							<li id="dagl">
 								<a href="webpage/archive/archive/ArchiveMgr.html">
 									<i class="icon-cabinet"></i>
 									档案管理
 								</a>
 							</li>
-							<li>
+							<li id="znjs">
 								<a href="webpage/archive/search/SearchMgr.html">
 									<i class="icon-search"></i>
 									智能检索
 								</a>
 							</li>
-							<li>
+							<li id="qwjs">
 								<a href="webpage/archive/search/SearchFile.html">
 									<i class="icon-book"></i>
 									全文检索

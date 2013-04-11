@@ -23,6 +23,7 @@ public interface IDynamicService {
 	@SuppressWarnings("unchecked")
 	List selectByExample(DynamicExample example);
 
+	int rowCount(String sql);
     /**
      * insert到动态档案表
      * @param list

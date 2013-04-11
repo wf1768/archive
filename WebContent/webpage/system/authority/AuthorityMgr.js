@@ -9,6 +9,9 @@ $(function () {
 				"url" : "orgtreeAction.action",
 				"data" : function (n) { 
 					return { nodeId : n.attr ? n.attr("id") : 0 };
+				},
+				error:function(n){
+					window.location.href="../../common/logout.jsp";
 				}
 			}
 		},
