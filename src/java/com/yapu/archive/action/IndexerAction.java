@@ -98,7 +98,7 @@ public class IndexerAction extends BaseAction {
 	 */
 	public String createFilesIndexer() throws Exception {
 		
-		PrintWriter out = this.getPrintWriter();
+//		PrintWriter out = this.getPrintWriter();
 		
 		//取得当前开启的服务器
 		SysDocserverExample sde = new SysDocserverExample();
@@ -181,7 +181,7 @@ public class IndexerAction extends BaseAction {
     	if (!map.isEmpty()) {
     		String result = indexerService.createIndex(docserver.getDocserverid(), list, map, "CREATE");
     		Gson gson = new Gson();
-    		out.write(gson.toJson(result));
+//    		out.write(gson.toJson(result));
     		return null;
     	}
 		return null;

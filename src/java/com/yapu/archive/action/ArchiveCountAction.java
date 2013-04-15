@@ -94,7 +94,7 @@ public class ArchiveCountAction extends BaseAction{
       //返回字段特殊属性，例如默认值，在页面添加时，直接赋值
         List<SysTempletfield> fields = new ArrayList<SysTempletfield>();
 		for (SysTempletfield field : fieldList) {
-			if (field.getSort() >= 0) {
+			if (field.getSort() >= 0 && field.getIssearch()>0) {
 				fields.add(field);
 			}
 		}

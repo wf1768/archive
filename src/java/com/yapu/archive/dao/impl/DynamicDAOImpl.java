@@ -80,6 +80,13 @@ public class DynamicDAOImpl extends SqlMapClientDaoSupport implements DynamicDAO
 		return list;
 	}
 	
+	public List selectListBySql(String sql){
+		HashMap map = new HashMap();
+		map.put("sql", sql);
+		List list = getSqlMapClientTemplate().queryForList("Dynamic.selectBySql", map);
+		return list;
+	}
+	
 	public int countByExample(String sql){
 		HashMap map = new HashMap();
 		map.put("sql", sql);

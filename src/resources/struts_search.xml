@@ -21,5 +21,8 @@
 		
 		<!-- 执行全文查询 -->
 		<action name="searchFile" class="searchFileAction" method="search"></action>
+		<!-- 高级查询 -->
+		<action name="getFieldAdvanced" class="searchAdvancedAction" method="getField" />
+		<action name="searchAdvanced" class="searchAdvancedAction" method="searchAdvanced"></action>
 	</package>
 </struts>

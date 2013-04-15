@@ -291,7 +291,7 @@ function showResultList(list) {
 		}
 		doc += "<tr><td>归档单位</td><td>"+list[i].gddw+"</td><td>归档日期</td><td>"+list[i].gdrq+"</td></tr>";
 		doc += "<tr><td>题名</td><td colspan=\"3\">"+list[i].tm+"</td></tr>";
-		doc += "<tr><td colspan=\"4\"><button  class=\"btn btn-info btn-small\" onClick=\"tabinfo('content','"+list[i].id+"')\">查看详细</button>  <button class=\"btn btn-info btn-small\">查看全文</button>"+list[i].id+"</td></tr>";
+		doc += "<tr><td colspan=\"4\"><button  class=\"btn btn-info btn-small\" onClick=\"tabinfo('content','"+list[i].id+"')\">查看详细</button>  <button class=\"btn btn-info btn-small\" onclick=\"showDoc('"+list[i].id+"');\">查看全文</button></td></tr>";
 		doc += "</table>";
 	}
 	return doc;
@@ -316,13 +316,13 @@ function tabinfo(tabType,selectid) {
 		$("#listTab").addClass("active");
 		$("#list").addClass("active");
 		$("#contentTab").removeClass("active");
-		$("#content").removeClass("active");
+		$("#contentInfo").removeClass("active");
 	}
 	else {
 		$("#listTab").removeClass("active");
 		$("#list").removeClass("active");
 		$("#contentTab").addClass("active");
-		$("#content").addClass("active");
+		$("#contentInfo").addClass("active");
 	}
 	if (selectid != "") {
 		var fields = searchCommon.fields;
@@ -370,4 +370,74 @@ function tabinfo(tabType,selectid) {
 		}
 		$("#data").html(content);
 	}
+}
+
+/***/
+// 打开电子全文
+function showDoc(id) {
+	var par = "selectRowid="+ id;
+	var rowList = [];
+	//同步读取数据
+	$.ajax({
+		async : false,
+		url : "listLinkDoc.action?"+ par,
+		type : 'post',
+		dataType : 'script',
+		success : function(data) {
+			if (data != "error") {
+				rowList = eval(data);
+				$("#doclist").html("");
+				if(rowList.length>0){
+					for (var i=0;i<rowList.length;i++) {
+						$("#doclist").append(getDoclist(rowList[i]));
+					}
+					$("#showdoc").modal('show');
+				}else{
+					openalert('该记录尚未挂接文件！');
+				}
+			} else {
+				openalert('读取数据时出错，请尝试重新操作或与管理员联系! ');
+			}
+		}
+	});
+}
+/*
+ * 生成doc现实的列表
+ * 
+ */
+function getDoclist(row) {
+	var str = "<li class=\"docli\" onMouseOut=\"showDocDelectButton(false,'"+row.docid+"')\" onMouseOver=\"showDocDelectButton(true,'"+row.docid+"')\">";
+	str += "<div class=\"thumbnail\"><div class=\"docdiv\"><a href=\"downDoc.action?docId="+ row.docid +"\">";
+	var docType = row.docext;
+	var typeCss = "";
+	if (docType == "DOC" || docType == "XLS" || docType=="PPT") {
+		typeCss = "file-icon-office";
+	}
+	else if (docType == "TXT") {
+		typeCss = "file-icon-text";
+	}
+	else if (docType == "JPG" || docType == "GIF" || docType=="BMP" || docType=="JPEG" || docType=="TIF") {
+		typeCss = "file-icon-image";
+	}
+	else if (docType == "PDF") {
+		typeCss = "file-icon-pdf";
+	}
+	else if (docType == "ZIP") {
+		typeCss = "file-icon-zip";
+	}
+	else if (docType == "RAR") {
+		typeCss = "file-icon-rar";
+	}
+	else if (docType == "FLASH") {
+		typeCss = "file-icon-flash";
+	}
+	else {
+		
+	}
+	str += "<img class=\"file-icon "+typeCss+" \">";
+	str += "</a></div>";
+	var name = row.docoldname;
+	str += "<div title=\""+row.docoldname+"\"><div class=\"docfilename\"><a href=\"downDoc.action?docId="+ row.docid +"\">" + name + "</a></div></div></div>";
+	str += "</li>";
+	return str;
 }

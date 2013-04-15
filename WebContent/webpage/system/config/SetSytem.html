@@ -24,7 +24,13 @@
 
 	function createFilesIndex() {
 		$("#loading").modal({backdrop:'static'});
+		var par = "";
+		$.post("createFilesIndexer.action", par, function(data) {
+			$("#loading").modal('hide');
+			openalert("电子全文索引创建完毕！");
+		});
 		
+		/*
 		//同步创建电子全文索引
 		$.ajax({
 			async : false,
@@ -41,7 +47,7 @@
 				}
 			}
 		});
-		
+		*/
 	}
 	
 	function deleteIndexer() {

@@ -61,7 +61,7 @@ $(function(){
 	});
 
 	//时间控件
-    var nowTemp = new Date();
+    /*var nowTemp = new Date();
     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
      
     var checkin = $('#startTime').datepicker({
@@ -84,7 +84,7 @@ $(function(){
     }).on('changeDate', function(ev) {
     	checkout.hide();
     }).data('datepicker');
-    
+    */
     
 });
 
@@ -135,7 +135,7 @@ function addTerm(){
 		html += '        <option value="6">小于等于</option>';
 		html += '        <option value="7">包含</option>';
 		html += '    </select>';
-		html += '    <input type="text" class="input-large" id="'+fieldNameId+'" value="" title="值" />';
+		html += '    <input type="text" name="'+fieldNameId+'" class="input-large" id="'+fieldNameId+'" value="" title="值" />';
 		html += '    <select class="input-medium value-type" onchange="getDatepicker(\''+fieldNameId+'\',this.value)">';
 		html += '        <option value="1">字符串</option>';
 		html += '        <option value="2">数字</option>';
@@ -155,14 +155,14 @@ function addTerm(){
 /**
  * 时间控件  效果不理想
  */
+var n = 0; 
 function getDatepicker(id_v,value){
 	if(value=="3"){
-		$('.input-large').tab().addClass('datepicker');
+		$('input[name="'+id_v+'"]').tab().addClass('datepicker');
 		$('.datepicker').datepicker();
-		
-		//$('.input-large').click(function () {
-		    //$(this).addClass('datepicker');
-		//});
+	}else{
+		$('input[name="'+id_v+'"]').tab().removeClass('datepicker');
+		$('.datepicker dropdown-menu').remove();
 	}
 	
     //$('.modal').css('z-index','9999');
@@ -207,7 +207,12 @@ function doSearch(){
 	     dataType: 'text',
 	     data: {groupitem: item},
 	     success: function (data) {
-	     	openalert("共检索到 "+data+" 条");
+	     	if(data>0){
+	     		$("#countResult").html("共检索到 "+data+" 条数据");
+	     	}else{
+	     		openalert("没有符合该条件的数据，请重新选择条件");
+	     		$("#countResult").html("共检索到 "+data+" 条数据");
+	     	}
 	     }
 	});
 }

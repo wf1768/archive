@@ -12,98 +12,22 @@
 <script type="text/javascript" src="../../js/us.archive.ui.js"></script>
 <script type="text/javascript" src="../../js/us.archive.util.js"></script>
 
+<!-- 各种图标 按钮 tab等 1-->
+<link rel="stylesheet" type="text/css" href="../../images/images.css" />
+
+<link href="../../js/bootstrap/css/bootstrap.css" rel="stylesheet">
 <link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
 <link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
 <link href="../../js/bootstrap/css/adminia.css" rel="stylesheet"> 
 <link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
-<link href="../../js/bootstrap/css/theme.css" rel="stylesheet"> 
+<link href="../../js/bootstrap/css/theme.css" rel="stylesheet">
 
-<script type="text/javascript">
- $(function () {
-       $("#dialog-form").dialog({
-           autoOpen: false,
-           height: 360,
-           width: 480,
-           modal: true,
-           resizable: false,
-           buttons: {
-               "提交": function () {
-                   var oldpass = $("#oldpassword");
-                   var newpass = $("#newpassword");
-                   var confirmpass = $("#confirmpassword");
-                   if (oldpass.val() == "") {
-                       $("#oldpassdiv").addClass("error");
-                       $("#oldpasserror").html("请输入原密码。");
-                       return;
-                   }
-                   if (newpass.val() == "") {
-                       $("#newpassdiv").addClass("error");
-                       $("#newpasserror").html("请输入新密码。");
-                       return;
-                   }
-                   if (confirmpass.val() == "") {
-                       $("#confirmpassdiv").addClass("error");
-                       $("#confirmpasserror").html("请输入重复密码。");
-                       return;
-                   }
-
-                   if (newpass.val() != confirmpass.val()) {
-                       $("#newpassdiv").addClass("error");
-                       $("#newpasserror").html("新密码2次输入不一致。请重新输入。");
-                       return;
-                   }
-
-                   var par = {
-                       oldpassword: "",
-                       newpassword: ""
-                   };
-                   par.oldpassword = oldpass.val();
-                   par.newpassword = newpass.val();
-                   var aa = "par=" + JSON.stringify(par);
-                   $.post("updatePass.action", aa, function (data) {
-                               us.openalert(data, "系统提示", "alertbody alert_Information");
-                           }
-                   );
-               },
-               "关闭": function () {
-                   $(this).dialog("close");
-               }
-           },
-           close: function () {
-
-           }
-       });
-    });
-	function quit() {
-	   us.openconfirm("真的要退出系统吗?", "系统提示", function () {
-	       window.location.href = "../../common/logout.jsp";
-	   });
-	}
-	function openAccountInfo() {
-	    $("#oldpassword").val("");
-	    $("#newpassword").val("");
-	    $("#confirmpassword").val("");
-	    $("#dialog-form").dialog("open");
-	}
-</script>
+<script type="text/javascript" src="../../js/account/account.js"></script> 
 <script type="text/javascript" src="SearchMgr.js"></script>
 
 <title></title>
-<style type="text/css">
-.narrowValue {
-	color: #888888;
-}
-h6{font-size: 12px;margin-top: 0.55em;margin-bottom: 0.25em;}
-.nav_ul{padding-left: 15px;}
-.pricing-plans.plans-3 .plan-container {
-    width: 100%;
-}
-.plan{margin-right: 0;}
-.plan-features{padding-bottom: 0;border-bottom-style: solid;border-bottom-color: #DDDDDD; border-bottom-width: 1px;}
-.plan-title{padding: 6px 0;font-weight: bold;}
-.plan-features li {margin: 0 1em;padding: 7px 0;text-align: left;}
-</style>
+
 </head>
 <body>
 	<div style="padding-top: 8px;">&nbsp;</div>
@@ -111,21 +35,8 @@ h6{font-size: 12px;margin-top: 0.55em;margin-bottom: 0.25em;}
 	<div class="container">
 		<div class="row">
 			<div class="span3">
-				<div class="account-container">
-					<div class="account-avatar">
-						<img src="../../js/bootstrap/img/default.gif" alt="" class="thumbnail" />
-					</div> <!-- /account-avatar -->
-					<div class="account-details">
-						<span class="account-role">欢迎您：</span>
-						<span id="uid" class="account-name"></span>
-						<!-- <span class="account-role">Administrator</span> -->
-						<span class="account-actions">
-							<a href="javascript:;" onclick="openAccountInfo();">账户信息</a> |
-							<a href="javascript:;" onclick="quit()">退出</a>
-						</span>
-					</div> <!-- /account-details -->
-				</div> <!-- /account-container -->
-				
+				<!-- 账户 -->
+				<div id="account"></div>
 				<hr />
 				<div id="refinements" class="sidebar-nav">
                     
@@ -178,7 +89,7 @@ h6{font-size: 12px;margin-top: 0.55em;margin-bottom: 0.25em;}
 						<div class="tabbale">
 							<ul class="nav nav-tabs">
 								<li id="listTab" class="active"><a href="#list" data-toggle="tab">查询</a></li>
-					    		<li id="contentTab" ><a href="#content" data-toggle="tab">详细</a></li>
+					    		<li id="contentTab" ><a href="#contentInfo" data-toggle="tab">详细</a></li>
 							</ul>
 							<div class="tab-content">
 								<div class="tab-pane active" id="list">
@@ -209,12 +120,19 @@ h6{font-size: 12px;margin-top: 0.55em;margin-bottom: 0.25em;}
 										</ul>
 									</div>
 								</div>
-								<div class="tab-pane " id="content">
-									<form class="form-horizontal">
-								        <fieldset id="data">
-								        </fieldset>
-								      </form>
+								<div class="tab-pane " id="contentInfo">
+									<div class="widget">
+										<div class="widget-header">
+											<h3>详细信息</h3>
+										</div> <!-- /widget-header -->
+										<div class="widget-content">
+											<form id="data" class="form-horizontal">
+												<div class="control-group"><label for="CSD" class="control-label">测试的</label><div class="controls"><input id="CSD" value="" readonly="" class="input-xlarge" type="text"></div></div><div class="control-group"><label for="AJH" class="control-label">案卷号</label><div class="controls"><input id="AJH" value="606" readonly="" class="input-xlarge" type="text"></div></div><div class="control-group"><label for="GDDW" class="control-label">归档单位</label><div class="controls"><input id="GDDW" value="" readonly="" class="input-xlarge" type="text"></div></div><div class="control-group"><label for="ZRZ" class="control-label">责任者</label><div class="controls"><input id="ZRZ" value="1" readonly="" class="input-xlarge" type="text"></div></div><div class="control-group"><label for="TM" class="control-label">题名</label><div class="controls"><input id="TM" value="606" readonly="" class="input-xlarge" type="text"></div></div><div class="control-group"><label for="FS" class="control-label">份数</label><div class="controls"><input id="FS" value="0" readonly="" class="input-xlarge" type="text"></div></div><div class="control-group"><label for="YS" class="control-label">页数</label><div class="controls"><input id="YS" value="0" readonly="" class="input-xlarge" type="text"></div></div><div class="control-group"><label for="GDRQ" class="control-label">归档日期</label><div class="controls"><input id="GDRQ" value="" readonly="" class="input-xlarge" type="text"></div></div><div class="control-group"><label for="BZ" class="control-label">备注</label><div class="controls"><input id="BZ" value="dd" readonly="" class="input-xlarge" type="text"></div></div>
+											</form>
+										</div> <!-- /widget-content -->
+									</div>
 								</div>
+								
 							</div>
 						</div><!-- tabbale end -->
 					</div><!-- widget-content end -->
@@ -222,38 +140,23 @@ h6{font-size: 12px;margin-top: 0.55em;margin-bottom: 0.25em;}
 			</div><!-- span9 end -->
 		</div>
 	</div>
+	<!-- 账户信息 -->
+	<div id="accountInfo"> </div>
 	
-	<div id="dialog-form" title="帐户信息" style="display:none">
-	    <form class="form-horizontal" style="margin-top:40px;">
-	        <fieldset>
-	            <div class="control-group" id="oldpassdiv">
-	                <label for="oldpassword" style="font-size:13px" class="control-label">原密码</label>
-	
-	                <div class="controls">
-	                    <input type="password" id="oldpassword" class="span2" onMouseOut="updatePassMouseOut('old')">
-	                    <span class="help-inline" id="oldpasserror"></span>
-	                </div>
-	            </div>
-	            <div class="control-group" id="newpassdiv">
-	                <label for="newpassword" style="font-size:13px" class="control-label">更改内容</label>
-	
-	                <div class="controls">
-	                    <input type="password" id="newpassword" class="span2" onMouseOut="updatePassMouseOut('new')">
-	                    <span class="help-inline" id="newpasserror"></span>
-	                </div>
-	            </div>
-	            <div class="control-group">
-	                <label for="confirmpassword" style="font-size:13px" class="control-label">重复密码</label>
-	
-	                <div class="controls">
-	                    <input type="password" id="confirmpassword" class="span2"
-	                           onMouseOut="updatePassMouseOut('confirm')">
-	                    <span class="help-inline" id="confirmpasserror"></span>
-	                </div>
-	            </div>
-	        </fieldset>
-	    </form>
-	</div>
+	<div id="showdoc" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 id="myModalLabel">电子全文列表</h3>
+        </div>
+        <div class="modal-body">
+			<div id="doclist"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">取 消</button>
+        </div>
+   	</div>
+   	
 	<script src="../../js/bootstrap/js/bootstrap.js"></script>
 </body>
 </html>

@@ -18,6 +18,11 @@ public class DynamicService implements IDynamicService {
 		return dynamicDao.selectByExample(example);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List selectBySql(String sql) {
+		return dynamicDao.selectListBySql(sql);
+	}
+	
 	public int rowCount(String sql){
 		return dynamicDao.countByExample(sql);
 	}

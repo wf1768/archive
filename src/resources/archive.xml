@@ -272,6 +272,11 @@
     	<property name="searchService" ref="searchService" />
     	<property name="dynamicService" ref="dynamicService" />
     </bean>
+    <bean id="searchAdvancedAction" class="com.yapu.archive.action.SearchAdvancedAction">
+    	<property name="treeService" ref="treeService" />
+    	<property name="searchService" ref="searchService" />
+    	<property name="dynamicService" ref="dynamicService" />
+    </bean>
     <bean id="searchFileAction" class="com.yapu.archive.action.SearchFileAction">
     	<property name="accountService" ref="publicAccountService" />
     	<property name="orgService" ref="publicOrgService" />
@@ -279,6 +284,7 @@
     	<property name="searchService" ref="searchService" />
     	<property name="docServerService" ref="docserverService"/>
     </bean>
+    
     <bean id="indexerAction" class="com.yapu.archive.action.IndexerAction">
     	<property name="tableService" ref="tableService" />
     	<property name="templetService" ref="templetService" />
@@ -305,4 +311,5 @@
         <property name="treeService" ref="treeService" />
         <property name="searchService" ref="searchService" />
     </bean>
+   
 </beans>
