@@ -4,7 +4,9 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 	<display-name>archive</display-name>
-
+	<listener>
+		<listener-class>com.yapu.archive.action.WorkService</listener-class>
+	</listener>
 	<session-config>
 
 		<session-timeout>100</session-timeout>
