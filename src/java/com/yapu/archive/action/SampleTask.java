@@ -4,24 +4,15 @@ import java.util.Calendar;
 import java.util.TimerTask;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.struts2.ServletActionContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.yapu.system.util.Constants;
 
 public class SampleTask extends TimerTask {
 
 	private ServletContext context;
 	private static boolean isRunning = false; //是否在运行
-	private static final int C_SCHEDULE_HOUR = 16;
+	private static final int C_SCHEDULE_HOUR = 10; //时间点
 
 	private IndexerAction indexA;
 	
