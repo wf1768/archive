@@ -158,6 +158,23 @@ public class PublicAccountService extends AccountService {
 		}
 		return null;
 	}
+	/**
+	 * 得到账户对资源树节点的 （浏览、下载、打印）权限
+	 * @param accountid
+	 * @param treeid
+	 * @return
+	 */
+	public List<SysAccountTree> getAccountOfTree(String accountid,String treeid) {
+		if (!accountid.equals("") && !treeid.equals("")) {
+			//1、首先按账户id，得到该账户与资源树关系表集合
+			SysAccountTreeExample accountTreeExample = new SysAccountTreeExample();
+			accountTreeExample.createCriteria().andAccountidEqualTo(accountid)
+				.andTreeidEqualTo(treeid);
+			List<SysAccountTree> accountTreeList = accounttreeDao.selectByExample(accountTreeExample);
+			return accountTreeList;
+		}
+		return null;
+	}
 	/*
 	 * (non-Javadoc)
 	 * @see com.yapu.system.service.impl.AccountService#getTree(java.lang.String)

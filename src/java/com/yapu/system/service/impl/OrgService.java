@@ -415,5 +415,10 @@ public class OrgService implements IOrgService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public List<SysOrgTree> getOrgOfTree(String orgid, String treeid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

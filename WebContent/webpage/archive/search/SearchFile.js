@@ -104,7 +104,7 @@ function showResultList(list) {
 			doc += "<tr><td>文件类型</td><td>"+list[i].docext+"</td><td>文件长度</td><td>"+list[i].doclength+"</td></tr>";
 			doc += "<tr><td>上传人</td><td>"+list[i].creater+"</td><td>上传日期</td><td>"+list[i].createtime+"</td></tr>";
 			doc += "<tr><td>摘要</td><td colspan=\"3\">"+list[i].summary+"</td></tr>";
-			doc += "<tr><td colspan=\"4\"><button  class=\"btn btn-info btn-small\" onClick=\"openContentDialog('"+list[i].docid+"')\">查看预览</button> <a href=\"downDoc.action?docId="+list[i].docid+"\" class=\"btn btn-info btn-small\">下载全文</a></td></tr>";
+			doc += "<tr><td colspan=\"4\"><button  class=\"btn btn-info btn-small\" onClick=\"openContentDialog('"+list[i].docid+"','"+list[i].treeid+"')\">查看预览</button> <a href=\"downDoc.action?docId="+list[i].docid+"\" class=\"btn btn-info btn-small\">下载全文</a></td></tr>";
 			doc += "</table>";
 		}
 	}else{
@@ -168,21 +168,52 @@ function pageState() {
 	}
 	
 }
-
-function openContentDialog(selectid) {
-	var datas = searchCommon.data;
-	var data ;
-//	//找到显示的数据
-	for (var i=0;i<datas.length;i++) {
-		if (datas[i].docid == selectid) {
-			data = datas[i];
+//预览
+function openContentDialog(selectid,treeid) {
+	$.ajax({
+		async : false,
+		url : "filePreview.action",
+		type : 'post',
+		dataType : 'text',
+		data:"treeid="+treeid,
+		success : function(data) {
+			if (data == "1") {
+				var datas = searchCommon.data;
+				var data ;
+			//	//找到显示的数据
+				for (var i=0;i<datas.length;i++) {
+					if (datas[i].docid == selectid) {
+						data = datas[i];
+					}
+				}
+				$("#title").html(data.docoldname);
+				$("#content").html(data.content);
+				$('#contentdialog').modal({
+			        backdrop:true,
+			        keyboard:true,
+			        show:true
+			    });
+			} else {
+				openalert("对不起，您没有权限预览此文件！");
+			}
 		}
-	}
-	$("#title").html(data.docoldname);
-	$("#content").html(data.content);
-	$('#contentdialog').modal({
-        backdrop:true,
-        keyboard:true,
-        show:true
-    });
+	});
+	
+}
+
+function openalert(text) {
+    var html = $(
+        '<div id="dialog-message" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
+            '<div class="modal-header">' +
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+                '<h3 id="myModalLabel">系统提示</h3>' +
+            '</div>' +
+            '<div class="modal-body">' +
+                '<p id="continfo">' + text + '</p>' +
+            '</div>' +
+            '<div class="modal-footer">' +
+                '<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>' +
+            '</div>' +
+        '</div>');
+    return html.modal()
 }

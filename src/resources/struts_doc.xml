@@ -14,6 +14,8 @@
         <action name="uploadFile" class="docAction" method="uploadFile"></action>
         
         <action name="listDoc" class="docAction" method="list"></action>
+        <!-- 预览 -->
+        <action name="filePreview" class="docAction" method="filePreview"></action>
         <!-- 下载测试  application/octet-stream-->
         <action name="downDoc" class="docAction" method="downDoc">
         	<result type="stream">

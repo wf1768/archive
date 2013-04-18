@@ -524,7 +524,7 @@ public class AccountService implements IAccountService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	public Boolean deleteAccountOfTree(List<SysAccountTree> list) {
 		// TODO Auto-generated method stub
@@ -564,6 +564,12 @@ public class AccountService implements IAccountService {
 
 	@Override
 	public List<SysTree> getTree(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SysAccountTree> getAccountOfTree(String accountid, String treeid) {
 		// TODO Auto-generated method stub
 		return null;
 	}

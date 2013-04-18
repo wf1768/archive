@@ -3,10 +3,12 @@ package com.yapu.archive.action;
 import DBstep.iMsgServer2000;
 import com.google.gson.Gson;
 import com.yapu.archive.entity.DynamicExample;
+import com.yapu.archive.entity.SysAccountTree;
 import com.yapu.archive.entity.SysDoc;
 import com.yapu.archive.entity.SysDocExample;
 import com.yapu.archive.entity.SysDocserver;
 import com.yapu.archive.entity.SysDocserverExample;
+import com.yapu.archive.entity.SysOrgTree;
 import com.yapu.archive.entity.SysTable;
 import com.yapu.archive.service.itf.IDocService;
 import com.yapu.archive.service.itf.IDocserverService;
@@ -16,6 +18,10 @@ import com.yapu.archive.service.itf.ITreeService;
 import com.yapu.archive.vo.UploadVo;
 import com.yapu.system.common.BaseAction;
 import com.yapu.system.entity.SysAccount;
+import com.yapu.system.entity.SysOrg;
+import com.yapu.system.entity.SysRole;
+import com.yapu.system.service.itf.IAccountService;
+import com.yapu.system.service.itf.IOrgService;
 import com.yapu.system.util.CommonUtils;
 import com.yapu.system.util.Constants;
 import com.yapu.system.util.Coverter;
@@ -40,7 +46,11 @@ public class DocAction extends BaseAction{
     private File archive;
     private String archiveFileName;
     private static final int BUFFER_SIZE = 2 * 1024;
-
+    
+    private static final String FILESCAN = "filescan";
+    private static final String FILEDOWN = "filedown";
+    private static final String FILEPRINT = "fileprint";
+    
     private IDocserverService docserverService;
     private IDocService docService;
     private String docId;
@@ -49,6 +59,9 @@ public class DocAction extends BaseAction{
     private SysDocserver docServer;
     private IDynamicService dynamicService;
     private ITableService tableService;
+    private IAccountService accountService;
+    private IOrgService orgService;
+    
     private String tableid;
     private String selectRowid;
     private int chunks;
@@ -96,14 +109,92 @@ public class DocAction extends BaseAction{
      */
     public String listLinkDoc() throws IOException {
     	PrintWriter out = this.getPrintWriter();
-    	SysDocExample example = new SysDocExample();
-        SysDocExample.Criteria criteria = example.createCriteria();
-        criteria.andFileidEqualTo(selectRowid);
-//        criteria.andTableidEqualTo(tableid);
-     	List<SysDoc> docList = docService.selectByWhereNotPage(example);
-     	Gson gson = new Gson();
-     	out.write(gson.toJson(docList));
+    	//要检查该用户是否有查看的权限
+    	String result = "";
+    	if(isFieldscan()){
+	    	SysDocExample example = new SysDocExample();
+	        SysDocExample.Criteria criteria = example.createCriteria();
+	        criteria.andFileidEqualTo(selectRowid);
+//	        criteria.andTableidEqualTo(tableid);
+	     	List<SysDoc> docList = docService.selectByWhereNotPage(example);
+	     	Gson gson = new Gson();
+	     	result += "var isNotAuth = '1';";
+	     	result += "var docList = "+gson.toJson(docList);
+    	}else{
+    		result += "var isNotAuth = '0';"; //没有权限
+    	}
+    	out.write(result);
      	return null;
+    }
+    
+    /**
+     * 是否有（查看、下载、打印）权限
+     * @param fileType :filescan(查看) filedown(下载) fileprint(打印)
+     * @return
+     * */
+    public int isAuthority(String fileType){
+    	int filescan = 0;
+    	int filedown = 0;
+    	int fileprint = 0;
+    	SysAccount account = super.getAccount();
+		//先查看账户本身是否有权限
+		List<SysAccountTree> accountTreeList =  accountService.getAccountOfTree(account.getAccountid(), treeid);
+		if(accountTreeList.size() >0 && accountTreeList != null){
+			SysAccountTree accountTree = accountTreeList.get(0);
+			filescan = accountTree.getFilescan();
+			filedown = accountTree.getFiledown();
+			fileprint = accountTree.getFileprint();
+		}else{
+			//否则查看该账户的所在组
+			SysOrg sysOrg = accountService.getAccountOfOrg(account);
+			if(sysOrg!=null){
+			 	List<SysOrgTree> orgTreeList = orgService.getOrgOfTree(sysOrg.getOrgid(), treeid);
+			 	if(orgTreeList.size() >0 && orgTreeList != null){
+			 		SysOrgTree orgTree = orgTreeList.get(0);
+			 		filescan = orgTree.getFilescan();
+					filedown = orgTree.getFiledown();
+					fileprint = orgTree.getFileprint();
+			 	}
+			}
+		}
+		if(fileType.equals("filescan")){
+			return filescan;
+		}else if(fileType.equals("filedown")){
+			return filedown;
+		}else{
+			return fileprint;
+		}
+    }
+    /**
+     * 是否有查看权限
+     * @return
+     * */
+    public boolean isFieldscan(){
+    	if(isAuthority(FILESCAN)==1){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    }
+    /**
+     * 是否有下载权限
+     * */
+    public boolean isFielddown(){
+    	if(isAuthority(FILEDOWN)==1){
+    		return true;
+    	}else{
+    		return false;
+    	}
+    }
+    /**
+     * 是否有打印权限
+     * */
+    public boolean isFieldprint(){
+    	if(isAuthority(FILEPRINT)==1){
+    		return true;
+    	}else{
+    		return false;
+    	}
     }
     /**
      * 得到当前帐户上传的未挂接的电子全文
@@ -437,6 +528,22 @@ public class DocAction extends BaseAction{
         }
     }
     
+    /**
+     * 全文检索，文件预览
+     * @throws IOException 
+     * */
+    public String filePreview() throws IOException{
+    	PrintWriter out = this.getPrintWriter();
+    	if(isFieldscan()){
+    		out.write("1"); //有权限
+    	}else{
+    		out.write("0"); //没权限
+    	}
+    	return null;
+    }
+    /**
+     * 全文检索，文件下载
+     * */
     public String downDoc() {
     	if (null == docId || "".equals(docId)) {
     		return ERROR;
@@ -649,6 +756,14 @@ public class DocAction extends BaseAction{
 
 	public void setTableService(ITableService tableService) {
 		this.tableService = tableService;
+	}
+
+	public void setAccountService(IAccountService accountService) {
+		this.accountService = accountService;
+	}
+
+	public void setOrgService(IOrgService orgService) {
+		this.orgService = orgService;
 	}
 
 	public String getFileid() {

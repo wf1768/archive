@@ -16,6 +16,9 @@
 <link type="text/css" href="../../js/jstree/themes/default/style.css" rel="stylesheet">
 <script type="text/javascript" src="../../js/jstree/jquery.jstree.js"></script>
 
+<!-- 各种图标 按钮 tab等 1-->
+<link rel="stylesheet" type="text/css" href="../../images/images.css" />
+
 <link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
 <link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
@@ -57,6 +60,7 @@
 					<div class="widget-header">
 						<h3 id="title">高级检索</h3>
 					</div>
+					<div><input type="hidden" id="tableType" value="" /></div>
 					<div class="widget-content">
 						<div class="query-group well">
 							<div class="form-horizontal">
@@ -71,11 +75,39 @@
 									</div>
 								</div>
 							</div>
+							<div class="form-horizontal">
+								<div class="control-group">
+									<label for="servername" class="control-label">档案类型</label>
+									<div id="templeType" class="controls">
+										
+									</div>
+								</div>
+							</div>
 						</div>
 						
 						<div class="widget-content">
 							<div id="countResult"></div>
 						</div>
+						
+						<div class="pagination">
+							<ul>
+								<!-- <input type="text" id="page" size="26"
+									onkeypress="if(event.keyCode==13) {$('#btn').click();return false;}"
+									class="span1"> -->
+								<li id="first" class=""><a href="javascript:void(0);" onClick="selectPage('first');return false;">首页</a></li>
+								<li id="previous"><a href="javascript:void(0);" onClick="selectPage('previous');return false;">上一页</a></li>
+								<li><a>第 <input id="currentPage" type="text" onkeyup='this.value=this.value.replace(/\D/gi,"")' onkeypress="if(event.keyCode==13) {selectPage(this.value);return false;}"
+										style="margin-bottom: 0px; margin-top: 0px; width: 25px; height: 10px; direction: rtl;">
+										页
+								</a></li>
+								<li id="next"><a href="javascript:void(0);" onClick="selectPage('next');return false;">下一页</a></li>
+								<li id="over"><a href="javascript:void(0);" onClick="selectPage('over');return false;">尾页</a></li>
+							</ul>
+							<ul class="pull-right">
+								<li class="disabled"><a id="pageinfo">第  页 / 共  页</a></li>
+							</ul>
+						</div>
+						
 					</div>
 				</div>
 			</div><!-- span9 end -->
@@ -83,6 +115,21 @@
 	</div>
 	<!-- 账户信息 -->
 	<div id="accountInfo"></div>
+	
+	<div id="showdoc" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 id="myModalLabel">电子全文列表</h3>
+        </div>
+        <div class="modal-body">
+			<div id="doclist"></div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal">取 消</button>
+        </div>
+   	</div>
+   	
 	<script src="../../js/bootstrap/js/bootstrap.js"></script>
 </body>
 </html>

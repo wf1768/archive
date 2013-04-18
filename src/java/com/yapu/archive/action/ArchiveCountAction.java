@@ -127,7 +127,7 @@ public class ArchiveCountAction extends BaseAction{
 		         }.getType());  
     	
     	StringBuffer sql = new StringBuffer();
-    	sql.append("SELECT COUNT(0) FROM "+tableName +" WHERE 1=1 ");
+    	sql.append("SELECT COUNT(0) FROM "+tableName +" WHERE 1=1 AND TREEID='"+treeid+"'");
     	for(QueryItem qt:retList){
     		sql.append(" AND " +BaseSelector.getSql(qt.getOperatorType(), qt.getName(), qt.getValue()));
     	}

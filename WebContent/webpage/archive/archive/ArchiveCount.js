@@ -50,8 +50,13 @@ $(function(){
 	}).bind("select_node.jstree",function(e,data) { 
 	    var node = data.rslt.obj, inst = data.inst;
 	    orgid = node.attr("id");//选择后给全局orgid赋值
-	    readField(orgid);
-	    $(".query-item").remove(); //清空条件
+	    var rel = $("#"+node.attr("id")).attr("rel");
+	    if(rel=="default"){
+	    	readField(orgid);
+	    	$(".query-item").remove(); //清空条件
+	    }
+	    if (node.hasClass('jstree-closed')) { return inst.open_node(node); }
+	    if (node.hasClass('jstree-open')) { return inst.close_node(node); }
 	});
 	
 	//删除动态条件
@@ -198,6 +203,11 @@ function GetQueryGroup(group) {
  * 根据选择的树节点 查找统计
  */
 function doSearch(){
+	var field = $("#selectField").val();
+	if(field == "" || field == null){
+		openalert("请选择档案节点并添加过滤条件!");
+		return ;
+	}
 	var qg = GetQueryGroup('.query-group');
 	var item = JSON.stringify(qg);
 	$.ajax({

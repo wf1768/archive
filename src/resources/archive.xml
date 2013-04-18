@@ -230,6 +230,8 @@
         <property name="docService" ref="docService" />
         <property name="dynamicService" ref="dynamicService" />
         <property name="tableService" ref="tableService" />
+        <property name="accountService" ref="publicAccountService" />
+        <property name="orgService" ref="publicOrgService" />
     </bean>
     <bean id="templetAction" class="com.yapu.archive.action.TempletAction">
         <property name="templetService" ref="templetService" />

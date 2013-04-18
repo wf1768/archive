@@ -159,6 +159,8 @@ public interface IAccountService {
 	 */
 	List<SysAccountTree> getAccountOfTree(SysAccount account);
 	
+	List<SysAccountTree> getAccountOfTree(String accountid,String treeid);
+	
 	Boolean deleteAccountOfTree(List<SysAccountTree> list);
 	
 	Boolean deleteAccountOfTree(SysAccountTreeExample example);

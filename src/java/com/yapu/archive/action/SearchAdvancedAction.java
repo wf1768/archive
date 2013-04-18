@@ -27,6 +27,7 @@ import com.google.gson.reflect.TypeToken;
 import com.yapu.archive.entity.DynamicExample;
 import com.yapu.archive.entity.QueryItem;
 import com.yapu.archive.entity.SysTable;
+import com.yapu.archive.entity.SysTemplet;
 import com.yapu.archive.entity.SysTempletfield;
 import com.yapu.archive.service.itf.IDynamicService;
 import com.yapu.archive.service.itf.ISearchService;
@@ -83,12 +84,15 @@ public class SearchAdvancedAction extends BaseAction{
      */
     public String getField() throws IOException {
         PrintWriter out = getPrintWriter();
-        String result = "error";
         //如果没有得到树节点id，返回error
         if (null == treeid || "".equals(treeid)) {
-            out.write(result);
+            out.write("error");
             return null;
         }
+        
+      //得到节点对应的模板。用来判断档案类型
+		SysTemplet templet = treeService.getTreeOfTemplet(treeid);
+		 String result = "var templeType='"+templet.getTemplettype()+"';";
         List<SysTempletfield> fieldList = treeService.getTreeOfTempletfield(treeid,tableType);
 
       //返回字段特殊属性，例如默认值，在页面添加时，直接赋值
@@ -99,9 +103,10 @@ public class SearchAdvancedAction extends BaseAction{
 			}
 		}
         Gson gson = new Gson();
-//        System.out.println(gson.toJson(fields));
-//        System.out.println(gson.toJson(fieldList));
-        out.write(gson.toJson(fields));
+        if(fields.size()>0){
+        	result += "var fields = "+gson.toJson(fields);
+        }
+        out.write(result);
         return null;
     }
 
@@ -109,6 +114,9 @@ public class SearchAdvancedAction extends BaseAction{
      * 高级查询
      * */
     public String searchAdvanced() throws IOException{
+//    	int totalRow=0;		//总记录数
+//		String pageInfo="";	//分页信息
+		
     	PrintWriter out = getPrintWriter();
         //增加多媒体文件级表内容
         List<SysTable> tableList = treeService.getTreeOfTable(treeid);
@@ -126,22 +134,33 @@ public class SearchAdvancedAction extends BaseAction{
 		         new TypeToken<List<QueryItem>>() {  
 		         }.getType());  
     	
-    	StringBuffer sql = new StringBuffer();
-    	sql.append("SELECT * FROM "+tableName +" WHERE 1=1 ");
+    	StringBuffer sql = new StringBuffer(); //列表
+    	sql.append("SELECT * FROM "+tableName +" WHERE 1=1 AND TREEID='"+treeid+"'");
+    	StringBuffer sql_count = new StringBuffer(); //统计
+    	sql_count.append("SELECT COUNT(0) FROM "+tableName +" WHERE 1=1 AND TREEID='"+treeid+"'");
     	for(QueryItem qt:retList){
     		sql.append(" AND " +BaseSelector.getSql(qt.getOperatorType(), qt.getName(), qt.getValue()));
+    		sql_count.append(" AND " +BaseSelector.getSql(qt.getOperatorType(), qt.getName(), qt.getValue()));
     	}
-    	System.out.println("SQL="+sql.toString());
-    	List dynamicList = dynamicService.selectBySql(sql.toString());
-//    	System.out.println(gson.toJson(dynamicList));
-    	out.write(gson.toJson(dynamicList));
+    	//总记录数
+    	intRowCount = dynamicService.rowCount(sql_count.toString());
+    	//获得分页信息
+//    	pageInfo=this.getPageInfoStr(totalRow, intPage, "", "");
+    	intPageCount = this.getPageCount();
+
+    	String result = "var intPageCount = '"+intPageCount+"';";
+    	
+    	List dynamicList = dynamicService.selectBySql(sql.toString(), this.getStartRec(intPage), this.getIntPageSize());
+    	result += "var dynamicList = "+gson.toJson(dynamicList);
+    	
+    	out.write(result);
     	return null;
     }
     
     /**
      * 自定义统计
      * */
-    public String getQueryGroups() throws IOException{
+    public int getQueryGroups() throws IOException{
     	PrintWriter out = getPrintWriter();
         //增加多媒体文件级表内容
         List<SysTable> tableList = treeService.getTreeOfTable(treeid);
@@ -167,8 +186,7 @@ public class SearchAdvancedAction extends BaseAction{
     	System.out.println(sql.toString());
     	
     	int num = dynamicService.rowCount(sql.toString());
-    	out.write(num+"");
-    	return null;
+    	return num;
     }
 	
     public String getQuerySql(){

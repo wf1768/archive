@@ -24,7 +24,7 @@ public interface IDynamicService {
 	List selectByExample(DynamicExample example);
 
 	@SuppressWarnings("unchecked")
-	List selectBySql(String sql);
+	List selectBySql(String sql,int index,int size);
 	
 	int rowCount(String sql);
     /**

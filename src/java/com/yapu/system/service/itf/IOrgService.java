@@ -130,6 +130,8 @@ public interface IOrgService {
 	 */
 	List<SysOrgTree> getOrgOfTree(SysOrg org);
 	
+	List<SysOrgTree> getOrgOfTree(String orgid,String treeid);
+	
 	Boolean deleteOrgOfTree(List<SysOrgTree> list);
 	
 	Boolean deleteOrgOfTree(SysOrgTreeExample example);

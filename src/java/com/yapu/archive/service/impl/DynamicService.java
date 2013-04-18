@@ -19,8 +19,8 @@ public class DynamicService implements IDynamicService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List selectBySql(String sql) {
-		return dynamicDao.selectListBySql(sql);
+	public List selectBySql(String sql,int index,int size) {
+		return dynamicDao.selectListPageBySql(sql, index, size);
 	}
 	
 	public int rowCount(String sql){

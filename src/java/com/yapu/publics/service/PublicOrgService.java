@@ -68,6 +68,23 @@ public class PublicOrgService extends OrgService {
 		}
 		return null;
 	}
+	/**
+	 * 得到组对资源树节点的 （浏览、下载、打印）权限
+	 * @param orgid
+	 * @param treeid
+	 * @return
+	 */
+	public List<SysOrgTree> getOrgOfTree(String orgid,String treeid) {
+		if (!orgid.equals("") && !treeid.equals("")) {
+			//1、首先组id，得到该组与资源树关系表集合
+			SysOrgTreeExample orgTreeExample = new SysOrgTreeExample();
+			orgTreeExample.createCriteria().andOrgidEqualTo(orgid)
+				.andTreeidEqualTo(treeid);
+			List<SysOrgTree> orgTreeList = orgtreeDao.selectByExample(orgTreeExample);
+			return orgTreeList;
+		}
+		return null;
+	}
 	/*
 	 * (non-Javadoc)
 	 * @see com.yapu.system.service.impl.OrgService#getTree(java.lang.String)

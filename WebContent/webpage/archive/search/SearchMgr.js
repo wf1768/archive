@@ -291,7 +291,7 @@ function showResultList(list) {
 		}
 		doc += "<tr><td>归档单位</td><td>"+list[i].gddw+"</td><td>归档日期</td><td>"+list[i].gdrq+"</td></tr>";
 		doc += "<tr><td>题名</td><td colspan=\"3\">"+list[i].tm+"</td></tr>";
-		doc += "<tr><td colspan=\"4\"><button  class=\"btn btn-info btn-small\" onClick=\"tabinfo('content','"+list[i].id+"')\">查看详细</button>  <button class=\"btn btn-info btn-small\" onclick=\"showDoc('"+list[i].id+"');\">查看全文</button></td></tr>";
+		doc += "<tr><td colspan=\"4\"><button  class=\"btn btn-info btn-small\" onClick=\"tabinfo('content','"+list[i].id+"')\">查看详细</button>  <button class=\"btn btn-info btn-small\" onclick=\"showDoc('"+list[i].id+"','"+list[i].treeid+"');\">查看全文</button></td></tr>";
 		doc += "</table>";
 	}
 	return doc;
@@ -374,8 +374,8 @@ function tabinfo(tabType,selectid) {
 
 /***/
 // 打开电子全文
-function showDoc(id) {
-	var par = "selectRowid="+ id;
+function showDoc(id,treeid) {
+	var par = "selectRowid="+ id+"&treeid="+treeid;
 	var rowList = [];
 	//同步读取数据
 	$.ajax({
@@ -384,19 +384,19 @@ function showDoc(id) {
 		type : 'post',
 		dataType : 'script',
 		success : function(data) {
-			if (data != "error") {
-				rowList = eval(data);
-				$("#doclist").html("");
-				if(rowList.length>0){
-					for (var i=0;i<rowList.length;i++) {
-						$("#doclist").append(getDoclist(rowList[i]));
-					}
-					$("#showdoc").modal('show');
-				}else{
-					openalert('该记录尚未挂接文件！');
+			if(isNotAuth==0){
+				openalert('对不起，您没有该档案的查看权！');
+				return;
+			}
+			rowList = eval(docList);
+			$("#doclist").html("");
+			if(rowList.length>0){
+				for (var i=0;i<rowList.length;i++) {
+					$("#doclist").append(getDoclist(rowList[i]));
 				}
-			} else {
-				openalert('读取数据时出错，请尝试重新操作或与管理员联系! ');
+				$("#showdoc").modal('show');
+			}else{
+				openalert('该记录尚未挂接文件！');
 			}
 		}
 	});
