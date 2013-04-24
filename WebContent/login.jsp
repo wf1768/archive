@@ -79,7 +79,8 @@
 		</form>
 	</div> <!-- /login-content -->
 	<div style="margin-top: 30px;">
-		温馨提示：本系统用于浏览器IE8以上版本...
+		温馨提示：本系统用于浏览器 Chrome 14+/ Safari 5/ Firefox 5+/ Internet Explorer 7/8/9/ Opera 11
+		
 	</div>
 </div> <!-- /login-wrapper -->
 

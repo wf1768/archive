@@ -1,12 +1,16 @@
 package com.yapu.archive.action;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.TimerTask;
 
 import javax.servlet.ServletContext;
 
+import org.apache.struts2.ServletActionContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.opensymphony.xwork2.ActionSupport;
 
 public class SampleTask extends TimerTask {
 
@@ -45,15 +49,22 @@ public class SampleTask extends TimerTask {
     		context.log("上一次任务执行还未结束");
     	}
     }
+
 	public static void main(String[] args) {
-		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-		IndexerAction indexA = (IndexerAction) context.getBean("indexerAction");
+//		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+//		IndexerAction indexA = (IndexerAction) context.getBean("indexerAction");
 //		indexA.createIndexerOnCREATE();
 		try {
-			indexA.createFilesIndexer();
+//			indexA.createFilesIndexer();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+//		String temp = "/";
+//		String fileIndexDir = ServletActionContext.getServletContext().getRealPath(temp)+ File.separator;
+//		
+		
+		System.out.println(System.getProperty("user.dir"));
 	}
 	
 } 
+

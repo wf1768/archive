@@ -541,9 +541,20 @@ public class DocAction extends BaseAction{
     	}
     	return null;
     }
+
     /**
      * 全文检索，文件下载
+     * @throws IOException 
      * */
+    public String isDownDoc() throws IOException{
+    	PrintWriter out = this.getPrintWriter();
+    	if(isFielddown()){
+    		out.write("1"); //有权限
+    	}else{
+    		out.write("0"); //
+    	}
+    	return null;
+    }
     public String downDoc() {
     	if (null == docId || "".equals(docId)) {
     		return ERROR;
@@ -553,20 +564,23 @@ public class DocAction extends BaseAction{
     	if (null == doc || "".equals(doc)) {
     		return ERROR;
     	}
-    	//得到原文件名
-    	docName = doc.getDocoldname();
-    	contentType = getContentType(doc.getDocext());
-    	//判断文件所属服务器
-    	String serverid = doc.getDocserverid();
-    	//得到所属服务器的信息
-    	docServer = docserverService.selectByPrimaryKey(serverid);
-    	if (null == docServer || "".equals(docServer)) {
-    		return ERROR;
-    	}
-    	//判断服务器类型。根据不同类型，执行不同的操作
-    	String serverType = docServer.getServertype();
-    	if ("LOCAL".equals(serverType)) {
-    		savePath = docServer.getServerpath();
+    	//是否有下载权限
+    	if(isFielddown()){
+	    	//得到原文件名
+	    	docName = doc.getDocoldname();
+	    	contentType = getContentType(doc.getDocext());
+	    	//判断文件所属服务器
+	    	String serverid = doc.getDocserverid();
+	    	//得到所属服务器的信息
+	    	docServer = docserverService.selectByPrimaryKey(serverid);
+	    	if (null == docServer || "".equals(docServer)) {
+	    		return ERROR;
+	    	}
+	    	//判断服务器类型。根据不同类型，执行不同的操作
+	    	String serverType = docServer.getServertype();
+	    	if ("LOCAL".equals(serverType)) {
+	    		savePath = docServer.getServerpath();
+	    	}
     	}
     	//TODO 需要增加ftp类型的下载
     	return SUCCESS;

@@ -58,7 +58,7 @@ $(function(){
 	    var rel = $("#"+node.attr("id")).attr("rel");
 	    if(rel=="default"){
 	    	treeName = $("#"+node.attr("id")+" a").first().text(); // 文件所属档案库
-	    	readField(orgid);
+	    	readField(orgid,'01'); // 初始读取案卷
 	   		$(".query-item").remove(); //清空条件
 	    	$("#tableType").val("");   //初始
 	    }
@@ -76,13 +76,13 @@ $(function(){
 });
 
 //同步读取当前节点的字段
-function readField(treeid) {
+function readField(treeid,tableType) {
     $.ajax({
         async: false,
         url: "getFieldAdvanced.action",
         type: 'post',
         dataType: 'script',
-        data: {treeid: treeid, tableType: '01'},
+        data: {treeid: treeid, tableType: tableType},
         success: function (data) {
             if (data != "error") {
                 field = eval(fields);
@@ -96,6 +96,27 @@ function readField(treeid) {
 					html += '<label class="radio"><input id="templeType_W" type="radio" name="templeType" onclick="getTableType(this.value)" value="01" /> 文件级</label>';                	
                 }
                 $("#templeType").html(html);
+                searchCommon.templettype = templeType;
+            } else {
+                openalert('读取数据时出错，请尝试重新操作或与管理员联系!');
+            }
+        }
+    });
+}
+//案卷，文件切换
+function readFieldAW(tableType) {
+    $.ajax({
+        async: false,
+        url: "getFieldAdvanced.action",
+        type: 'post',
+        dataType: 'script',
+        data: {treeid: orgid, tableType: tableType},
+        success: function (data) {
+            if (data != "error") {
+                field = eval(fields);
+                tableFields = field;
+                talbeField(field); //字段
+                
                 searchCommon.templettype = templeType;
             } else {
                 openalert('读取数据时出错，请尝试重新操作或与管理员联系!');
@@ -234,6 +255,7 @@ function doSearch(){
 function getTableType(value){
 	$("#tableType").val(value);
 	searchCommon.tabletype = value;
+	readFieldAW(value);//读取字段
 }
 //创建页面显示
 function showResultList(list) {

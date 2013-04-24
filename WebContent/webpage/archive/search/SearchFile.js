@@ -104,13 +104,14 @@ function showResultList(list) {
 			doc += "<tr><td>文件类型</td><td>"+list[i].docext+"</td><td>文件长度</td><td>"+list[i].doclength+"</td></tr>";
 			doc += "<tr><td>上传人</td><td>"+list[i].creater+"</td><td>上传日期</td><td>"+list[i].createtime+"</td></tr>";
 			doc += "<tr><td>摘要</td><td colspan=\"3\">"+list[i].summary+"</td></tr>";
-			doc += "<tr><td colspan=\"4\"><button  class=\"btn btn-info btn-small\" onClick=\"openContentDialog('"+list[i].docid+"','"+list[i].treeid+"')\">查看预览</button> <a href=\"downDoc.action?docId="+list[i].docid+"\" class=\"btn btn-info btn-small\">下载全文</a></td></tr>";
+			doc += "<tr><td colspan=\"4\"><button  class=\"btn btn-info btn-small\" onClick=\"openContentDialog('"+list[i].docid+"','"+list[i].treeid+"')\">查看预览</button><button  class=\"btn btn-info btn-small\" onClick=\"fileDown('"+list[i].docid+"','"+list[i].treeid+"')\">下载全文</button> </td></tr>";
 			doc += "</table>";
 		}
 	}else{
 		doc="该关键词没有检索到相应的内容。。。";
 	}
 	return doc;
+	//<a href=\"downDoc.action?docId="+list[i].docid+"&treeid="+list[i].treeid+"\" class=\"btn btn-info btn-small\">下载全文</a>
 }
 
 //翻页
@@ -200,7 +201,25 @@ function openContentDialog(selectid,treeid) {
 	});
 	
 }
+//下载
+function fileDown(docId,treeid){
+	$.ajax({
+		async : false,
+		url : "isDownDoc.action",
+		type : 'post',
+		dataType : 'text',
+		data:"treeid="+treeid,
+		success : function(data) {
+			if (data == "1") {
+				window.location.href="downDoc.action?docId="+docId+"&treeid="+treeid;
+			} else {
+				openalert("对不起，您没有权限预览此文件！");
+			}
+		}
+	});
+}
 
+//系统提示
 function openalert(text) {
     var html = $(
         '<div id="dialog-message" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +

@@ -290,7 +290,8 @@ $(function(){
 	//声明新建行的系统默认值
 	var newItemTemplate = {
 			treeid	: archiveCommon.selectTreeid,
-			isdoc	: "0"
+			isdoc	: "0",
+			status	: "1"
 	};
 	//新建行时，将系统必须的默认值与字段默认值合并
 	newItemTemplate = $.extend({},newItemTemplate,ajGridconfig.fieldsDefaultValue);

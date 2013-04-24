@@ -7,13 +7,14 @@ $.extend($.fn.validatebox.defaults.rules, {
         },
         message: '只能输入汉字'
     },
+   /*
     CHAndENS:{
     	validator: function (value) {
 	        return /^(?!_)(?!.*?_$)[a-zA-Z\u4e00-\u9fa5]{3,10}$/.test(value);
 	    },
 	    message: '只能输入汉字和英文，最少三个字符，最多20个字符。'
     	
-    },
+    }, */
     //移动手机号码验证
     mobile: {//value值为文本框中的值
         validator: function (value) {

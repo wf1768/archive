@@ -396,6 +396,7 @@ function saveAddTempletfield() {
 	var englishname = $("#englishname").val();
 	var fieldsize = $("#fieldsize").val();
 	var fieldtype = $("#fieldtype").val();
+	alert(fieldtype);
 	var defaultvalue = $("#defaultvalue").text();
 	var sort = $("#sort").val();
 	var isrequire = 0;

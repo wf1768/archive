@@ -35,8 +35,8 @@ import com.yapu.system.util.FileOperate;
 
 public class Indexer {
 	//索引文件路径
-    public final String LUCENE_URL = "LUCENE.properties";
-//	private String indexDir = "/LUCENE";
+//    public final String LUCENE_URL = "LUCENE.properties";
+	private String indexDir = "/LUCENE";
 	
 	private void delLucentIndex(String folderPath) {
 		FileOperate fo = new FileOperate();
@@ -51,13 +51,12 @@ public class Indexer {
 	 * @param openMode		创建模式   CREATE：全部重新创建。 APPEND：追加。CREATE_OR_APPEND：
 	 */
 	public void CreateIndex(String tablename,List fieldList,List dataList,String openMode) {
-		
 		IndexWriter indexWriter = null;
 		try {
 			// 创建表对应的独立索引存放目录
-//			String temp = indexDir + "/" + tablename;
-//			String tableIndexDir = ServletActionContext.getServletContext().getRealPath(temp)+ File.separator;
-			String tableIndexDir = getSystem("LUCENE_URL")+tablename;
+			String temp = indexDir + "/" + tablename;
+			String tableIndexDir = ServletActionContext.getServletContext().getRealPath(temp)+ File.separator;
+//			String tableIndexDir = getSystem("LUCENE_URL")+tablename;
 			System.out.println(tableIndexDir);
 			// 创建Directory对象
 			Directory dir = new SimpleFSDirectory(new File(tableIndexDir));
@@ -177,10 +176,10 @@ public class Indexer {
 		
 		try {
 			// 创建表对应的独立索引存放目录
-//			String temp = indexDir + "/" + docServerid;
-//			String fileIndexDir = ServletActionContext.getServletContext().getRealPath(temp)+ File.separator;
+			String temp = indexDir + "/" + docServerid;
+			String fileIndexDir = ServletActionContext.getServletContext().getRealPath(temp)+ File.separator;
 			
-			String fileIndexDir = getSystem("LUCENE_URL")+docServerid;
+//			String fileIndexDir = getSystem("LUCENE_URL")+docServerid;
 			
 			System.out.println(fileIndexDir);
 			// 创建Directory对象
@@ -272,10 +271,10 @@ public class Indexer {
 	 */
 	public String deleteIndexer(String tableName,String id) throws IOException {
 		
-//		String temp = indexDir + "/" + tableName;
-//		String tableIndexDir = ServletActionContext.getServletContext().getRealPath(temp)+ File.separator;
+		String temp = indexDir + "/" + tableName;
+		String tableIndexDir = ServletActionContext.getServletContext().getRealPath(temp)+ File.separator;
 		
-		String tableIndexDir = getSystem("LUCENE_URL")+tableName;
+//		String tableIndexDir = getSystem("LUCENE_URL")+tableName;
 		
 		// 创建Directory对象
 		Directory dir = new SimpleFSDirectory(new File(tableIndexDir));
@@ -295,10 +294,10 @@ public class Indexer {
 	
 	public String updateIndexer(String tableName,List fieldList,List dataList) throws IOException {
 		
-//		String temp = indexDir + "/" + tableName;
-//		String tableIndexDir = ServletActionContext.getServletContext().getRealPath(temp)+ File.separator;
+		String temp = indexDir + "/" + tableName;
+		String tableIndexDir = ServletActionContext.getServletContext().getRealPath(temp)+ File.separator;
 //		
-		String tableIndexDir = getSystem("LUCENE_URL")+tableName;
+//		String tableIndexDir = getSystem("LUCENE_URL")+tableName;
 		
 		// 创建Directory对象
 		Directory dir = new SimpleFSDirectory(new File(tableIndexDir));
@@ -324,29 +323,29 @@ public class Indexer {
 		return null;
 	}
 
-	/**
-	 * 通过key获取.properties中的value
-	 * @param key
-	 * @return value
-	 * */
-	public String getValue(String key,String properties_file){
-		String value="";
-        try {
-        	InputStream in = this.getClass().getClassLoader().getResourceAsStream(properties_file);
-            Properties properties = new Properties();
-			properties.load(in);
-			value = properties.getProperty(key);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return value;
-	}
-	/**
-	 * 读取system.properties
-	 * */
-	public String getSystem(String key){
-		String result = getValue(key, LUCENE_URL);
-		return result;
-	}
+//	/**
+//	 * 通过key获取.properties中的value
+//	 * @param key
+//	 * @return value
+//	 * */
+//	public String getValue(String key,String properties_file){
+//		String value="";
+//        try {
+//        	InputStream in = this.getClass().getClassLoader().getResourceAsStream(properties_file);
+//            Properties properties = new Properties();
+//			properties.load(in);
+//			value = properties.getProperty(key);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return value;
+//	}
+//	/**
+//	 * 读取system.properties
+//	 * */
+//	public String getSystem(String key){
+//		String result = getValue(key, LUCENE_URL);
+//		return result;
+//	}
 	
 }

@@ -286,7 +286,8 @@ $(function(){
 	var newItemTemplate = {
 			treeid	: archiveCommon.selectTreeid,
 			parentid: archiveCommon.selectAid,
-			isdoc	: "0"
+			isdoc	: "0",
+			status	: "1"
 	};
 	//新建行时，将系统必须的默认值与字段默认值合并
 	newItemTemplate = $.extend({},newItemTemplate,wjGridconfig.fieldsDefaultValue);

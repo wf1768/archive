@@ -17,6 +17,7 @@
         <!-- 预览 -->
         <action name="filePreview" class="docAction" method="filePreview"></action>
         <!-- 下载测试  application/octet-stream-->
+        <action name="isDownDoc" class="docAction" method="isDownDoc"></action>
         <action name="downDoc" class="docAction" method="downDoc">
         	<result type="stream">
 				<param name="contentType">${contentType}</param>

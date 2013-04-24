@@ -166,8 +166,8 @@ public class TempletfieldService implements ITempletfieldService {
 		SysTable table = tableDao.selectByPrimaryKey(oldField.getTableid());
 		//判断是什么模板，如果是基础模板（虚拟的表），不更新真实表
 		SysTemplet templet = templetDao.selectByPrimaryKey(table.getTempletid());
-		if ("CA".equals(templet.getTemplettype()) || "CF".equals(templet.getTemplettype())) {
-			return false;
+		if ("CA".equals(templet.getTemplettype()) || "CF".equals(templet.getTemplettype()) || "CP".equals(templet.getTemplettype())) {
+			return true;
 		}
 		
 		if (null != table) {

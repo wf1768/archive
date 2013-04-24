@@ -332,7 +332,7 @@ $(function() {
 		},
 		center: {
 			paneSelector:	"#yesfile",
-//			size		:	"100",
+			size		:	"100",
 			spacing_open:	2,
 			closable	:	false,
 			resizable	:	true
