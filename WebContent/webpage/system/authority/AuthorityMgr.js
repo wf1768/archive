@@ -251,6 +251,8 @@ function setOrgTree(){
 	   success: function(msg){
 	   		if("succ"==msg){
 	   			openalert("授权成功！");
+	   			//组档案树orgoftree  loadOrgOfTreeData orgid orgid
+				orgoftree();
 	   		}else{
 	   			openalert("授权失败，请重新登录尝试或与管理员联系!");
 	   		}
@@ -270,6 +272,8 @@ function setAccountTree(){
 	   success: function(msg){
 	   		if("succ"==msg){
 	   			openalert("授权成功！");
+	   			//账户档案树accountoftree  loadAccountOfTreeData  accountid
+				accountoftree(accountid);
 	   		}else{
 	   			openalert("授权失败，请重新登录尝试或与管理员联系!");
 	   		}
@@ -589,6 +593,7 @@ function updateOrgTree(){
 				   success: function(msg){
 				   		if("succ"==msg){
 				   			openalert("授权成功！");
+				   			orgoftree(); //刷新
 				   		}else{
 				   			openalert("授权失败，请重新登录尝试或与管理员联系!");
 				   		}
@@ -604,6 +609,7 @@ function updateOrgTree(){
 		   success: function(msg){
 		   		if("succ"==msg){
 		   			openalert("授权成功！");
+		   			orgoftree(); //刷新
 		   		}else{
 		   			openalert("授权失败，请重新登录尝试或与管理员联系!");
 		   		}
@@ -643,6 +649,7 @@ function updateAccountTree(){
 				   success: function(msg){
 				   		if("succ"==msg){
 				   			openalert("授权成功！");
+				   			accountoftree(accountid); //刷新
 				   		}else{
 				   			openalert("授权失败，请重新登录尝试或与管理员联系!");
 				   		}
@@ -658,6 +665,7 @@ function updateAccountTree(){
 		   success: function(msg){
 		   		if("succ"==msg){
 		   			openalert("授权成功！");
+		   			accountoftree(accountid); //刷新
 		   		}else{
 		   			openalert("授权失败，请重新登录尝试或与管理员联系!");
 		   		}

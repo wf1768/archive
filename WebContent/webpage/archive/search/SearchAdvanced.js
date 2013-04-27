@@ -116,7 +116,7 @@ function readFieldAW(tableType) {
                 field = eval(fields);
                 tableFields = field;
                 talbeField(field); //字段
-                
+                $(".query-item").remove(); //清空条件 
                 searchCommon.templettype = templeType;
             } else {
                 openalert('读取数据时出错，请尝试重新操作或与管理员联系!');
