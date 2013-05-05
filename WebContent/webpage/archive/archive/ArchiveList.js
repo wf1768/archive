@@ -444,7 +444,7 @@ function showDocDelectButton(b,id) {
  */
 function getDoclist(row) {
 	var str = "<li class=\"docli\" onMouseOut=\"showDocDelectButton(false,'"+row.docid+"')\" onMouseOver=\"showDocDelectButton(true,'"+row.docid+"')\">";
-	str += "<div class=\"docdiv\"><a href=\"downDoc.action?docId="+ row.docid +"\">";
+	str += "<div class=\"docdiv\"><a href=\"#\" onClick=\"fileDown('"+row.docid+"','"+archiveCommon.selectTreeid+"')\">";
 	var docType = row.docext;
 	var typeCss = "";
 	if (docType == "DOC" || docType == "XLS" || docType=="PPT") {
@@ -477,7 +477,7 @@ function getDoclist(row) {
 //	if (row.docoldname.length > 8) {
 //		name = row.docoldname.substr(0,8) + "..." + "." + docType;
 //	}
-	str += "<div title=\""+row.docoldname+"\"><div class=\"docfilename\"><a href=\"downDoc.action?docId="+ row.docid +"\">" + name + "</a></div></div>";
+	str += "<div title=\""+row.docoldname+"\"><div class=\"docfilename\"><a href=\"#\" onClick=\"fileDown('"+row.docid+"','"+archiveCommon.selectTreeid+"')\">" + name + "</a></div></div>";
 	str += "<div><button type=\"button\" id=\""+row.docid+"\" style=\"display:none\" onClick=\"delectDoc('"+row.docid+"')\" class=\"btn btn-danger btn-small\">删除</button></div>";
 	str += "</li>";
 	return str;
@@ -490,7 +490,7 @@ function showDocwindow(id, tableid) {
 	archiveCommon.selectRowid = id;
 	archiveCommon.selectTableid = tableid;
 	
-	var par = "selectRowid="+ id + "&tableid="+tableid;
+	var par = "selectRowid="+ id + "&tableid="+tableid+"&treeid="+archiveCommon.selectTreeid;
 	var rowList = [];
 	//同步读取数据
 	$.ajax({
@@ -500,8 +500,9 @@ function showDocwindow(id, tableid) {
 		dataType : 'script',
 		success : function(data) {
 			if (data != "error") {
-				rowList = eval(data);
-				$("#doclist").html("");
+				rowList = eval(docList);
+ 				$("#doclist").html("");
+ 				
 				for (var i=0;i<rowList.length;i++) {
 					$("#doclist").append(getDoclist(rowList[i]));
 				}
@@ -594,4 +595,40 @@ function uploadFile() {
         return false;
     });
     $( "#uploadFile" ).dialog( "open");
+}
+
+//下载
+function fileDown(docId,treeid){
+	$.ajax({
+		async : false,
+		url : "isDownDoc.action",
+		type : 'post',
+		dataType : 'text',
+		data:"treeid="+treeid,
+		success : function(data) {
+			if (data == "1") {
+				window.location.href="downDoc.action?docId="+docId+"&treeid="+treeid;
+			} else {
+				openalert("对不起，您没有权限下载此文件！");
+			}
+		}
+	});
+}
+
+//系统提示
+function openalert(text) {
+    var html = $(
+        '<div id="dialog-message" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
+            '<div class="modal-header">' +
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+                '<h3 id="myModalLabel">系统提示</h3>' +
+            '</div>' +
+            '<div class="modal-body">' +
+                '<p id="continfo">' + text + '</p>' +
+            '</div>' +
+            '<div class="modal-footer">' +
+                '<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>' +
+            '</div>' +
+        '</div>');
+    return html.modal()
 }

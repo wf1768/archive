@@ -195,7 +195,16 @@ $(function() {
             	showTreeList(tree,id,text);
             }               
         }           
-    });
+    }).bind("select_node.jstree",function(e,data) { 
+	    var node = data.rslt.obj, inst = data.inst;
+	   /* orgid = node.attr("id");//选择后给全局orgid赋值
+	    var rel = $("#"+node.attr("id")).attr("rel");
+	    if(rel=="default"){
+	    	alert('is ok!');
+	    }*/
+	    if (node.hasClass('jstree-closed')) { return inst.open_node(node); }
+	    if (node.hasClass('jstree-open')) { return inst.close_node(node); }
+	});
 
 	$.fn.initJerichoTab({
         renderTo: '#tab',

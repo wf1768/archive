@@ -399,7 +399,7 @@ function showDoc(id) {
  */
 function getDoclist(row) {
 	var str = "<li class=\"docli\" onMouseOut=\"showDocDelectButton(false,'"+row.docid+"')\" onMouseOver=\"showDocDelectButton(true,'"+row.docid+"')\">";
-	str += "<div class=\"thumbnail\"><div class=\"docdiv\"><a href=\"downDoc.action?docId="+ row.docid +"\">";
+	str += "<div class=\"thumbnail\"><div class=\"docdiv\"><a href=\"#\" onClick=\"fileDown('"+row.docid+"','"+orgid+"')\">";
 	var docType = row.docext;
 	var typeCss = "";
 	if (docType == "DOC" || docType == "XLS" || docType=="PPT") {
@@ -429,7 +429,25 @@ function getDoclist(row) {
 	str += "<img class=\"file-icon "+typeCss+" \">";
 	str += "</a></div>";
 	var name = row.docoldname;
-	str += "<div title=\""+row.docoldname+"\"><div class=\"docfilename\"><a href=\"downDoc.action?docId="+ row.docid +"\">" + name + "</a></div></div></div>";
+	str += "<div title=\""+row.docoldname+"\"><div class=\"docfilename\"><a href=\"#\" onClick=\"fileDown('"+row.docid+"','"+orgid+"')\">" + name + "</a></div></div></div>";
 	str += "</li>";
 	return str;
 }
+//下载
+function fileDown(docId,treeid){
+	$.ajax({
+		async : false,
+		url : "isDownDoc.action",
+		type : 'post',
+		dataType : 'text',
+		data:"treeid="+treeid,
+		success : function(data) {
+			if (data == "1") {
+				window.location.href="downDoc.action?docId="+docId+"&treeid="+treeid;
+			} else {
+				openalert("对不起，您没有权限下载此文件！");
+			}
+		}
+	});
+}
+
