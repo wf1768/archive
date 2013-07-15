@@ -253,8 +253,8 @@ public class DocAction extends BaseAction{
             if (oldName.lastIndexOf(".") >= 0) {
                 docExt = oldName.substring(oldName.lastIndexOf("."));
             }
-//            String newName = docId+docExt;
-            String newName = oldName;
+            String newName = docId+docExt;
+//            String newName = oldName;
             File newFile =new File(contextPath+newName);
             dstFile.renameTo(newFile);
             SysDoc doc = new SysDoc();

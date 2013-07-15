@@ -17,7 +17,7 @@ if (us.archive.ui == null || us.archive.ui == undefined ) {
 }
 
 //grid
-us.archive.ui.Gridconfig = function(a) {
+us.archive.ui.Gridconfig = function() {
 	// 声明列的数组
 	this.columns = [];
 	this.columns_fields = [];

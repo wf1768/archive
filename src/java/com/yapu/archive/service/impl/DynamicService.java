@@ -43,17 +43,31 @@ public class DynamicService implements IDynamicService {
                 value.append(" (");
                 for (SysTempletfield field : fieldList) {
                     sb.append(field.getEnglishname()).append(",");
+                    String col_value = row.get(field.getEnglishname().toLowerCase());
                     if (field.getFieldtype().contains("VARCHAR")) {
-                        value.append("'").append(row.get(field.getEnglishname().toLowerCase())).append("',");
+
+                        if (col_value == null || col_value.length() == 0) {
+                            value.append("'',");
+                        }
+                        else {
+                            value.append("'").append(row.get(field.getEnglishname().toLowerCase())).append("',");
+                        }
                     }
                     else {
-                        value.append(row.get(field.getEnglishname().toLowerCase())).append(",");
+                        if (col_value == null || col_value.length() == 0) {
+                            value.append("'0',");
+                        }
+                        else {
+                            value.append(row.get(field.getEnglishname().toLowerCase())).append(",");
+                        }
+
                     }
                 }
                 sb.deleteCharAt(sb.length() -1).append(" ) values ");
                 value.deleteCharAt(value.length() - 1).append(" )");
 
                 sb.append(value.toString());
+                System.out.println(value.toString());
                 boolean b = dynamicDao.insert(sb.toString());
                 if (!b) {
                     return false;

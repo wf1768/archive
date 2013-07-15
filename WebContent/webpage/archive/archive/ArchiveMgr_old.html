@@ -1,0 +1,161 @@
+
+<!DOCTYPE html >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<!-- 系统基本css -->
+<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+<!-- 各种图标 按钮 tab等 1-->
+<link rel="stylesheet" type="text/css" href="../../images/images.css" />
+
+<!-- jquery -->
+<script type="text/javascript" src="../../js/jquery-1.7.1.js"></script>
+
+<!-- archive的通用对象 -->
+<script type="text/javascript" src="../../js/us.archive.js"></script>
+<script type="text/javascript" src="../../js/us.archive.ui.js"></script>
+<script type="text/javascript" src="../../js/us.archive.util.js"></script>
+
+<!-- json2 -->
+<script type="text/javascript" src="../../js/json2.js"></script>
+
+
+<!-- 模块专用 -->
+<script type="text/javascript" src="ArchiveMgr.js"></script>
+<!-- 1 -->
+<script type="text/javascript" src="../../js/uuid.js"></script>
+<!-- 对话框1 -->
+<link rel="stylesheet" type="text/css" href="../../js/zebra-dialog/css/zebra_dialog.css" />
+<script type="text/javascript" src="../../js/zebra-dialog/js/zebra_dialog.js"></script>
+<!-- javascript 的map。在客户端环境下实现复制，粘贴功能时用到 12-->
+<script type="text/javascript" src="../../js/map.js"></script>
+
+<!-- jquery ui css 有一些插件用到了jquery ui。例如新的grid 12-->
+<!--<link rel="stylesheet" href="../../js/SlickGrid/css/smoothness/jquery-ui-1.8.16.custom.css" type="text/css" />
+ <link rel="stylesheet" type="text/css" href="../../js/jquery-ui/css/cupertino/jquery-ui-1.8.23.custom.css" />
+ <script type="text/javascript" src="../../js/jquery-ui/jquery-ui-1.8.23.custom.min.js"></script>-->
+ <!---->
+<link href="../../js/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="../../js/bootstrap/css/adminia.css" rel="stylesheet"> 
+<link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+<link href="../../js/bootstrap/css/unicorn.main.css" rel="stylesheet">
+
+<script type="text/javascript" src="../../js/bootstrap/js/bootstrap.js"></script>
+
+
+<!-- slick grid -->
+<link rel="stylesheet" href="../../js/SlickGrid/slick.grid.css" type="text/css" />
+<link rel="stylesheet" href="../../js/SlickGrid/myGrid.css" type="text/css" />
+<!-- slick grid分页插件-->
+<link rel="stylesheet" href="../../js/SlickGrid/controls/slick.pager.css" type="text/css" />
+<script type="text/javascript" src="../../js/SlickGrid/lib/firebugx.js"></script>
+
+
+<script type="text/javascript" src="../../js/SlickGrid/lib/jquery.event.drag-2.0.min.js"></script>
+
+<script type="text/javascript" src="../../js/SlickGrid/slick.core.js"></script>
+<script type="text/javascript" src="../../js/SlickGrid/plugins/slick.checkboxselectcolumn.js"></script>
+<script type="text/javascript" src="../../js/SlickGrid/plugins/slick.autotooltips.js"></script>
+<script type="text/javascript" src="../../js/SlickGrid/plugins/slick.rowselectionmodel.js"></script>
+<script type="text/javascript" src="../../js/SlickGrid/slick.dataview.js"></script>
+<script type="text/javascript" src="../../js/SlickGrid/slick.formatters.js"></script>
+<script type="text/javascript" src="../../js/SlickGrid/slick.editors.js"></script>
+<script type="text/javascript" src="../../js/SlickGrid/SelectCellEditor.js"></script>
+<script type="text/javascript" src="../../js/SlickGrid/controls/slick.pager.js"></script>
+<script type="text/javascript" src="../../js/SlickGrid/controls/slick.columnpicker.js"></script>
+<script type="text/javascript" src="../../js/SlickGrid/slick.grid.js"></script>
+
+
+<!-- jqueyr-window js 1
+<script type="text/javascript" src="../../js/jquery-window/jquery.window.js"></script>-->
+
+<!-- tree -->
+<link type="text/css" href="../../js/jstree/themes/default/style.css" rel="stylesheet">
+<script type="text/javascript" src="../../js/jstree/jquery.jstree.js"></script>
+
+<link type="text/css" href="../../js/jerichotab/css/jquery.jerichotab.css" rel="stylesheet">
+<script type="text/javascript" src="../../js/jerichotab/jquery.jerichotab.js"></script>
+<script type="text/javascript" src="../../js/jerichotab/jquery.resizable.js"></script>
+
+<link type="text/css" href="../../js/plupload/js/jquery.plupload.queue/css/jquery.plupload.queue.css" rel="stylesheet">
+<script type="text/javascript" src="../../js/plupload/js/plupload.full.js"></script>
+<script type="text/javascript" src="../../js/plupload/js/jquery.plupload.queue/jquery.plupload.queue.js"></script>
+<script type="text/javascript" src="../../js/plupload/js/i18n/cn.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../../js/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css" />
+ <script type="text/javascript" src="../../js/jquery-ui/jquery-ui-1.8.16.custom.min.js"></script>
+
+<!-- 1 -->
+ <link rel="stylesheet" type="text/css" href="../../js/jquery.layout/layout-default-latest.css" />
+<script type="text/javascript" src="../../js/jquery.layout/jquery.layout-latest.js"></script>
+
+<link href="../../js/bootstrap/js/datepicker/datepicker.css" rel="stylesheet">
+<script type="text/javascript" src="../../js/bootstrap/js/datepicker/bootstrap-datepicker.js"></script>
+
+
+<script type="text/javascript">
+//客户端实现 复制、粘贴 功能用的map
+var copyMap = new HashMap();
+</script>
+<title></title>
+</head>
+<body>
+	<div class="ui-layout-west" style="width:220px;padding1:0px;overflow:hidden;">
+		<div class="grid-header" style="width: 100%">档案树</div>
+		<div id="archivetree" style="height:100%"></div>
+	</div>
+	<div id="center" class="ui-layout-center" style="overflow:hidden;" border="true">
+		<div id="tab" class="archivetab">
+			<div id="help" title="操作帮助" style="padding:20px;overflow:hidden;"> 
+				<div style="margin-top:20px;">
+					
+				</div>
+			</div>
+			
+		</div>
+	</div> 
+	<div id="batchwindows" style="display:none">
+		<form class="form-horizontal" style="margin-top:20px;">
+			<fieldset>
+	          <div class="control-group">
+	            <label for="selectfield" class="control-label">更改字段</label>
+	            <div class="controls">
+	            	<select id="selectfield" class="span2"></select>
+	            </div>
+	          </div>
+	          <div class="control-group" id="updatecontentdiv">
+	            <label for="updatetxt" class="control-label">更改内容</label>
+	            <div class="controls">
+	            	<input type="text" id="updatetxt" class="span2">
+	            	<p class="help-block" id="updatetxterror"></p>
+	            </div>
+	          </div>
+	        </fieldset>
+		</form>
+	</div>
+	<!-- 电子全文列表 -->
+	<div id="docwindows" title="电子全文列表">
+		<ul id="doclist"></ul>
+	</div>
+	<!-- 为了解决 jerichotab 在同一页签下显示不同节点数据需要绑定一个 tabFirer，才能实现，我靠-->
+	<input type="hidden" id="wjtab" />
+    <input type="hidden" id="media" />
+    <input type="hidden" id="mediawj" />
+	<input type="hidden" id="importtab" />
+	<input type="hidden" id="batchatttab" />
+
+    <div id="uploadFile" style="width:700px;" title="上传电子全文" style="display:none">
+        <div style="width: 100%;height:90%;">
+            <form id="formId" action="submit.action" method="post">
+                <div id="uploader" style="width: 100%;height: 100%">
+                    <p>您的浏览器未安装 Flash, Silverlight, Gears, BrowserPlus 或者支持 HTML5 .</p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

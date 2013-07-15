@@ -7,7 +7,17 @@
 <link rel="stylesheet" type="text/css" href="webpage/css/style.css"/>
 <link rel="stylesheet" type="text/css" href="webpage/images/images.css"/>
 <link rel="stylesheet" type="text/css" href="webpage/js/jquery.layout/layout-default-latest.css"/>
+
+
 <script type="text/javascript" src="webpage/js/jquery-1.7.1.js"></script>
+
+<link href="webpage/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="webpage/js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+<%--<script type="text/javascript" src="webpage/js/bootstrap/js/bootstrap.js"></script>--%>
+<script type="text/javascript" src="webpage/js/bootstrap/js/bootbox.min.js"></script>
+<link href="webpage/js/bootstrap/css/font-awesome.css" rel="stylesheet">
+<link href="webpage/js/bootstrap/css/adminia.css" rel="stylesheet">
+<link href="webpage/js/bootstrap/css/adminia-responsive.css" rel="stylesheet">
 
 <link rel="stylesheet" type="text/css" href="webpage/js/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css"/>
 <script type="text/javascript" src="webpage/js/jquery-ui/jquery-ui-1.8.16.custom.min.js"></script>
@@ -15,11 +25,7 @@
 <script type="text/javascript" src="webpage/js/jquery.layout/jquery.layout-latest.js"></script>
 <script type="text/javascript" src="webpage/js/us.archive.util.js"></script>
 
-<link href="webpage/js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="webpage/js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-<link href="webpage/js/bootstrap/css/font-awesome.css" rel="stylesheet">
-<link href="webpage/js/bootstrap/css/adminia.css" rel="stylesheet"> 
-<link href="webpage/js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
+
 
 <style type="text/css">
     .ifr {
@@ -197,9 +203,14 @@
         //$("#ifr").addClass("ifr");
     });
     function quit() {
-        us.openconfirm("真的要退出系统吗?", "系统提示", function () {
-            window.location.href = "webpage/common/logout.jsp";
-        });
+        bootbox.confirm("真的要退出系统吗?", function(result) {
+            if(result){
+                window.location.href = "webpage/common/logout.jsp";
+            }
+        })
+//        us.openconfirm("真的要退出系统吗?", "系统提示", function () {
+//            window.location.href = "webpage/common/logout.jsp";
+//        });
     }
     function openAccountInfo() {
         $("#oldpassword").val("");
@@ -241,7 +252,7 @@
 				<span class="icon-bar"></span> 				
 			</a>
 			
-			<a id="sysname" class="brand" href="javascript::">Adminia Admin</a>
+			<a id="sysname" class="brand" href="javascript:;">Adminia Admin</a>
 			<div class="nav-collapse">    
                 <ul class="nav pull-right" id="fun">
                 </ul>

@@ -161,34 +161,51 @@ us.request= function(paras)
 us.batchAttachment = function() {
 	
 }
+//制作的通用alert
+us.openalert = function(text, title,iconcss) {
+    var html = $(
+        '<div id="dialog-message" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
+            '<div class="modal-header">' +
+            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+            '<h3 id="myModalLabel">系统提示</h3>' +
+            '</div>' +
+            '<div class="modal-body">' +
+            '<p id="continfo">' + text + '</p>' +
+            '</div>' +
+            '<div class="modal-footer">' +
+            '<button class="btn" data-dismiss="modal" id="closeidnow" aria-hidden="true">关闭</button>' +
+            '</div>' +
+            '</div>');
+    return html.modal()
+}
 
 //jquery ui dialog 制作的通用alert 
-us.openalert = function(text, title,iconcss) {
-	var html = $(
-		    '<div class="dialog" id="dialog-message">' +
-		    '  <div class="'+iconcss+'">' +
-		    '  	<div style="margin-top: 8px;" >' + text + '</div>' + 
-		    '</div>');
-	return html.dialog({
-	      //autoOpen: false,
-	      resizable: false,
-	      modal: true,
-	      title: title || "提示信息",
-	      closeOnEscape : true,
-	      show: {
-	          effect: 'fade',
-	          duration: 300
-	      },
-	      buttons: {
-	        "确定": function() {
-	          var dlg = $(this).dialog("close");
-	        }
-	      },
-	      close: function() {
-	    	  
-	      }
-	    });
-}
+//us.openalert = function(text, title,iconcss) {
+//	var html = $(
+//		    '<div class="dialog" id="dialog-message">' +
+//		    '  <div class="'+iconcss+'">' +
+//		    '  	<div style="margin-top: 8px;" >' + text + '</div>' +
+//		    '</div>');
+//	return html.dialog({
+//	      //autoOpen: false,
+//	      resizable: false,
+//	      modal: true,
+//	      title: title || "提示信息",
+//	      closeOnEscape : true,
+//	      show: {
+//	          effect: 'fade',
+//	          duration: 300
+//	      },
+//	      buttons: {
+//	        "确定": function() {
+//	          var dlg = $(this).dialog("close");
+//	        }
+//	      },
+//	      close: function() {
+//
+//	      }
+//	    });
+//}
 //jquery ui dialog confirm弹出确认提示
 us.openconfirm = function(text, title,fn1, fn2) {
 	var html = $(
@@ -242,5 +259,69 @@ us.openloading = function(text) {
 
 us.closeloading = function() {
 	return $('#dialog-loading').modal('hide');
+}
+
+us.upload_multi = function(url,fun) {
+
+    var html =
+        '<div id="upload-dialog" class="modal hide fade" aria-hidden="true">' +
+            '<div class="modal-header">' +
+            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>' +
+            '上传图片' +
+            '</div>' +
+            '<div class="modal-body">' +
+            '<div style="width: 100%;height:90%;">' +
+            '<form id="upload-form" action="" method="post">' +
+            '<div id="uploader" style="width: 100%;height: 100%">' +
+            '<p>您的浏览器未安装 Flash, Silverlight, Gears, BrowserPlus 或者支持 HTML5 .</p>' +
+            '</div>' +
+            '</form>' +
+            '</div>' +
+            '</div>' +
+            '<div class="modal-footer">' +
+            '<button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>' +
+            '</div>' +
+            '</div>';
+
+    $('body').append(html);
+
+    $("#uploader").pluploadQueue({
+        runtimes : 'flash,html5,html4',
+        max_file_size : '200mb',
+        chunk_size: '2mb',
+        url : url,
+//        unique_names : true,
+        flash_swf_url : '../../js/plupload/js/plupload.flash.swf'
+//        filters : [
+//            {
+//                title : "图片文件",
+//                extensions : "png,jpg,jpeg,gif"
+//            }
+//        ]
+    });
+
+
+//    // Client side form validation
+//    $('#upload-form').submit(function(e) {
+//        var uploader = $('#uploader').pluploadQueue();
+//        if (uploader.files.length > 0) {
+//            uploader.bind('StateChanged', function() {
+//                if (uploader.files.length === (uploader.total.uploaded + uploader.total.failed)) {
+//                    $('#upload-form')[0].submit();
+//                }
+//            });
+//            uploader.start();
+//        } else {
+//            openalert('请先上传文件!');
+//        }
+//        return false;
+//    });
+//
+    //上传框隐藏后，执行传入的方法名。
+    $('#upload-dialog').on('hidden', function () {
+        eval(fun + "()");
+    });
+
+    return $('#upload-dialog').modal();
 }
 

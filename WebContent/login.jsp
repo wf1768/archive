@@ -60,7 +60,7 @@
 				<div class="control-group">
 					<label class="control-label" for="username">用户名</label>
 					<div class="controls">
-						<input type="text" id="accountcode" name="accountcode" value="admin">
+						<input type="text" id="accountcode" name="accountcode" value="wangf">
 					</div>
 				</div>
 				<div class="control-group">
