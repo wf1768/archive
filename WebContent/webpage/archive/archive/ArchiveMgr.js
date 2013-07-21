@@ -129,9 +129,9 @@ function showTreeList(ob,id,text) {
 function showWjTab(id,isAllWj) {
 	archiveCommon.selectAid = id;
 	archiveCommon.isAllWj = isAllWj;
-	var url = "showArchiveWjList.action?treeid=" + archiveCommon.selectTreeid;
-	us.addtab($("#wjtab"),'文件管理','ajax', url);
-//	us.showtab($('#tab'),url, '文件管理', 'icon-page');
+    show_wj_archive_list();
+//	var url = "showArchiveWjList.action?treeid=" + archiveCommon.selectTreeid;
+//	us.addtab($("#wjtab"),'文件管理','ajax', url);
 }
 
 // 打开案卷导入tab

@@ -255,6 +255,10 @@ public class ArchiveAction extends BaseAction {
 				sb.deleteCharAt(sb.length() - 1).append("},");
 			}
 		}
+        else {
+//            sb.append("{},");
+            sb.append(",");
+        }
 //		sb.deleteCharAt(sb.length() - 1).append("]}");
 		sb.deleteCharAt(sb.length() - 1).append("]");
 		out.write(sb.toString());

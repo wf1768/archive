@@ -306,6 +306,8 @@ public class DocAction extends BaseAction{
                 FileInputStream s = new FileInputStream(newFile);
                 util.uploadFile(s, newName);
                 util.closeServer();
+                //ftp上传完成，删除临时文件
+                deleteFile(newFile.getPath());
             } else if ("LOCAL".equals(docserver.getServertype())){
                 String serverPath = docserver.getServerpath();
                 String savePath = docserver.getServerpath();
@@ -318,6 +320,8 @@ public class DocAction extends BaseAction{
                     }
                 }
                 newFile.renameTo(new File(savePath + newName));
+                //删除临时文件.renameTO 的同时，已经删除了，这里再删除一次，避免
+                deleteFile(newFile.getPath());
             }
             doc.setDocpath( docserver.getServerpath() + newName);
             doc.setDocpath(newName);
@@ -369,6 +373,24 @@ public class DocAction extends BaseAction{
     	out.write(result);
         return null;
     }
+
+    /**
+     * 删除单个文件
+     * @param   sPath    被删除文件的文件名
+     * @return 单个文件删除成功返回true，否则返回false
+     */
+    public boolean deleteFile(String sPath) {
+        boolean flag = false;
+        file = new File(sPath);
+        // 路径为文件且不为空则进行删除
+        if (file.isFile() && file.exists()) {
+            file.delete();
+            flag = true;
+        }
+        return flag;
+    }
+
+
     public String read() throws Exception {
         String contextPath = ServletActionContext.getServletContext().getRealPath(this.getSavePath())+ File.separator;
         SysDoc doc = docService.selectByPrimaryKey(this.getDocId());
@@ -555,7 +577,7 @@ public class DocAction extends BaseAction{
     	}
     	return null;
     }
-    public String downDoc() {
+    public String downDoc() throws IOException {
     	if (null == docId || "".equals(docId)) {
     		return ERROR;
     	}
@@ -568,7 +590,8 @@ public class DocAction extends BaseAction{
     	if(isFielddown()){
 	    	//得到原文件名
 	    	docName = doc.getDocoldname();
-	    	contentType = getContentType(doc.getDocext());
+//            docName = new String(docName.getBytes(),"ISO8859-1");
+            contentType = getContentType(doc.getDocext());
 	    	//判断文件所属服务器
 	    	String serverid = doc.getDocserverid();
 	    	//得到所属服务器的信息
@@ -581,20 +604,43 @@ public class DocAction extends BaseAction{
 	    	if ("LOCAL".equals(serverType)) {
 	    		savePath = docServer.getServerpath();
 	    	}
+            else if ("FTP".equals(serverType)) {
+            }
+
     	}
-    	//TODO 需要增加ftp类型的下载
+
     	return SUCCESS;
     }
     
-    public InputStream getInputStream() throws FileNotFoundException {
-//    	String fileName = savePath + doc.getDocnewname();
-    	String serverPath = docServer.getServerpath();
-    	if (!serverPath.substring(serverPath.length()-1,serverPath.length()).equals("/")) {
-    		serverPath += "/";
-        }
-    	String fileName = serverPath + doc.getDocpath();
+    public InputStream getInputStream() throws IOException {
+        FileInputStream aa = null;
+        //判断服务器类型。根据不同类型，执行不同的操作
+        String serverType = docServer.getServertype();
+        if ("LOCAL".equals(serverType)) {
+            String serverPath = docServer.getServerpath();
+            if (!serverPath.substring(serverPath.length()-1,serverPath.length()).equals("/")) {
+                serverPath += "/";
+            }
+            String fileName = serverPath + doc.getDocpath();
 //    	String fileName = doc.getDocpath();
-    	FileInputStream aa = new FileInputStream(fileName);
+            aa = new FileInputStream(fileName);
+        }
+        else if ("FTP".equals(serverType)) {
+            FtpUtil util = new FtpUtil();
+            util.connect(docServer.getServerip(), docServer.getServerport(),
+                    docServer.getFtpuser(), docServer.getFtppassword(), docServer.getServerpath());
+
+            InputStream bb = util.downFile(doc.getDocnewname());
+
+//            aa = (FileInputStream)bb;
+//            aa = util.downFile(doc.getDocnewname());
+            util.closeServer();
+            return bb;
+        }
+        else {
+
+        }
+
     	return aa;
 	}
     
@@ -633,17 +679,20 @@ public class DocAction extends BaseAction{
      * @return
      */
     private String getContentType(String docType) {
-    	if ("XLS".equals(docType.toUpperCase())) {
+    	if ("XLS".equals(docType.toUpperCase()) || "XLSX".equals(docType.toUpperCase())) {
             return "application/vnd.ms-excel;charset=utf-8";
     	}
-    	else if("DOC".equals(docType.toUpperCase())) {
+    	else if("DOC".equals(docType.toUpperCase()) || "DOCX".equals(docType.toUpperCase())) {
             return "application/msword;charset=utf-8";
     	}
+        else if("PPT".equals(docType.toUpperCase()) || "PPTX".equals(docType.toUpperCase())) {
+            return "application/msword;charset=utf-8";
+        }
     	else if("PDF".equals(docType.toUpperCase())) {
             return "application/pdf;charset=utf-8";
     	}
     	else {
-            contentType = "text/plain;charset=utf-8";      
+            contentType = "text/plain;charset=utf-8";
     	}
     	return "";
     }

@@ -15,7 +15,7 @@ function SelectCellEditor (args) {
               v = opt_values[i];
               option_str += "<OPTION value='"+v+"'>"+v+"</OPTION>";
             }
-            $select = $("<SELECT tabIndex='0' style='width:" + args.column.width + " ' class='editor-select'>"+ option_str +"</SELECT>");
+            $select = $("<SELECT tabIndex='0' style='width:" + args.column.width + "px ' class='editor-select'>"+ option_str +"</SELECT>");
             $select.appendTo(args.container);
             $select.focus();
         };

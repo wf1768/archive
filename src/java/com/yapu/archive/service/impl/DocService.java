@@ -13,7 +13,9 @@ import com.yapu.archive.service.itf.IDocService;
 import com.yapu.elfinder.DirFileInfor;
 import com.yapu.system.util.CommonUtils;
 import com.yapu.system.util.FileOperate;
+import com.yapu.system.util.FtpUtil;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,16 +52,24 @@ public class DocService implements IDocService {
 						boolean b = fo.delFile(serverPath);
                         //删除文件记录
                         return docDao.deleteByPrimaryKey(docID);
-//						if (b) {
-//							//删除文件记录
-//							return docDao.deleteByPrimaryKey(docID);
-//						}
-//						else {
-//							return 0;
-//						}
 					}
 					else {
 						//TODO 处理ftp删除
+                        FtpUtil util = new FtpUtil();
+                        util.connect(docserver.getServerip(),
+                                docserver.getServerport(),
+                                docserver.getFtpuser(),
+                                docserver.getFtppassword(),
+                                docserver.getServerpath());
+//                        FileInputStream s = new FileInputStream(newFile);
+//                        util.uploadFile(s, newName);
+                        boolean isDel = util.deleteFile(doc.getDocnewname());
+                        util.closeServer();
+                        if (isDel) {
+                            //删除文件记录
+                            return docDao.deleteByPrimaryKey(docID);
+                        }
+
 					}
 				} catch (Exception e) {
 					System.out.println(e.getMessage());

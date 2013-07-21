@@ -2,6 +2,9 @@ var ajGridconfig = new us.archive.ui.Gridconfig();
 
 $(function() {
 
+    ajGridconfig.tabletype = '01';
+    ajGridconfig.init_grid(ajGridconfig,"#archivediv","pager_aj","inlineFilterPanel_aj");
+
     // 创建checkbox列
 //    var checkboxSelector = new Slick.CheckboxSelectColumn({
 //        cssClass : "slick-cell-checkboxsel"
@@ -13,48 +16,49 @@ $(function() {
 //        ajGridconfig.columns.push(ajGridconfig.columns_fields[i]);
 //    }
 
-    // 创建dataview
-    ajGridconfig.dataView = new Slick.Data.DataView({
-        inlineFilters : true
-    });
-    // 创建grid
-    ajGridconfig.grid = new Slick.Grid("#archivediv", ajGridconfig.dataView, ajGridconfig.columns, ajGridconfig.options);
-    var columnpicker = new Slick.Controls.ColumnPicker(ajGridconfig.columns, ajGridconfig.grid, ajGridconfig.options);
-    //设置录入错误时提示。例如不能为空的字段
-    ajGridconfig.grid.onValidationError.subscribe(function(e, args) {
-//		alert(args.validationResults.msg);
-        us.openalert(args.validationResults.msg,
-            '系统提示',
-            'alertbody alert_Information'
-        );
-    });
-    // 设置grid的选择模式。行选择
-    // grid.setSelectionModel(new Slick.RowSelectionModel());
-    ajGridconfig.grid.setSelectionModel(new Slick.RowSelectionModel({
-        selectActiveRow : false
-    }));
-//	ajGridconfig.grid.setSelectionModel(new Slick.CellSelectionModel());
-
-    //设置键盘监听。ctrl + a 全选
-    ajGridconfig.grid.onKeyDown.subscribe(function(e) {
-        // select all rows on ctrl-a
-        if (e.which != 65 || !e.ctrlKey) {
-            return false;
-        }
-        var rows = [];
-        for ( var i = 0; i < ajGridconfig.dataView.getLength(); i++) {
-            rows.push(i);
-        }
-        ajGridconfig.grid.setSelectedRows(rows);
-        e.preventDefault();
-    });
-
-    // 设置分页控件
-    var pager_aj = new Slick.Controls.Pager(ajGridconfig.dataView, ajGridconfig.grid, $("#pager_aj"));
-
-    // 注册grid的自动提示插件。只在字段内容过长时出现省略号时提示
-    ajGridconfig.grid.registerPlugin(new Slick.AutoTooltips());
-    $("#inlineFilterPanel_aj").appendTo(ajGridconfig.grid.getTopPanel()).show();
+//    // 创建dataview
+//    ajGridconfig.dataView = new Slick.Data.DataView({
+//        inlineFilters : true
+//    });
+//    // 创建grid
+//    ajGridconfig.grid = new Slick.Grid("#archivediv", ajGridconfig.dataView, ajGridconfig.columns, ajGridconfig.options);
+//    var columnpicker = new Slick.Controls.ColumnPicker(ajGridconfig.columns, ajGridconfig.grid, ajGridconfig.options);
+//    //设置录入错误时提示。例如不能为空的字段
+//    ajGridconfig.grid.onValidationError.subscribe(function(e, args) {
+////		alert(args.validationResults.msg);
+//        us.openalert(args.validationResults.msg,
+//            '系统提示',
+//            'alertbody alert_Information'
+//        );
+//    });
+//
+//    // 设置grid的选择模式。行选择
+//    // grid.setSelectionModel(new Slick.RowSelectionModel());
+//    ajGridconfig.grid.setSelectionModel(new Slick.RowSelectionModel({
+//        selectActiveRow : false
+//    }));
+////	ajGridconfig.grid.setSelectionModel(new Slick.CellSelectionModel());
+//
+////    设置键盘监听。ctrl + a 全选
+//    ajGridconfig.grid.onKeyDown.subscribe(function(e) {
+//        // select all rows on ctrl-a
+//        if (e.which != 65 || !e.ctrlKey) {
+//            return false;
+//        }
+//        var rows = [];
+//        for ( var i = 0; i < ajGridconfig.dataView.getLength(); i++) {
+//            rows.push(i);
+//        }
+//        ajGridconfig.grid.setSelectedRows(rows);
+//        e.preventDefault();
+//    });
+//
+//    //设置分页控件
+//    var pager_aj = new Slick.Controls.Pager(ajGridconfig.dataView, ajGridconfig.grid, $("#pager_aj"));
+//
+//    // 注册grid的自动提示插件。只在字段内容过长时出现省略号时提示
+//    ajGridconfig.grid.registerPlugin(new Slick.AutoTooltips());
+//    $("#inlineFilterPanel_aj").appendTo(ajGridconfig.grid.getTopPanel()).show();
 
     $("#txtSearch_aj").keyup(function(e) {
         Slick.GlobalEditorLock.cancelCurrentEdit();
@@ -72,72 +76,63 @@ $(function() {
 //            $("#selectfield_aj").append("<option value='"+ajGridconfig.columns_fields[i].id+"'>"+ajGridconfig.columns_fields[i].name+"</option>");
 //        }
 //    }
-    //声明新建行的系统默认值
-    var newItemTemplate = {
-        treeid	: archiveCommon.selectTreeid,
-        isdoc	: "0",
-        status	: "1"
-    };
-    //新建行时，将系统必须的默认值与字段默认值合并
-    newItemTemplate = $.extend({},newItemTemplate,ajGridconfig.fieldsDefaultValue);
-
-    //grid的添加新行事件
-    ajGridconfig.grid.onAddNewRow.subscribe(function(e, args) {
-//        var item = $.extend({}, newItemTemplate, args.item);
-        var item = args.item;
-        item.id = UUID.prototype.createUUID ();
-        item.treeid = archiveCommon.selectTreeid;
-        item.isdoc = '0';
-        item.status = '1';
-
-        item.rownum = (ajGridconfig.dataView.getLength() + 1).toString();
-        ajGridconfig.dataView.addItem(item);
-
-        var par = "importData=[" + JSON.stringify(item) + "]&tableType=01";
-        alert(par);
-        $.post("saveImportArchive.action",par,function(data){
-                if (data != "保存完毕。") {
-                    us.openalert(data,
-                        '系统提示',
-                        'alertbody alert_Information'
-                    );
-                }
-            }
-        );
-    });
-
-    //grid的列值变动事件
-    ajGridconfig.grid.onCellChange.subscribe(function(e, args) {
-        var item = args.item;
-        var par = "importData=[" + JSON.stringify(item) + "]&tableType=01";
-        $.post("updateImportArchive.action",par,function(data){
-                if (data != "保存完毕。") {
-                    us.openalert(data,
-                        '系统提示',
-                        'alertbody alert_Information'
-                    );
-                }
-            }
-        );
-    });
-
-    ajGridconfig.grid.onSort.subscribe(function(e, args) {
-        archiveCommon.sortdir = args.sortAsc ? 1 : -1;
-        archiveCommon.sortcol = args.sortCol.field;
-        ajGridconfig.dataView.sort(us.comparer, args.sortAsc);
-
-    });
-
-    ajGridconfig.dataView.onRowCountChanged.subscribe(function(e, args) {
-        ajGridconfig.grid.updateRowCount();
-        ajGridconfig.grid.render();
-    });
-
-    ajGridconfig.dataView.onRowsChanged.subscribe(function(e, args) {
-        ajGridconfig.grid.invalidateRows(args.rows);
-        ajGridconfig.grid.render();
-    });
-
+//
+//
+//    //grid的添加新行事件
+//    ajGridconfig.grid.onAddNewRow.subscribe(function(e, args) {
+//        var item = $.extend({}, ajGridconfig.newItemTemplate, args.item);
+//        item.id = UUID.prototype.createUUID ();
+//        item.treeid = archiveCommon.selectTreeid;
+//
+//        item.rownum = (ajGridconfig.dataView.getLength() + 1).toString();
+//        ajGridconfig.dataView.addItem(item);
+//
+//        var par = "importData=[" + JSON.stringify(item) + "]&tableType=01";
+//        alert(par);
+//        $.post("saveImportArchive.action",par,function(data){
+//                if (data != "保存完毕。") {
+//                    us.openalert(data,
+//                        '系统提示',
+//                        'alertbody alert_Information'
+//                    );
+//                }
+//            }
+//        );
+//    });
+//
+//
+//    //grid的列值变动事件
+//    ajGridconfig.grid.onCellChange.subscribe(function(e, args) {
+//        var item = args.item;
+//        var par = "importData=[" + JSON.stringify(item) + "]&tableType=01";
+//        $.post("updateImportArchive.action",par,function(data){
+//                if (data != "保存完毕。") {
+//                    us.openalert(data,
+//                        '系统提示',
+//                        'alertbody alert_Information'
+//                    );
+//                }
+//            }
+//        );
+//    });
+//
+//    ajGridconfig.grid.onSort.subscribe(function(e, args) {
+//        archiveCommon.sortdir = args.sortAsc ? 1 : -1;
+//        archiveCommon.sortcol = args.sortCol.field;
+//        ajGridconfig.dataView.sort(us.comparer, args.sortAsc);
+//
+//    });
+//
+//    ajGridconfig.dataView.onRowCountChanged.subscribe(function(e, args) {
+//        ajGridconfig.grid.updateRowCount();
+//        ajGridconfig.grid.render();
+//    });
+//
+//    ajGridconfig.dataView.onRowsChanged.subscribe(function(e, args) {
+//        ajGridconfig.grid.invalidateRows(args.rows);
+//        ajGridconfig.grid.render();
+//    });
+//
 //    ajGridconfig.dataView.beginUpdate();
 //    ajGridconfig.dataView.setItems(ajGridconfig.rows);
 //    ajGridconfig.dataView.setFilterArgs({
@@ -145,8 +140,8 @@ $(function() {
 //    });
 //    ajGridconfig.dataView.setFilter(us.myFilter);
 //    ajGridconfig.dataView.endUpdate();
-
-    ajGridconfig.dataView.syncGridSelection(ajGridconfig.grid, true);
+//
+//    ajGridconfig.dataView.syncGridSelection(ajGridconfig.grid, true);
 })
 
 
@@ -191,11 +186,20 @@ function readData() {
                 ajGridconfig.grid.registerPlugin(checkboxSelector);
 
                 //生成过滤选择字段
+                $("#selectfield_aj").empty();
                 for (var i=0;i<ajGridconfig.columns_fields.length;i++) {
                     if (ajGridconfig.columns_fields[i].id != "rownum" && ajGridconfig.columns_fields[i].id != "isdoc" && ajGridconfig.columns_fields[i].id != "files") {
                         $("#selectfield_aj").append("<option value='"+ajGridconfig.columns_fields[i].id+"'>"+ajGridconfig.columns_fields[i].name+"</option>");
                     }
                 }
+
+                //声明新建行的系统默认值
+//                var newItemTemplate = {
+//                    isdoc	: "0",
+//                    status	: "1"
+//                };
+                //新建行时，将系统必须的默认值与字段默认值合并
+                ajGridconfig.newItemTemplate = $.extend({},ajGridconfig.newItemTemplate,ajGridconfig.fieldsDefaultValue);
             } else {
                 us.openalert('<span style="color:red">读取数据时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',
                     '系统提示',
@@ -232,7 +236,7 @@ function show_aj_archive_list() {
         }
     });
     readData();
-
+    $('#ajtab').click();
     $("#grid_header_aj").html('<h3>'+archiveCommon.selectTreeName + '_案卷档案列表'+'</h3>');
 
 }
@@ -262,24 +266,40 @@ function del() {
     selectRows.sort(function compare(a, b) {
         return b - a;
     });
-    if (selectRows.length > 0) {
-        bootbox.confirm("确定要删除选中的 <span style='color:red'>"+selectRows.length+"</span> 条案卷记录吗?<br> <font color='red'>" +
+    alert(selectRows);
+
+    var deleteRows = [];
+
+    for ( var i = 0; i < selectRows.length; i++) {
+        var item = ajGridconfig.dataView.getItem(selectRows[i]);
+        if (item) {
+            deleteRows.push(item);
+        }
+    }
+
+    if (deleteRows.length > 0) {
+        bootbox.confirm("确定要删除选中的 <span style='color:red'>"+deleteRows.length+"</span> 条案卷记录吗?<br> <font color='red'>" +
             "注意：删除案卷记录，将同时删除案卷及案卷下所有文件数据、电子全文，请谨慎操作！</font> ", function(result) {
             if(result){
-                var deleteRows = [];
-
-                for ( var i = 0; i < selectRows.length; i++) {
-                    var item = ajGridconfig.dataView.getItem(selectRows[i]);
-                    deleteRows.push(item);
-                }
+//                var deleteRows = [];
+//
+//                for ( var i = 0; i < selectRows.length; i++) {
+//                    var item = ajGridconfig.dataView.getItem(selectRows[i]);
+//                    deleteRows.push(item);
+//                }
                 var par = "par=" + JSON.stringify(deleteRows) + "&tableType=01";
+
                 $.post("deleteArchive.action",par,function(data){
                         if (data == "SUCCESS") {
-                            for ( var i = 0; i < selectRows.length; i++) {
-                                var item = ajGridconfig.dataView.getItem(selectRows[i]);
-                                ajGridconfig.dataView.deleteItem(item.id);
-                            };
+//                            for ( var i = 0; i < selectRows.length; i++) {
+//                                var item = ajGridconfig.dataView.getItem(selectRows[i]);
+//                                ajGridconfig.dataView.deleteItem(item.id);
+//                            };
                             us.openalert('删除成功。 ','系统提示','alertbody alert_Information');
+//                            var data = [];
+                            readData();
+//                            ajGridconfig.dataView.setItems(data);
+                            ajGridconfig.dataView.setItems(ajGridconfig.rows);
                         }
                         else {
                             us.openalert(data,'系统提示','alertbody alert_Information');
@@ -300,40 +320,22 @@ function batchupdate() {
         return b - a;
     });
     if (selectRows.length > 0) {
-        $( "#batchwindows" ).dialog({
-            autoOpen: false,
-            height: 280,
-            width: 500,
-            title:'批量修改',
-            modal: true,
-            resizable:false,
-            create: function(event, ui) {
-                $("#selectfield").empty();
-                for (var i=0;i<ajGridconfig.columns_fields.length;i++) {
-                    if (ajGridconfig.columns_fields[i].id != "rownum" && ajGridconfig.columns_fields[i].id != "isdoc" && ajGridconfig.columns_fields[i].id != "files") {
-                        $("#selectfield").append("<option value='"+ajGridconfig.columns_fields[i].id+"'>"+ajGridconfig.columns_fields[i].name+"</option>");
-                    }
-                }
-            },
-            open:function(event,ui) {
-                $("#updatetxt").val("");
-            },
-            buttons: {
-                "提交": function() {
-                    us.batchUpdate(ajGridconfig.grid,ajGridconfig.dataView,true,'01');
-                },
-                "关闭": function() {
-                    $( this ).dialog( "close" );
-                }
-            },
-            close: function() {
-
+        $("#selectfield").empty();
+        for (var i=0;i<ajGridconfig.columns_fields.length;i++) {
+            if (ajGridconfig.columns_fields[i].id != "rownum" && ajGridconfig.columns_fields[i].id != "isdoc" && ajGridconfig.columns_fields[i].id != "files") {
+                $("#selectfield").append("<option value='"+ajGridconfig.columns_fields[i].id+"'>"+ajGridconfig.columns_fields[i].name+"</option>");
             }
+        }
+        $("#updatetxt").val("");
+        //取消绑定保存按钮的click事情
+        $("#save_batch").unbind("click");
+        $('#save_batch').click(function() {
+            us.batchUpdate(ajGridconfig.grid,ajGridconfig.dataView,true,'01');
         });
-        $( "#batchwindows" ).dialog('open');
+        $('#batchwindows').modal('show');
     }
     else {
-        us.openalert('请选择要修改的数据。 ','系统提示','alertbody alert_Information');
+        us.openalert('请选择要修改的数据.');
     }
 }
 //open import data dialog
@@ -535,4 +537,60 @@ function uploadFile() {
 //        return false;
 //    });
 //    $( "#uploadFile" ).dialog( "open");
+}
+
+/**
+ * 显示和隐藏电子全文删除按钮
+ * @param b		true false 是否隐藏
+ * @param id	按钮ID
+ */
+function showDocDelectButton(b,id) {
+    if (b) {
+        $("#" + id).css("display","inline-block");
+    }
+    else {
+        $("#" + id).css("display","none");
+    }
+}
+
+//下载
+function fileDown(docId,treeid){
+    $.ajax({
+        async : false,
+        url : "isDownDoc.action",
+        type : 'post',
+        dataType : 'text',
+        data:"treeid="+treeid,
+        success : function(data) {
+            if (data == "1") {
+                window.location.href="downDoc.action?docId="+docId+"&treeid="+treeid;
+            } else {
+                openalert("对不起，您没有权限下载此文件！");
+            }
+        }
+    });
+}
+
+function delectDoc(id) {
+    bootbox.confirm("确定要<span style='color:red'>删除</span> 选中的电子全文吗？<br>" +
+        "<span style='color:red'>注意：将彻底删除电子全文，请谨慎操作！</span> ", function(result) {
+        if(result){
+            //同步读取数据
+            $.ajax({
+                async : false,
+                url : "docDelete.action?docId="+ id,
+                type : 'post',
+                dataType : 'script',
+                success : function(data) {
+                    if (data != "error") {
+                        us.openalert('删除文件完毕! ');
+                    } else {
+                        us.openalert('删除文件时出错，请尝试重新操作或与管理员联系! ');
+                    }
+                }
+            });
+            //重新读取全文列表
+            showdoc();
+        }
+    })
 }
