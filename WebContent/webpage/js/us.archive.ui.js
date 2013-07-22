@@ -49,6 +49,7 @@ us.archive.ui.Gridconfig = function() {
     this.tabletype = '';
 
     this.init_grid = function(gridObject,grid_div,pager,filterPanel) {
+
         // 创建dataview
         this.dataView = new Slick.Data.DataView({
             inlineFilters : false
@@ -145,7 +146,7 @@ us.archive.ui.Gridconfig = function() {
             gridObject.grid.invalidateRows(args.rows);
             gridObject.grid.render();
         });
-        this.dataView.syncGridSelection(this.grid, true);
+        gridObject.dataView.syncGridSelection(gridObject.grid, true);
 
     }
 }

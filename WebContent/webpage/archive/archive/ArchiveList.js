@@ -148,6 +148,7 @@ $(function() {
 
 //read Archive data
 function readData() {
+
     //同步读取数据
     var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01";
     $.ajax({
@@ -157,7 +158,10 @@ function readData() {
         dataType : 'script',
         success : function(data) {
             if (data != "error") {
+
                 ajGridconfig.rows = rowList;
+
+                ajGridconfig.dataView.setItems(ajGridconfig.rows);
 
                 // 创建checkbox列
                 var checkboxSelector = new Slick.CheckboxSelectColumn({
@@ -174,14 +178,13 @@ function readData() {
                 //设置grid的列
                 ajGridconfig.grid.setColumns(visibleColumns);
 
-                ajGridconfig.dataView.beginUpdate();
-                ajGridconfig.dataView.setItems(ajGridconfig.rows);
+//                ajGridconfig.dataView.beginUpdate();
+//                ajGridconfig.dataView.setItems(ajGridconfig.rows);
                 ajGridconfig.dataView.setFilterArgs({
                     searchString : archiveCommon.searchString
                 });
                 ajGridconfig.dataView.setFilter(us.myFilter);
-                ajGridconfig.dataView.endUpdate();
-
+//                ajGridconfig.dataView.endUpdate();
                 // 注册grid的checkbox功能插件
                 ajGridconfig.grid.registerPlugin(checkboxSelector);
 
@@ -262,11 +265,11 @@ function endupdate() {
 }
 //delete rows
 function del() {
+
     var selectRows = ajGridconfig.grid.getSelectedRows();
     selectRows.sort(function compare(a, b) {
         return b - a;
     });
-    alert(selectRows);
 
     var deleteRows = [];
 
@@ -281,25 +284,25 @@ function del() {
         bootbox.confirm("确定要删除选中的 <span style='color:red'>"+deleteRows.length+"</span> 条案卷记录吗?<br> <font color='red'>" +
             "注意：删除案卷记录，将同时删除案卷及案卷下所有文件数据、电子全文，请谨慎操作！</font> ", function(result) {
             if(result){
-//                var deleteRows = [];
-//
-//                for ( var i = 0; i < selectRows.length; i++) {
-//                    var item = ajGridconfig.dataView.getItem(selectRows[i]);
-//                    deleteRows.push(item);
-//                }
                 var par = "par=" + JSON.stringify(deleteRows) + "&tableType=01";
 
                 $.post("deleteArchive.action",par,function(data){
                         if (data == "SUCCESS") {
-//                            for ( var i = 0; i < selectRows.length; i++) {
-//                                var item = ajGridconfig.dataView.getItem(selectRows[i]);
-//                                ajGridconfig.dataView.deleteItem(item.id);
-//                            };
+                            for ( var i = 0; i < selectRows.length; i++) {
+                                var item = ajGridconfig.dataView.getItem(selectRows[i]);
+                                ajGridconfig.dataView.deleteItem(item.id);
+                                ajGridconfig.grid.invalidate();
+                                ajGridconfig.grid.render();
+                            };
+                            readData();
+//                            ajGridconfig.grid.invalidate();
+//                            ajGridconfig.grid.render();
                             us.openalert('删除成功。 ','系统提示','alertbody alert_Information');
 //                            var data = [];
-                            readData();
+//                            readData();
+//                            grid.invalidate();
 //                            ajGridconfig.dataView.setItems(data);
-                            ajGridconfig.dataView.setItems(ajGridconfig.rows);
+//                            ajGridconfig.dataView.setItems(ajGridconfig.rows);
                         }
                         else {
                             us.openalert(data,'系统提示','alertbody alert_Information');
