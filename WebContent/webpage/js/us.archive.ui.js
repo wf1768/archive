@@ -91,7 +91,7 @@ us.archive.ui.Gridconfig = function() {
         // 注册grid的自动提示插件。只在字段内容过长时出现省略号时提示
         this.grid.registerPlugin(new Slick.AutoTooltips());
         if (filterPanel) {
-            $("#"+filterPanel).appendTo(this.grid.getTopPanel()).show();
+            $("#"+filterPanel).appendTo(gridObject.grid.getTopPanel()).show();
         }
         if (this.is_add_new_item) {
             //grid的添加新行事件
@@ -118,7 +118,7 @@ us.archive.ui.Gridconfig = function() {
         //grid的列值变动事件
         this.grid.onCellChange.subscribe(function(e, args) {
             var item = args.item;
-            var par = "importData=[" + JSON.stringify(item) + "]&tableType=01";
+            var par = "importData=[" + JSON.stringify(item) + "]&tableType=" + gridObject.tabletype;
             $.post("updateImportArchive.action",par,function(data){
                     if (data != "保存完毕。") {
                         us.openalert(data,

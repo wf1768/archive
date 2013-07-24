@@ -50,7 +50,10 @@ public class DynamicService implements IDynamicService {
                             value.append("'',");
                         }
                         else {
-                            value.append("'").append(row.get(field.getEnglishname().toLowerCase())).append("',");
+                            String tmp = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
+                            tmp = tmp.replace("'","\\\'");
+//                            value.append("'").append(row.get(field.getEnglishname().toLowerCase())).append("',");
+                            value.append("'").append(tmp).append("',");
                         }
                     }
                     else {
@@ -97,11 +100,13 @@ public class DynamicService implements IDynamicService {
                 for (SysTempletfield field : fieldList) {
                     if (!"id".equals(field.getEnglishname().toLowerCase())) {
                         sb.append(field.getEnglishname().toLowerCase()).append("=");
+                        String value = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
+                        value = value.replace("'","\\\'");
                         if (field.getFieldtype().contains("VARCHAR")) {
-                            sb.append("'").append(row.get(field.getEnglishname().toLowerCase())).append("',");
+                            sb.append("'").append(value).append("',");
                         }
                         else {
-                            sb.append(row.get(field.getEnglishname().toLowerCase())).append(",");
+                            sb.append(value).append(",");
                         }
                     }
                 }

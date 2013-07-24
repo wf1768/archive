@@ -244,7 +244,10 @@ public class ArchiveAction extends BaseAction {
 							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\"\",");
 						}
 						else {
-							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\""+tempMap.get(sysTempletfield.getEnglishname())+"\",");
+                            String value = tempMap.get(sysTempletfield.getEnglishname()).toString().replaceAll("\\\\","\\\\\\\\");
+                            value = value.replace("'","\\\'");
+//							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\""+tempMap.get(sysTempletfield.getEnglishname())+"\",");
+                            sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\""+value+"\",");
 						}
 //					}
 //					else if (sysTempletfield.getFieldtype().contains("INT")) {

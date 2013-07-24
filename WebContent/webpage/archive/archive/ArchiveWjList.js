@@ -1,6 +1,7 @@
 
 
 var wjGridconfig = new us.archive.ui.Gridconfig();
+
 //wj insert a new row
 function wjadd() {
 	wjGridconfig.grid.setOptions({
@@ -67,41 +68,22 @@ function wjbatchupdate() {
 		return b - a;
 	});
 	if (selectRows.length > 0) {
-		$( "#batchwindows" ).dialog({
-			autoOpen: false,
-			height: 280,
-			width: 500,
-			title:'批量修改',
-			modal: true,
-			resizable:false,
-			create: function(event, ui) {
-				$("#selectfield").empty();
-				for (var i=0;i<wjGridconfig.columns_fields.length;i++) {
-					if (wjGridconfig.columns_fields[i].id != "rownum" && wjGridconfig.columns_fields[i].id != "isdoc" && wjGridconfig.columns_fields[i].id != "files") {
-						$("#selectfield").append("<option value='"+wjGridconfig.columns_fields[i].id+"'>"+wjGridconfig.columns_fields[i].name+"</option>");
-					}
-				}
-			},
-			open:function(event,ui) {
-				$("#updatetxt").val("");
-			},
-			buttons: {
-				"提交": function() {
-					us.batchUpdate(wjGridconfig.grid,wjGridconfig.dataView,true,'02');
-				},
-				"关闭": function() {
-					$( this ).dialog( "close" );
-				}
-			},
-			close: function() {
-				
-			}
-		});
-		
-		$( "#batchwindows" ).dialog('open');
+        $("#selectfield").empty();
+        for (var i=0;i<wjGridconfig.columns_fields.length;i++) {
+            if (wjGridconfig.columns_fields[i].id != "rownum" && wjGridconfig.columns_fields[i].id != "isdoc" && wjGridconfig.columns_fields[i].id != "files") {
+                $("#selectfield").append("<option value='"+wjGridconfig.columns_fields[i].id+"'>"+wjGridconfig.columns_fields[i].name+"</option>");
+            }
+        }
+        $("#updatetxt").val("");
+        //取消绑定保存按钮的click事情
+        $("#save_batch").unbind("click");
+        $('#save_batch').click(function() {
+            us.batchUpdate(wjGridconfig.grid,wjGridconfig.dataView,true,'02');
+        });
+        $('#batchwindows').modal('show');
 	}
 	else {
-		us.openalert('请选择要修改的数据。 ','系统提示','alertbody alert_Information');
+		us.openalert('请选择要修改的数据。');
 	}
 }
 //open wj import data tab
@@ -174,6 +156,8 @@ function readwjdata() {
 			if (data != "error") {
 				wjGridconfig.rows = rowList;
 
+                wjGridconfig.dataView.setItems(wjGridconfig.rows);
+
                 // 创建checkbox列
                 var checkboxSelector_wj = new Slick.CheckboxSelectColumn({
                     cssClass : "slick-cell-checkboxsel"
@@ -189,13 +173,13 @@ function readwjdata() {
                 //设置grid的列
                 wjGridconfig.grid.setColumns(visibleColumns_wj);
 
-                wjGridconfig.dataView.beginUpdate();
-                wjGridconfig.dataView.setItems(wjGridconfig.rows);
+//                wjGridconfig.dataView.beginUpdate();
+//                wjGridconfig.dataView.setItems(wjGridconfig.rows);
                 wjGridconfig.dataView.setFilterArgs({
                     searchString : archiveCommon.searchString
                 });
                 wjGridconfig.dataView.setFilter(us.myFilter);
-                wjGridconfig.dataView.endUpdate();
+//                wjGridconfig.dataView.endUpdate();
 
                 // 注册grid的checkbox功能插件
                 wjGridconfig.grid.registerPlugin(checkboxSelector_wj);
@@ -246,8 +230,9 @@ function readwjdata() {
 //                    );
 //                });
 //
-//                var viewHeight = $('#wjdiv').find(".grid-canvas").height();
-//                $('#wjdiv').height(viewHeight+40);
+                wjGridconfig.grid.invalidate();
+                var viewHeight = $('#wjdiv').find(".grid-canvas").height();
+                $('#wjdiv').height(viewHeight+40);
 
 			} else {
 				us.openalert('<span style="color:red">读取数据时出错!<span></br>请尝试重新操作或与管理员联系。',
@@ -260,6 +245,7 @@ function readwjdata() {
 }
 
 function show_wj_archive_list() {
+    $('#wjtab').click();
     var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=02&importType=0";
     $.ajax({
         async: false,
@@ -282,7 +268,6 @@ function show_wj_archive_list() {
     });
     readwjdata();
     //模拟点击了页签文件级<a>，转到文件级页签
-    $('#wjtab').click();
     $("#grid_header_wj").html('<h3>'+archiveCommon.selectTreeName + '_文件级档案列表'+'</h3>');
 
 }

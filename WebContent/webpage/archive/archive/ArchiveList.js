@@ -203,6 +203,7 @@ function readData() {
 //                };
                 //新建行时，将系统必须的默认值与字段默认值合并
                 ajGridconfig.newItemTemplate = $.extend({},ajGridconfig.newItemTemplate,ajGridconfig.fieldsDefaultValue);
+                ajGridconfig.grid.invalidate();
             } else {
                 us.openalert('<span style="color:red">读取数据时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',
                     '系统提示',
@@ -214,6 +215,7 @@ function readData() {
 }
 
 function show_aj_archive_list() {
+    $('#ajtab').click();
     //同步读取字段
     var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01&importType=0";
     $.ajax({
@@ -239,7 +241,7 @@ function show_aj_archive_list() {
         }
     });
     readData();
-    $('#ajtab').click();
+
     $("#grid_header_aj").html('<h3>'+archiveCommon.selectTreeName + '_案卷档案列表'+'</h3>');
 
 }
