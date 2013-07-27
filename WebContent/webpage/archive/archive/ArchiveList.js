@@ -158,7 +158,6 @@ function readData() {
         dataType : 'script',
         success : function(data) {
             if (data != "error") {
-
                 ajGridconfig.rows = rowList;
 
                 ajGridconfig.dataView.setItems(ajGridconfig.rows);
@@ -345,15 +344,17 @@ function batchupdate() {
 }
 //open import data dialog
 function importdata() {
-    showArchiveImportTab('01');
+//    showArchiveImportTab('01');
+    openImportWindows('01');
 }
 //show filter div
 function filter() {
-    if ($(ajGridconfig.grid.getTopPanel()).is(":visible")) {
-        ajGridconfig.grid.hideTopPanel();
-    } else {
-        ajGridconfig.grid.showTopPanel();
-    }
+    ajGridconfig.grid.setTopPanelVisibility(!ajGridconfig.grid.getOptions().showTopPanel);
+//    if ($(ajGridconfig.grid.getTopPanel()).is(":visible")) {
+//        ajGridconfig.grid.hideTopPanel();
+//    } else {
+//        ajGridconfig.grid.showTopPanel();
+//    }
 }
 //show allwj tab
 function allwj() {

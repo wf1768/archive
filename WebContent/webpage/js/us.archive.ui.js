@@ -28,6 +28,7 @@ us.archive.ui.Gridconfig = function() {
     this.grid;
     //是否允许新建行
     this.is_add_new_item = true;
+    this.is_pager = true;
     this.fieldsDefaultValue = "";
     //过滤条件
     this.searchString = "";
@@ -86,8 +87,9 @@ us.archive.ui.Gridconfig = function() {
             e.preventDefault();
         });
         // 设置分页控件
-        var pager_aj = new Slick.Controls.Pager(this.dataView, this.grid, $("#"+pager));
-
+        if (this.is_pager) {
+            var pager_aj = new Slick.Controls.Pager(this.dataView, this.grid, $("#"+pager));
+        }
         // 注册grid的自动提示插件。只在字段内容过长时出现省略号时提示
         this.grid.registerPlugin(new Slick.AutoTooltips());
         if (filterPanel) {

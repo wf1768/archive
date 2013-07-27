@@ -89,6 +89,7 @@
     <script type="text/javascript" src="../../js/account/account.js"></script>
     <script type="text/javascript" src="ArchiveList.js"></script>
     <script type="text/javascript" src="ArchiveWjList.js"></script>
+    <script type="text/javascript" src="ArchiveImportList.js"></script>
 
     <script type="text/javascript">
         //客户端实现 复制、粘贴 功能用的map
@@ -304,6 +305,42 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div id="importwindows" class="modal hide fade" aria-hidden="true" style="left: 40%;width: 800px;margin: -280px 0 0 -280px;">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <div id="importtitle">数据导入</div>
+    </div>
+    <div class="modal-body" style="height: 400px;">
+        <div id="importdiv" class="grid-div"
+             style="width: 100%;height: 400px; "></div>
+    </div>
+    <div class="modal-footer">
+        <a href="javascript:;" onclick="selectfile()" class="btn btn-primary">选择文件</a>
+        <a href="javascript:;" id="importdelete" onclick="importdelete()" class="btn btn-primary">删除</a>
+        <a href="javascript:;" id="importbatchupdate" onclick="importsave()" class="btn btn-primary">保存</a>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="selectfilewindows" class="modal hide fade" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <div id="">上传导入文件</div>
+    </div>
+    <div class="modal-body">
+        <form id="importArchiveForm" class="form-horizontal" enctype="multipart/form-data"
+              action="upload.action" method="post" target="hidden_frame">
+            <input type="file" size="40px" class="span2" style="width: 300px" id="selectfile" name="selectfile">
+            <iframe name="hidden_frame" id="hidden_frame" style="display: none"></iframe>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="javascript:;" onclick="importArchive()" class="btn btn-primary">导入</a>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    </div>
+</div>
 
 <!--<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
     <!--<div class="modal-header">-->

@@ -81,12 +81,13 @@ public class TreeAction extends BaseAction {
 		
 		//获得父节点为nodeId的子节点
 		SysTreeExample example = new SysTreeExample();
-		if ("admin".equals(sessionAccount.getAccountcode())) {
-			example.createCriteria().andParentidEqualTo(tmpParent);
-		}
-		else {
-			example.createCriteria().andParentidEqualTo(tmpParent).andTreeidIn(treeidList);
-		}
+        example.createCriteria().andParentidEqualTo(tmpParent);
+//		if ("admin".equals(sessionAccount.getAccountcode())) {
+//			example.createCriteria().andParentidEqualTo(tmpParent);
+//		}
+//		else {
+//			example.createCriteria().andParentidEqualTo(tmpParent).andTreeidIn(treeidList);
+//		}
 		List<SysTree> treeList = treeService.selectByWhereNotPage(example);
 		
 		if ("root".equals(parentid)) {

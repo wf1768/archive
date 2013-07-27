@@ -88,15 +88,17 @@ function wjbatchupdate() {
 }
 //open wj import data tab
 function wjimport() {
-	showArchiveImportTab('02');
+    openImportWindows('02');
+//	showArchiveImportTab('02');
 }
 //show wj grid filter div
 function wjfilter() {
-	if ($(wjGridconfig.grid.getTopPanel()).is(":visible")) {
-		wjGridconfig.grid.hideTopPanel();
-	} else {
-		wjGridconfig.grid.showTopPanel();
-	}
+    wjGridconfig.grid.setTopPanelVisibility(!wjGridconfig.grid.getOptions().showTopPanel);
+//	if ($(wjGridconfig.grid.getTopPanel()).is(":visible")) {
+//		wjGridconfig.grid.hideTopPanel();
+//	} else {
+//		wjGridconfig.grid.showTopPanel();
+//	}
 }
 // wj Single archive link files
 function wjlinkfile() {
@@ -245,7 +247,7 @@ function readwjdata() {
 }
 
 function show_wj_archive_list() {
-    $('#wjtab').click();
+
     var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=02&importType=0";
     $.ajax({
         async: false,
@@ -266,6 +268,7 @@ function show_wj_archive_list() {
             }
         }
     });
+    $('#wjtab').click();
     readwjdata();
     //模拟点击了页签文件级<a>，转到文件级页签
     $("#grid_header_wj").html('<h3>'+archiveCommon.selectTreeName + '_文件级档案列表'+'</h3>');

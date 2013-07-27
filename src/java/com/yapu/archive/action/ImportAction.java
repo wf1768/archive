@@ -73,18 +73,22 @@ public class ImportAction extends BaseAction {
 		List<SysTempletfield> noImportFieldList = new ArrayList<SysTempletfield>();
 		//数据库字段名称与excel列头对比，找出需要导入哪些字段
 		String[] stringArr = new String[excelField.size()];
+        int tmpArrNumber = 0;
 		for (int i=0;i<fieldList.size();i++) {
+
 			String a = fieldList.get(i).getChinesename();
 			int num = excelField.indexOf(a);
 			if (num >= 0) {
-				stringArr[num] = fieldList.get(i).getEnglishname();
+//				stringArr[tmpArrNumber] = fieldList.get(i).getEnglishname();
+//                tmpArrNumber += 1;
+                tmpFieldList.add(fieldList.get(i).getEnglishname());
 			}
 			else if (fieldList.get(i).getSort() >= 0) {
 				noImportFieldList.add(fieldList.get(i));
 			}
 		}
 		
-		tmpFieldList = Arrays.asList(stringArr);
+//		tmpFieldList = Arrays.asList(stringArr);
 		
 		if (tmpFieldList.size() <= 0) {
 			out.write("<script>parent.showCallback('failure','Excel文件读取错误，请检查Excel文件是否符合本系统的要求！')</script>");
@@ -100,6 +104,7 @@ public class ImportAction extends BaseAction {
 			//生成系统字段
 			sb.append("{").append("\"id\":\"").append(UUID.randomUUID()).append("\",\"treeid\":\"");
 			sb.append(treeid).append("\",\"isdoc\":\"0\",\"rownum\":\"").append(i).append("\",");
+            sb.append("\"status\":\"1\",");
 			if (tableType.equals("02")) {
 				sb.append("\"parentid\":\"").append(selectAid).append("\",");
 			}
@@ -110,7 +115,15 @@ public class ImportAction extends BaseAction {
 				sb.append("\":");
 				sb.append("\"");
 				try {
-					sb.append(row.get(j));
+                    String tmp = row.get(j);
+//                    String tmp = row.get(j).replaceAll("\\\\","\\\\\\\\");
+
+                    tmp = tmp.replace("\n"," ");
+                    tmp = tmp.replaceAll("\\\\","\\\\\\\\");
+//                    tmp = tmp.replace("\\r"," ");
+                    tmp = tmp.replace("'","\\\'");
+//					sb.append(row.get(j));
+                    sb.append(tmp);
 				} catch (Exception e2) {
 					
 				}
@@ -148,7 +161,9 @@ public class ImportAction extends BaseAction {
 		}
 //		sb.deleteCharAt(sb.length() - 1).append("]}");
 		sb.deleteCharAt(sb.length() - 1).append("]");
-		out.write("<script>parent.showCallback('success','"+sb.toString()+"')</script>");
+//		out.write("<script>parent.showCallback('success','"+sb.toString()+"')</script>");
+
+        out.write("<script>var tmp = "+sb.toString()+"; parent.showCallback('success',tmp);</script>");
 		return null;
 	}
 	

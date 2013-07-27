@@ -137,9 +137,9 @@ function showWjTab(id,isAllWj) {
 // 打开案卷导入tab
 function showArchiveImportTab(tableType) {
 	archiveCommon.tableType = tableType;
-	var url = "dispatch.action?page=/webpage/archive/archive/ArchiveImportList.html";
-//	us.showtab($('#tab'),url, '案卷导入', 'icon-page');
-	us.addtab($("#importtab"),'案卷导入','ajax', url);
+    $('#importwindows').modal('show');
+//	var url = "dispatch.action?page=/webpage/archive/archive/ArchiveImportList.html";
+//	us.addtab($("#importtab"),'案卷导入','ajax', url);
 }
 
 
