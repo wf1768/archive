@@ -28,7 +28,10 @@ us.archive.ui.Gridconfig = function() {
     this.grid;
     //是否允许新建行
     this.is_add_new_item = true;
+    //是否有分页
     this.is_pager = true;
+    //是否列值变动，要提交。档案里列值变动要提交修改。导入时，读取的excel文件列表保存前修改列值就不需要提交。
+    this.is_cellchange = true;
     this.fieldsDefaultValue = "";
     //过滤条件
     this.searchString = "";
@@ -118,19 +121,21 @@ us.archive.ui.Gridconfig = function() {
         }
 
         //grid的列值变动事件
-        this.grid.onCellChange.subscribe(function(e, args) {
-            var item = args.item;
-            var par = "importData=[" + JSON.stringify(item) + "]&tableType=" + gridObject.tabletype;
-            $.post("updateImportArchive.action",par,function(data){
-                    if (data != "保存完毕。") {
-                        us.openalert(data,
-                            '系统提示',
-                            'alertbody alert_Information'
-                        );
+        if (this.is_cellchange) {
+            this.grid.onCellChange.subscribe(function(e, args) {
+                var item = args.item;
+                var par = "importData=[" + JSON.stringify(item) + "]&tableType=" + gridObject.tabletype;
+                $.post("updateImportArchive.action",par,function(data){
+                        if (data != "保存完毕。") {
+                            us.openalert(data,
+                                '系统提示',
+                                'alertbody alert_Information'
+                            );
+                        }
                     }
-                }
-            );
-        });
+                );
+            });
+        }
 
         gridObject.grid.onSort.subscribe(function(e, args) {
             archiveCommon.sortdir = args.sortAsc ? 1 : -1;

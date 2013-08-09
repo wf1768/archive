@@ -50,8 +50,17 @@ public class DynamicService implements IDynamicService {
                             value.append("'',");
                         }
                         else {
-                            String tmp = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
+                            String tmp = row.get(field.getEnglishname().toLowerCase());
+                            tmp = tmp.replace("\n"," ");
+//                            tmp = tmp.replaceAll("\\\\"," - ");
+//                            tmp = tmp.replace("'"," ");
+                            tmp = tmp.replaceAll("\\\\","\\\\\\\\");
                             tmp = tmp.replace("'","\\\'");
+
+
+
+//                            String tmp = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
+//                            tmp = tmp.replace("'","\\\'");
 //                            value.append("'").append(row.get(field.getEnglishname().toLowerCase())).append("',");
                             value.append("'").append(tmp).append("',");
                         }

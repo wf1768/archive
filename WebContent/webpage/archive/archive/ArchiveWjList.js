@@ -20,8 +20,16 @@ function wjdelete() {
 
     for ( var i = 0; i < selectRows.length; i++) {
         var item = wjGridconfig.dataView.getItem(selectRows[i]);
-        deleteRows.push(item);
+        var item_tmp = {};
+        item_tmp.id = item.id;
+        item_tmp.treeid = item.treeid;
+        deleteRows.push(item_tmp);
     }
+
+//    if (deleteRows.length > 100) {
+//        us.openalert('选择删除的数据过大，请选择100条以内，分多次删除。 ','系统提示','alertbody alert_Information');
+//        return;
+//    }
 
 	if (deleteRows.length > 0) {
         bootbox.confirm("确定要删除选中的 <span style='color:red'>"+deleteRows.length+"</span> 条文件记录吗?<br> <font color='red'>" +
@@ -233,8 +241,8 @@ function readwjdata() {
 //                });
 //
                 wjGridconfig.grid.invalidate();
-                var viewHeight = $('#wjdiv').find(".grid-canvas").height();
-                $('#wjdiv').height(viewHeight+40);
+//                var viewHeight = $('#wjdiv').find(".grid-canvas").height();
+//                $('#wjdiv').height(viewHeight+40);
 
 			} else {
 				us.openalert('<span style="color:red">读取数据时出错!<span></br>请尝试重新操作或与管理员联系。',

@@ -26,6 +26,7 @@ function openImportWindows(tabletype) {
     });
     // 加入checkbox列
     importGridConfig.columns.push(checkboxSelector_import.getColumnDefinition());
+    importGridConfig.columns = [];
     // 加入其他列
     for ( var i = 0; i < importGridConfig.columns_fields.length; i++) {
         importGridConfig.columns.push(importGridConfig.columns_fields[i]);
@@ -36,6 +37,7 @@ function openImportWindows(tabletype) {
     importGridConfig.is_pager = false;
     importGridConfig.tabletype = tabletype;
     importGridConfig.is_add_new_item = false;
+    importGridConfig.is_cellchange = false;
     importGridConfig.init_grid(importGridConfig,"#importdiv","","");
     importGridConfig.grid.resizeCanvas();
 
@@ -139,40 +141,42 @@ function importdelete() {
 
 // import data save
 function importsave() {
+//    importGridConfig.grid.getEditorLock().commitCurrentEdit();
+//    var a = importGridConfig.dataView.getItems();
+//
+//    for (var i=0;i< 1;i++) {
+//        var item = a[i];
+//
+//        //同步读取数据
+//        var par = "importData=[" + JSON.stringify(item) + "]&tableType=" + archiveCommon.tableType;
+//        $.ajax({
+//            async : false,
+//            url : "saveImportArchive.action",
+//            type : 'post',
+//            dataType : 'script',
+//            data    : par,
+//            success : function(data) {
+//                if (data != "保存完毕。") {
+//                    alert('dd');
+//                }
+//                else {
+//                    alert(i);
+//                }
+//            }
+//        });
+//    }
+
     importGridConfig.grid.getEditorLock().commitCurrentEdit();
     var a = importGridConfig.dataView.getItems();
+    if (a.length > 0) {
+        var par = "importData=" + JSON.stringify(a) + "&tableType=" + archiveCommon.tableType;
 
-    for (var i=0;i< 1;i++) {
-        var item = a[i];
-        //同步读取数据
-        var par = "importData=[" + JSON.stringify(item) + "]&tableType=" + archiveCommon.tableType;
-        $.ajax({
-            async : false,
-            url : "saveImportArchive.action?" + par,
-            type : 'post',
-            dataType : 'script',
-            success : function(data) {
-                if (data != "保存完毕。") {
-
-                }
-                else {
-                    alert(i);
-                }
+        $.post("saveImportArchive.action",par,function(data){
+                us.openalert(data,'系统提示','alertbody alert_Information');
             }
-        });
+        );
     }
-
-
-
-//    if (a.length > 0) {
-//        var par = "importData=" + JSON.stringify(a) + "&tableType=" + archiveCommon.tableType;
-//
-//        $.post("saveImportArchive.action",par,function(data){
-//                us.openalert(data,'系统提示','alertbody alert_Information');
-//            }
-//        );
-//    }
-//    else {
-//        us.openalert('没有找到导入数据.<br>请重新读取Excel导入文件或与管理员联系。 ','系统提示','alertbody alert_Information');
-//    }
+    else {
+        us.openalert('没有找到导入数据.<br>请重新读取Excel导入文件或与管理员联系。 ','系统提示','alertbody alert_Information');
+    }
 }

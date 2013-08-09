@@ -215,9 +215,9 @@ public class Excel {
                     sRow = sCol;
                 } else {
                     if (sCol != null) {
-                        sRow = sRow + "," + sCol;
+                        sRow = sRow + "&&" + sCol;
                     } else {
-                        sRow = sRow + "," + "";
+                        sRow = sRow + "&&" + "";
                     }
                 }
                 c1 = null;
@@ -256,9 +256,9 @@ public class Excel {
                     sRow = sCol;
                 } else {
                     if (sCol != null) {
-                        sRow = sRow + "," + sCol;
+                        sRow = sRow + "&&" + sCol;
                     } else {
-                        sRow = sRow + "," + "";
+                        sRow = sRow + "&&" + "";
                     }
                 }
                 c1 = null;
@@ -301,7 +301,8 @@ public class Excel {
         try {
             for (int i = 0; i < size; i++) {
                 String s = (String) v.get(i);
-                String[] s1 = s.split(",");
+//                String[] s1 = s.split(",");
+                String[] s1 = s.split("&&");
                 for (int j = 0; j < col; j++) {
                     Label label = new Label(j, i, s1[j]);
 
@@ -329,7 +330,8 @@ public class Excel {
         try {
             for (int i = 0; i < size; i++) {
                 String s = (String) v.get(i);
-                String[] s1 = s.split(",");
+                String[] s1 = s.split("&&");
+//                String[] s1 = s.split(",");
                 int col_size = s1.length;
                 for (int j = 0; j < col_size; j++) {
                     Label label = new Label(j, i, s1[j]);

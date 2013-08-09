@@ -3,14 +3,7 @@ package com.yapu.archive.action;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.Vector;
-
-import net.sf.json.JSONArray;
+import java.util.*;
 
 import org.apache.struts2.ServletActionContext;
 import org.json.JSONException;
@@ -52,10 +45,18 @@ public class ImportAction extends BaseAction {
 		
 		//得到excel表内容
 		Excel e = new Excel();
-		Vector v = e.readFromExcel(selectfile);
+        Vector v = null;
+        try {
+            v = e.readFromExcel(selectfile);
+        }
+        catch (Exception e1) {
+            out.write("<script>parent.showCallback('failure','Excel文件读取错误，请检查Excel文件中是否包含上传数据。')</script>");
+            return null;
+        }
+
 		//得到excel表第一行列头，作为字段名称
 		String excelFieldName = "";
-		if (v.size() > 2) {
+		if (v.size() >= 2) {
 			excelFieldName = (String) v.get(0);
 		}
 		else {
@@ -63,25 +64,23 @@ public class ImportAction extends BaseAction {
 			return null;
 		}
 		
-		List<String> excelField = Arrays.asList(v.get(0).toString().split(","));
+		List<String> excelField = Arrays.asList(v.get(0).toString().split("&&"));
 		
 		//得到数据库字段
 		List<SysTempletfield> fieldList = treeService.getTreeOfTempletfield(treeid,tableType);
 		//存储导入字段
 		List<String> tmpFieldList = new ArrayList<String>();
+        HashMap<Integer,String> tmpFieldMap = new HashMap<Integer,String>();
 		//存储没有出现在excel里的字段。
 		List<SysTempletfield> noImportFieldList = new ArrayList<SysTempletfield>();
 		//数据库字段名称与excel列头对比，找出需要导入哪些字段
-		String[] stringArr = new String[excelField.size()];
-        int tmpArrNumber = 0;
 		for (int i=0;i<fieldList.size();i++) {
 
 			String a = fieldList.get(i).getChinesename();
 			int num = excelField.indexOf(a);
 			if (num >= 0) {
-//				stringArr[tmpArrNumber] = fieldList.get(i).getEnglishname();
-//                tmpArrNumber += 1;
                 tmpFieldList.add(fieldList.get(i).getEnglishname());
+                tmpFieldMap.put(num,fieldList.get(i).getEnglishname());
 			}
 			else if (fieldList.get(i).getSort() >= 0) {
 				noImportFieldList.add(fieldList.get(i));
@@ -98,38 +97,87 @@ public class ImportAction extends BaseAction {
 		StringBuffer sb = new StringBuffer();
 //		sb.append("{\"total\":").append(v.size()-1).append(",\"rows\":[");
 		sb.append("[");
+
+        //在生成json时，将数据生成list.用来直接保存到数据库
+        List<HashMap<String,String>> archiveList = new ArrayList<HashMap<String, String>>();
+
+
 		//创建json数据
 		for (int i=1;i<v.size();i++) {
-			List<String> row = Arrays.asList(v.get(i).toString().split(","));
+            HashMap<String,String> archiveMap = new HashMap<String,String>();
+			List<String> row = Arrays.asList(v.get(i).toString().split("&&",-1));
 			//生成系统字段
-			sb.append("{").append("\"id\":\"").append(UUID.randomUUID()).append("\",\"treeid\":\"");
+            String tmpid = UUID.randomUUID().toString();
+			sb.append("{").append("\"id\":\"").append(tmpid).append("\",\"treeid\":\"");
 			sb.append(treeid).append("\",\"isdoc\":\"0\",\"rownum\":\"").append(i).append("\",");
             sb.append("\"status\":\"1\",");
+
+            archiveMap.put("id",tmpid);
+            archiveMap.put("treeid",treeid);
+            archiveMap.put("isdoc","0");
+            archiveMap.put("status","1");
+            //生成list
+
 			if (tableType.equals("02")) {
 				sb.append("\"parentid\":\"").append(selectAid).append("\",");
+                archiveMap.put("parentid",selectAid);
 			}
 			//生成excel导入字段数据
-			for (int j=0;j<tmpFieldList.size();j++) {
-				sb.append("\"");
-				sb.append(tmpFieldList.get(j).toString().toLowerCase());
-				sb.append("\":");
-				sb.append("\"");
-				try {
-                    String tmp = row.get(j);
-//                    String tmp = row.get(j).replaceAll("\\\\","\\\\\\\\");
+            Iterator it = tmpFieldMap.keySet().iterator();
+            while (it.hasNext()) {
+                Object key = it.next();
+//                System.out.println("key:"+key);
+//                System.out.println("value:"+a.get(key));
+                sb.append("\"");
+                sb.append(tmpFieldMap.get(key).toString().toLowerCase());
+                sb.append("\":");
+                sb.append("\"");
+                String tmp = "";
+                try {
+                    tmp = row.get((Integer)key);
 
                     tmp = tmp.replace("\n"," ");
+//                    tmp = tmp.replaceAll("\\\\"," - ");
+//                    tmp = tmp.replace("\r"," ");
+//                    tmp = tmp.replace("'"," ");
+
                     tmp = tmp.replaceAll("\\\\","\\\\\\\\");
 //                    tmp = tmp.replace("\\r"," ");
                     tmp = tmp.replace("'","\\\'");
+                    tmp = tmp.replace("\"","\\\"");
 //					sb.append(row.get(j));
                     sb.append(tmp);
-				} catch (Exception e2) {
-					
-				}
-				
-				sb.append("\",");
-			}
+                } catch (Exception e2) {
+
+                }
+
+                sb.append("\",");
+
+                archiveMap.put(tmpFieldMap.get(key).toString().toLowerCase(),row.get((Integer)key));
+            }
+
+//			for (int j=0;j<tmpFieldList.size();j++) {
+//				sb.append("\"");
+//				sb.append(tmpFieldList.get(j).toString().toLowerCase());
+//				sb.append("\":");
+//				sb.append("\"");
+//				try {
+//                    String bb = tmpFieldList.get(j).toString();
+//                    String tmp = row.get(j);
+////                    String tmp = row.get(j).replaceAll("\\\\","\\\\\\\\");
+//
+//                    tmp = tmp.replace("\n"," ");
+//                    tmp = tmp.replaceAll("\\\\","\\\\\\\\");
+////                    tmp = tmp.replace("\\r"," ");
+//                    tmp = tmp.replace("'","\\\'");
+////					sb.append(row.get(j));
+//                    sb.append(tmp);
+//				} catch (Exception e2) {
+//
+//				}
+//
+//				sb.append("\",");
+//			}
 			//生成非excel导入字段，并且字段类型是int或有默认值的
 			for (SysTempletfield field : noImportFieldList) {
 				if (field.getFieldtype().equals("INT")) {
@@ -143,6 +191,7 @@ public class ImportAction extends BaseAction {
 						
 					}
 					sb.append("\",");
+                    archiveMap.put(field.getEnglishname().toString().toLowerCase(),"0");
 				}
 				else {
 					sb.append("\"");
@@ -155,13 +204,50 @@ public class ImportAction extends BaseAction {
 						
 					}
 					sb.append("\",");
+                    archiveMap.put(field.getEnglishname().toString().toLowerCase(),"");
 				}
 			}
 			sb.deleteCharAt(sb.length() - 1).append("},");
+            archiveList.add(archiveMap);
 		}
 //		sb.deleteCharAt(sb.length() - 1).append("]}");
 		sb.deleteCharAt(sb.length() - 1).append("]");
 //		out.write("<script>parent.showCallback('success','"+sb.toString()+"')</script>");
+
+
+        //原设计：先读取excel文件内容到前台grid显示，点击保存，ajax提交grid数据到insert，如果数据过多，会超过ajax提交最大post值。
+        //现改为：上传excel文件，处理excel数据，把excel数据保存到数据库里，然后传到前台，如果前台编辑、删除，是真实的删除和修改了。
+
+        //================================
+//        String result = "";
+//        Gson gson = new Gson();
+//        List<HashMap<String,String>> archiveList = new ArrayList<HashMap<String, String>>();
+
+//        try {
+//            //将传入的json字符串，转换成list
+//            archiveList = (List)gson.fromJson(sb.toString(), new TypeToken<List<HashMap<String,String>>>(){}.getType());
+//        } catch (Exception e1) {
+//            System.out.println(e1.getMessage());
+//            out.write("<script>parent.showCallback('failure','保存失败，请重新尝试，或与管理员联系。')</script>");
+//            return null;
+//        }
+
+        if (archiveList.size() <= 0) {
+            out.write("<script>parent.showCallback('failure','没有找到数据，请重新尝试或与管理员联系。')</script>");
+            return null;
+        }
+
+        List<SysTable> tableList = treeService.getTreeOfTable(archiveList.get(0).get("treeid").toString());
+        String tableName = "";
+        //得到表名
+        for (int i=0;i<tableList.size();i++) {
+            if (tableList.get(i).getTabletype().equals(tableType)) {
+                tableName = tableList.get(i).getTablename();
+                break;
+            }
+        }
+        boolean b = dynamicService.insert(archiveList,tableName,fieldList);
+        //================================
 
         out.write("<script>var tmp = "+sb.toString()+"; parent.showCallback('success',tmp);</script>");
 		return null;

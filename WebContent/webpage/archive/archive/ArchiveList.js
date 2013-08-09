@@ -281,6 +281,11 @@ function del() {
         }
     }
 
+    if (deleteRows.length > 100) {
+        us.openalert('选择删除的数据过大，请选择100条以内，分多次删除。 ','系统提示','alertbody alert_Information');
+        return;
+    }
+
     if (deleteRows.length > 0) {
         bootbox.confirm("确定要删除选中的 <span style='color:red'>"+deleteRows.length+"</span> 条案卷记录吗?<br> <font color='red'>" +
             "注意：删除案卷记录，将同时删除案卷及案卷下所有文件数据、电子全文，请谨慎操作！</font> ", function(result) {
