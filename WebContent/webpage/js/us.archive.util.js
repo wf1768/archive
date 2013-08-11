@@ -318,11 +318,14 @@ us.upload_multi = function(url,fun) {
 //    });
 //
     //上传框隐藏后，执行传入的方法名。
-    $('#upload-dialog').on('hidden', function () {
+    if (fun != "") {
+        $('#upload-dialog').on('hidden', function () {
 //        if (fun != '') {
             eval(fun + "()");
 //        }
-    });
+        });
+
+    }
 
     return $('#upload-dialog').modal();
 }

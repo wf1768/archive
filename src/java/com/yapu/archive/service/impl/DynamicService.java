@@ -107,15 +107,17 @@ public class DynamicService implements IDynamicService {
                 sb.append("update ").append(tableName).append(" set ");
 
                 for (SysTempletfield field : fieldList) {
-                    if (!"id".equals(field.getEnglishname().toLowerCase())) {
-                        sb.append(field.getEnglishname().toLowerCase()).append("=");
-                        String value = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
-                        value = value.replace("'","\\\'");
-                        if (field.getFieldtype().contains("VARCHAR")) {
-                            sb.append("'").append(value).append("',");
-                        }
-                        else {
-                            sb.append(value).append(",");
+                    if (field.getSort() != -1) {
+                        if (!"id".equals(field.getEnglishname().toLowerCase())) {
+                            sb.append(field.getEnglishname().toLowerCase()).append("=");
+                            String value = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
+                            value = value.replace("'","\\\'");
+                            if (field.getFieldtype().contains("VARCHAR")) {
+                                sb.append("'").append(value).append("',");
+                            }
+                            else {
+                                sb.append(value).append(",");
+                            }
                         }
                     }
                 }

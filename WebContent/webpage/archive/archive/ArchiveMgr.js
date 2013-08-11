@@ -111,13 +111,18 @@ function showTreeList(ob,id,text) {
     });
     var url = "";
     if (archiveType == "A" || archiveType == "F") {
+        $('#media').hide();
+        $('#archive').show();
         show_aj_archive_list();
 //        url  = "showArchiveList.action?treeid=" + id;
 //        us.addtab(ob,'档案管理','ajax', url);
     }
     else if (archiveType == "P") {
-        url = "dispatch.action?page=/webpage/archive/archive/MediaList.html";
-        us.addtab($('#media'),'多媒体管理','ajax', url);
+        $('#media').show();
+        $('#archive').hide();
+        readMediaData();
+//        url = "dispatch.action?page=/webpage/archive/archive/MediaList.html";
+//        us.addtab($('#media'),'多媒体管理','ajax', url);
     }
 }
 

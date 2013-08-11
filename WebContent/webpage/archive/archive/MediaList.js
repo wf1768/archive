@@ -1,28 +1,28 @@
 var tableField; //表字段
 var selectMediaid;
-jQuery.fn.limit=function(){ 
-    var self = $("div[limit]"); 
-    self.each(function(){ 
-        var objString = $(this).text(); 
-        var objLength = $(this).text().length; 
-        var num = $(this).attr("limit"); 
-        if(objLength > num){ 
-		$(this).attr("title",objString); 
-            objString = $(this).text(objString.substring(0,num) + "..."); 
-        } 
-    }) 
+jQuery.fn.limit=function(){
+    var self = $("div[limit]");
+    self.each(function(){
+        var objString = $(this).text();
+        var objLength = $(this).text().length;
+        var num = $(this).attr("limit");
+        if(objLength > num){
+		$(this).attr("title",objString);
+            objString = $(this).text(objString.substring(0,num) + "...");
+        }
+    })
 }
 $(function(){
-    $('#grid_header_media').html(archiveCommon.selectTreeName + "_多媒体文件管理");
-	readData();
-	var tableField = readField();
-
-    $(document.body).limit(); 
+//    $('#grid_header_media').html(archiveCommon.selectTreeName + "_多媒体文件管理");
+//    readMediaData();
+//	var tableField = readField();
+//
+//    $(document.body).limit();
 
 });
 
 //同步读取当前节点的原始数据
-function readData() {
+function readMediaData() {
     $.ajax({
         async: false,
         url: "listForMediaArchive.action",
@@ -38,6 +38,9 @@ function readData() {
             }
         }
     });
+    var tableField = readField();
+
+    $(document.body).limit();
 }
 //同步读取当前节点的字段
 function readField() {
@@ -69,15 +72,15 @@ function showData(data) {
 	    }
      	html +='<li class="span3">';
 		html +='	<div class="thumbnail">';
-		html +='		<a class="thumbnail" href="javascript::" onclick="showMediaWjTab(\''+data[i].ID+'\')">';
+		html +='		<a class="thumbnail" href="javascript:;" onclick="showMediaWjTab(\''+data[i].ID+'\')">';
 		html +='			<img class="imgSize" src="'+imgsrc+'">';
 		html +='		</a>';
 		html +='		<div class="actions">';
-		html +='			<a href="javascript::" onclick="getMedia(\''+data[i].ID+'\')" title="修改"><i class="icon-pencil icon-white"></i></a>';
-		html +='			<a href="javascript::" onclick="deleteMedia(\''+data[i].ID+'\')" title="删除"><i class="icon-remove icon-white"></i></a>';
-		html +='   			<a href="javascript::" onclick="showMediaWjTab(\''+data[i].ID+'\')" title="查看"><i class="icon-search icon-white"></i></a>';
+		html +='			<a href="javascript:;" onclick="getMedia(\''+data[i].ID+'\')" title="修改"><i class="icon-pencil icon-white"></i></a>';
+		html +='			<a href="javascript:;" onclick="deleteMedia(\''+data[i].ID+'\')" title="删除"><i class="icon-remove icon-white"></i></a>';
+		html +='   			<a href="javascript:;" onclick="showMediaWjTab(\''+data[i].ID+'\')" title="查看"><i class="icon-search icon-white"></i></a>';
 		html +='		</div>';
-		html +='		<div limit="20" class="titleN">题名：'+data[i].TM+'</div>';
+		html +='		<div limit="18" class="titleN">题名：'+data[i].TM+'</div>';
 		html +='	</div>';
 		html +='</li>';
 	}
@@ -198,7 +201,7 @@ function insert(){
 	     success: function (data) {
 	     	$("#addMedia").modal('hide');
         	openalert(data);
-        	readData();
+            readMediaData();
 	     }
 	});
 }
@@ -217,7 +220,7 @@ function deleteMedia(id){
 			    success: function (data) {
 			        if (data == "succ") {
 			           openalert("删除成功!");
-			           readData();
+                        readMediaData();
 			        } else {
 			           openalert('删除失败，请尝试重新操作或与管理员联系! ');
 			        }
@@ -243,7 +246,7 @@ function getMedia(id){
 	            $("#addMediaDialog").html("");//把添加的内容清空，否则ID有冲突
 	            $("#updMediaDialog").html(html);
 	            $("#ID").val(id); //用于Update
-	            for(var i=0;i<tableField.length;i++){ 
+	            for(var i=0;i<tableField.length;i++){
 	            	var v = tableField[i].englishname;
 	            	$("#"+v).val(tableFieldValue[0][v]);//赋值
 	            }
@@ -289,8 +292,18 @@ function update(){
  */
 function showMediaWjTab(id) {
     selectMediaid = id;
-    url = "dispatch.action?page=/webpage/archive/archive/MediaWjList.html";
-    us.addtab($('#mediawj'), '多媒体--文件管理', 'ajax', url);
+//    url = "dispatch.action?page=/webpage/archive/archive/MediaWjList.html";
+//    us.addtab($('#mediawj'), '多媒体--文件管理', 'ajax', url);
+    $('#media_wjtab').click();
+    readMediaWjData();
+
+}
+
+/**
+ * 刷新
+ */
+function refreshMediaAj(){
+    readMediaData();
 }
 
 /**

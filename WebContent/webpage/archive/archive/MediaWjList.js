@@ -1,30 +1,31 @@
-var tableField; //表字段
-var tableValue; //字段值
-jQuery.fn.limit=function(){ 
-    var self = $("div[limit]"); 
-    self.each(function(){ 
-        var objString = $(this).text(); 
-        var objLength = $(this).text().length; 
-        var num = $(this).attr("limit"); 
-        if(objLength > num){ 
-		$(this).attr("title",objString); 
-            objString = $(this).text(objString.substring(0,num) + "..."); 
-        } 
-    }) 
-}
+var tableMediaWjField; //表字段
+var tableMediaValue; //字段值
+//jQuery.fn.limit=function(){ 
+//    var self = $("div[limit]"); 
+//    self.each(function(){ 
+//        var objString = $(this).text(); 
+//        var objLength = $(this).text().length; 
+//        var num = $(this).attr("limit"); 
+//        if(objLength > num){ 
+//		$(this).attr("title",objString); 
+//            objString = $(this).text(objString.substring(0,num) + "..."); 
+//        } 
+//    }) 
+//}
 $(function(){
-    $('#grid_header_mediawj').html(archiveCommon.selectTreeName + "_多媒体管理");
-    
-	readData();
-	uploadmmedia(); //上传控件加载
-	var tableField = readField();
-	
-	$(document.body).limit(); 
+//    $('#grid_header_mediawj').html(archiveCommon.selectTreeName + "_多媒体管理");
+//    
+//	readMediaWjData();
+//	uploadmmedia(); //上传控件加载
+//	var tableMediaWjField = readMediaWjField();
+//	
+//	$(document.body).limit(); 
 	
 });
 
 //同步读取当前节点的原始数据
-function readData() {
+function readMediaWjData() {
+    $('#grid_header_mediawj').html(archiveCommon.selectTreeName + "_多媒体管理");
     $.ajax({
         async: false,
         url: "listForMediaWjArchive.action",
@@ -34,16 +35,20 @@ function readData() {
         success: function (data) {
             if (data != "error") {
                 data = eval(data);
-                tableValue = data;
-                showData(data);
+                tableMediaValue = data;
+                showMediaWjData(data);
             } else {
                 openalert('读取数据时出错，请尝试重新操作或与管理员联系! ');
             }
         }
     });
+    uploadmmedia(); //上传控件加载
+    var tableMediaWjField = readMediaWjField();
+
+    $(document.body).limit();
 }
 //同步读取当前节点的字段
-function readField() {
+function readMediaWjField() {
     $.ajax({
         async: false,
         url: "getFieldList.action",
@@ -52,7 +57,7 @@ function readField() {
         data: {treeid: archiveCommon.selectTreeid, tableType: '02'},
         success: function (data) {
             if (data != "error") {
-                tableField = eval(data);
+                tableMediaWjField = eval(data);
             } else {
                 openalert('读取数据时出错，请尝试重新操作或与管理员联系!');
             }
@@ -60,7 +65,7 @@ function readField() {
     });
 }
 //显示多媒体数据
-function showData(data) {
+function showMediaWjData(data) {
 	var html = "";
 	for (var i = 0; i < data.length; i++) {
 	 	var imgsrc = "";
@@ -71,15 +76,15 @@ function showData(data) {
 	    }
      	html +='<li class="span3">';
 		html +='	<div class="thumbnail">';
-		html +='		<a class="thumbnail" href="javascript::" >';
+		html +='		<a class="thumbnail" href="javascript:;" >';
 		html +='			<img class="imgSize" src="'+imgsrc+'">';
 		html +='		</a>';
 		html +='		<div class="actions">';
-		html +='			<a href="javascript::" onclick="setCoverImg(\''+data[i].SLT+'\')" title="设为封面"><i class="icon-eye-open icon-white"></i></a>';
-		html +='			<a href="javascript::" onclick="createWjInfo(\''+data[i].ID+'\')" title="修改"><i class="icon-pencil icon-white"></i></a>';
-		html +='			<a href="javascript::" onclick="deleteMediaWj(\''+data[i].ID+'\',\''+data[i].SLT+'\')" title="删除"><i class="icon-remove icon-white"></i></a>';
+		html +='			<a href="javascript:;" onclick="setCoverImg(\''+data[i].SLT+'\')" title="设为封面"><i class="icon-eye-open icon-white"></i></a>';
+		html +='			<a href="javascript:;" onclick="createWjInfo(\''+data[i].ID+'\')" title="修改"><i class="icon-pencil icon-white"></i></a>';
+		html +='			<a href="javascript:;" onclick="deleteMediaWj(\''+data[i].ID+'\',\''+data[i].SLT+'\')" title="删除"><i class="icon-remove icon-white"></i></a>';
 		html +='		</div>';
-		html +='		<div limit="20" class="titleN">题名：'+data[i].TM+'</div>';
+		html +='		<div limit="18" class="titleN">题名：'+data[i].TM+'</div>';
 		html +='	</div>';
 		html +='</li>';
 	}
@@ -121,7 +126,13 @@ function uploadmmedia(){
 	    }
 	})
 }
+
 function openUploadMedia() {
+    var url = 'uploadMedia.action?parentid=' + selectMediaid + '&tableType=02&treeid=' + archiveCommon.selectTreeid;
+    us.upload_multi(url,'readMediaWjField');
+}
+
+function openUploadMedia2() {
      $("#uploader").pluploadQueue({
          // General settings
          runtimes : 'flash,html5,html4',
@@ -168,9 +179,9 @@ function createWjInfo(id) {
     var row;
     var num = -1;
     if (id != "") {
-        for (var i=0;i<tableValue.length;i++) {
-            if (id == tableValue[i].ID) {
-                editRow = tableValue[i];
+        for (var i=0;i<tableMediaValue.length;i++) {
+            if (id == tableMediaValue[i].ID) {
+                editRow = tableMediaValue[i];
                 row = editRow;
                 num = i;
                 editRowid = row.ID;
@@ -183,21 +194,21 @@ function createWjInfo(id) {
     }
     var html = "<form class=\"form-horizontal\">";
     //处理动态字段，创建dialog里的添加html
-    if (tableField.length > 0) {
-        for (var i=0;i<tableField.length;i++) {
-            if (tableField[i].isgridshow == 1) {
-                html += "<div class=\"control-group\" id=\""+tableField[i].englishname+"div\">";
-                html += "<label class=\"control-label\"' for=\""+tableField[i].englishname+"\">"+tableField[i].chinesename+"</label>";
+    if (tableMediaWjField.length > 0) {
+        for (var i=0;i<tableMediaWjField.length;i++) {
+            if (tableMediaWjField[i].isgridshow == 1) {
+                html += "<div class=\"control-group\" id=\""+tableMediaWjField[i].englishname+"div\">";
+                html += "<label class=\"control-label\"' for=\""+tableMediaWjField[i].englishname+"\">"+tableMediaWjField[i].chinesename+"</label>";
                 html += "<div class=\"controls\"'>";
                 //弄有代码的
-                if (tableField[i].iscode == 1) {
+                if (tableMediaWjField[i].iscode == 1) {
                     var code;
                     $.ajax({
                         async : false,
                         url : "getFieldCode.action",
                         type : 'post',
                         dataType : 'json',
-                        data:{templetfieldid:tableField[i].templetfieldid},
+                        data:{templetfieldid:tableMediaWjField[i].templetfieldid},
                         success : function(data) {
                             if (data != "error") {
                                 code = eval(data);
@@ -205,20 +216,20 @@ function createWjInfo(id) {
                             }
                         }
                     });
-                    html += "<select id='" + tableField[i].englishname +"'>";
+                    html += "<select id='" + tableMediaWjField[i].englishname +"'>";
                     for (var j=0;j<code.length;j++) {
                         html += "<option value='"+code[j].columnname+"'>"+code[j].columndata+"</option>";
                     }
                     html += "</select>";
                 }
                 else {
-                    if (tableField[i].fieldtype == "INT") {
-                        html += "<input type=\"text\" id=\""+tableField[i].englishname+"\" value=\"0\">";
+                    if (tableMediaWjField[i].fieldtype == "INT") {
+                        html += "<input type=\"text\" id=\""+tableMediaWjField[i].englishname+"\" value=\"0\">";
                     }else {
-                    	if(tableField[i].englishname == "GDRQ"){
-                    		html += '<input type="text" readonly="readonly" value=\""+row[tableField[i].englishname]+"\" id="GDRQ">';
+                    	if(tableMediaWjField[i].englishname == "GDRQ"){
+                    		html += '<input type="text" readonly="readonly" value=\""+row[tableMediaWjField[i].englishname]+"\" id="GDRQ">';
 	                	}else{
-	                    	html += "<input type=\"text\" id=\""+tableField[i].englishname+"\" value=\""+row[tableField[i].englishname]+"\">";
+	                    	html += "<input type=\"text\" id=\""+tableMediaWjField[i].englishname+"\" value=\""+row[tableMediaWjField[i].englishname]+"\">";
 	                    }
                     }
 
@@ -255,8 +266,8 @@ function updateMediaWj() {
     item.slt = editRow.SLT;
     item.parentid = editRow.PARENTID;
     item.IMAGEPATH = "";
-    for (var i=0;i<tableField.length;i++) {
-        var field = tableField[i];
+    for (var i=0;i<tableMediaWjField.length;i++) {
+        var field = tableMediaWjField[i];
         if (field.isgridshow == 1) {
             $('#' + field.englishname + "div").removeClass("error");
             if (null != $('#' + field.englishname).val() || "" != $('#' + field.englishname).val()) {
@@ -292,7 +303,7 @@ function updateMediaWj() {
         data:{importData:JSON.stringify(items),tableType:'02'},
         success : function(data) {
         	$("#updMediaWj").modal('hide'); 
-        	readData();
+        	readMediaWjData();
             openalert(data);
         }
     });
@@ -312,7 +323,7 @@ function deleteMediaWj(id,slt){
 			    success: function (data) {
 			        if (data == "succ") {
 			           openalert("删除成功!");
-			           readData();
+			           readMediaWjData();
 			        } else {
 			           openalert('删除失败，请尝试重新操作或与管理员联系! ');
 			        }
@@ -362,5 +373,5 @@ function openMediaImg() {
  * 刷新
  */
 function refreshWj(){
-	readData();
+	readMediaWjData();
 }
