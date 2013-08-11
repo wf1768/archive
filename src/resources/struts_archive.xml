@@ -83,6 +83,18 @@
 		<!-- 删除档案-->
 		<action name="deleteArchive" class="archiveAction" method="delete"></action>
 
+    	<!-- ========== archive组卷 =========================== -->
+        <!-- 打开文件级页签 -->
+        <action name="showArchiveWjListGroup" class="archiveGroupAction" method="showWjArchive">
+			<result name="success">/webpage/archive/archive/ArchiveWjListGroup.html</result>
+		</action>
+		<!-- 显示文件列表-->
+		<action name="listArchiveF" class="archiveGroupAction" method="list"></action>
+		<!-- 拆卷 -->
+		<action name="hitchBacks" class="archiveGroupAction" method="hitchBacks"></action>
+		<!-- 归档 -->
+		<action name="filing" class="archiveGroupAction" method="filing"></action>
+		
     
         <!-- =============== 导入 ================== -->
         <!-- 读取导入文件 -->
