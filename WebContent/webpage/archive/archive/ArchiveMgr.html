@@ -95,9 +95,10 @@
     <!-- fancyZoom 提供给客户来选择图片展示的一种效果。-->
     <link rel="stylesheet" type="text/css" href="../../js/FancyZoom/fancyzoom.css" />
     <script src="../../js/FancyZoom/js-global/FancyZoom.js" type="text/javascript"></script>
-    <script src="../../js/fancyzoom/js-global/FancyZoomHTML.js" type="text/javascript"></script>
+    <script src="../../js/FancyZoom/js-global/FancyZoomHTML.js" type="text/javascript"></script>
 
     <script type="text/javascript" src="MediaWjList.js"></script>
+    <script type="text/javascript" src="ArchiveBatchAttachment.js"></script>
 
     <script type="text/javascript">
         //客户端实现 复制、粘贴 功能用的map
@@ -132,14 +133,11 @@
                 <ul class="nav nav-tabs">
                     <li class="active"><a id="ajtab" href="#aj" data-toggle="tab">案卷</a></li>
                     <li><a href="#wj" id="wjtab" data-toggle="tab">文件</a></li>
+                    <li><a href="#batchAtt" id="batchAtttab" data-toggle="tab">批量挂接</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane active" id="aj">
                         <div class="span9" style="margin-left: 0px;">
-                            <!--<h1 class="page-title">-->
-                            <!--<i class="icon-th-large"></i>-->
-                            <!--档案管理-->
-                            <!--</h1>-->
                             <div class="widget">
                                 <div id="grid_header_aj" class="widget-header">
                                     <h3>案卷管理</h3>
@@ -249,6 +247,59 @@
                                                                                                  id="txtSearch_wj">
                                         <a href="javascript:void(0);" class="btn btn-info btn-small" style="color: #FFFFFF" onClick="wjfilter()">关闭</a>
                                     </form>
+                                </div>
+                            </div>
+                            <!-- widget end -->
+                        </div>
+                        <!-- span9 end -->
+                    </div>
+                    <div class="tab-pane" id="batchAtt">
+                        <div class="span9" style="margin-left: 0px;">
+                            <div class="widget">
+                                <div id="grid_header_batchAtt" class="widget-header">
+                                    <h3>挂接档案</h3>
+                                </div>
+                                <div id="batch_archive" style="width: 100%;height: 200px;">
+                                    <div style="width:100%;height:35px" class="grid-menu">
+                                        <ul class="nav nav-pills" style="background-color: #F5F5F5; border: 1px solid #D3D3D3">
+                                            <li><a href="javascript:void(0);" onClick="setcondition()">设置挂接条件</a></li>
+                                            <li><a href="javascript:void(0);" onClick="deletearchive()">移除档案</a></li>
+                                            <li><a href="javascript:void(0);" onClick="savearchive()">保存</a></li>
+                                        </ul>
+                                    </div>
+                                    <div id="archiveAttachmentDiv" class="grid-div" style="position: relative; width: 99.8%; height: 180px;"></div>
+                                </div>
+                            </div>
+                            <!-- widget end -->
+                            <div class="widget">
+                                <div id="grid_header_yesfile" class="widget-header">
+                                    <h3>已挂接文件</h3>
+                                </div>
+                                <div id="batch_yesfile" style="width: 100%;height: 200px;">
+                                    <div style="width:100%;height:35px" class="grid-menu">
+                                        <ul class="nav nav-pills" style="background-color: #F5F5F5; border: 1px solid #D3D3D3">
+                                            <li><a href="javascript:void(0);" onClick="deleteyesfile()">移除</a></li>
+                                        </ul>
+                                    </div>
+                                    <div id="archiveAttachmentDiv-yes" class="grid-div" style="position: relative; width: 99.8%; height: 180px;"></div>
+                                </div>
+                            </div>
+                            <!-- widget end -->
+                            <div class="widget">
+                                <div id="grid_header_nofile" class="widget-header">
+                                    <h3>未挂接文件</h3>
+                                </div>
+                                <div id="batch_nofile" style="width: 100%;height: 200px;">
+                                    <div style="width:100%;height:35px" class="grid-menu">
+                                        <ul class="nav nav-pills" style="background-color: #F5F5F5; border: 1px solid #D3D3D3">
+                                            <li><a href="javascript:void(0);" onClick="autofile()">批量挂接</a></li>
+                                            <li><a href="javascript:void(0);" onClick="selffile()">手动挂接</a></li>
+                                            <li><a href="javascript:void(0);" onClick="uploadfile()">上传</a></li>
+                                            <li><a href="javascript:void(0);" onClick="removefile()">移除</a></li>
+                                            <li><a href="javascript:void(0);" onClick="deletefile()">删除</a></li>
+                                        </ul>
+                                    </div>
+                                    <div id="archiveAttachmentDiv-no" class="grid-div" style="position: relative; width: 99.8%; height: 180px;"></div>
                                 </div>
                             </div>
                             <!-- widget end -->

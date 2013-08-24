@@ -42,8 +42,10 @@
             <param name="savePath">/WEB-INF/files/upload</param>
         </action >
         <!-- 删除电子全文 -->
-        <action name ="docDelete" class ="docAction" method="delete">
-        </action >
+        <action name ="docDelete" class ="docAction" method="delete"></action >
+
+        <!-- 删除未挂接的电子全文 -->
+        <action name ="deleteno" class ="docAction" method="deleteNo"></action >
         <action name ="docRead" class ="docAction" method="read">
             <param name="savePath">/WEB-INF/files/swfdoc</param>
         </action >

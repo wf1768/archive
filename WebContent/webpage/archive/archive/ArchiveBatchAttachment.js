@@ -6,9 +6,7 @@ var attNoGridConfig = new us.archive.ui.Gridconfig();
 //对应的全文grid
 var attYesGridConfig = new us.archive.ui.Gridconfig();
 
-archiveCommon.yesItems = [];
-
-//set att condition 
+//设置批量挂接条件
 function setcondition() {
 	$( "#setrequwindows" ).dialog({
 		autoOpen: false,
@@ -42,7 +40,7 @@ function setcondition() {
 	});
 	$( "#setrequwindows" ).dialog('open');
 }
-//move archive
+//移除等待挂接的档案文件
 function deletearchive() {
 	var selectRows = attGridConfig.grid.getSelectedRows();
 	selectRows.sort(function compare(a, b) {
@@ -52,6 +50,28 @@ function deletearchive() {
 		for ( var i = 0; i < selectRows.length; i++) {
 			var item = attGridConfig.dataView.getItem(selectRows[i]);
 			attGridConfig.dataView.deleteItem(item.id);
+
+            var removeItem = [];
+
+            //判断当前档案是否挂接了全文
+            for (var j = 0;j<archiveCommon.yesItems.length;j++) {
+                var tempItem = archiveCommon.yesItems[j];
+                //如果当前档案挂接了，移除对应关系
+                if (tempItem.fileid == item.id) {
+                    removeItem.push(j);
+//                    archiveCommon.yesItems.splice(j,1);
+                    tempItem.fileid = '';
+                    tempItem.treeid = '';
+                    //将全文对象加入到未挂接全文列表
+                    attNoGridConfig.dataView.addItem(tempItem);
+                }
+            }
+
+            for (var z = removeItem.length;z > 0;z--) {
+                archiveCommon.yesItems.splice(removeItem[z-1],1);
+            }
+
+            attYesGridConfig.dataView = [];
 		}
 	}
 	else {
@@ -61,7 +81,7 @@ function deletearchive() {
 		);
 	}
 }
-//save archive att 
+//保存挂接
 function savearchive() {
 	var a = archiveCommon.yesItems;
 	if (a.length > 0) {
@@ -75,13 +95,13 @@ function savearchive() {
 		});
 	}
 	else {
-		us.openalert('<span style="color:red">没有找到导入数据!<span></br>请重新挂接或与管理员联系。',
+		us.openalert('<span style="color:red">没有找到挂接数据!<span></br>请重新挂接或与管理员联系。',
 				'系统提示',
 				'alertbody alert_Information'
 		);
 	}
 }
-// atuo archive att file
+// 自动挂接
 function autofile() {
 	//得到档案记录items
 	var attItems = attGridConfig.dataView.getItems();
@@ -124,7 +144,7 @@ function autofile() {
 	}
 //	archiveCommon.yesItems = attYesGridConfig.dataView.getItems();
 }
-//self archive att file
+//手动挂接
 function selffile() {
 	var attSelectRows = attGridConfig.grid.getSelectedRows();
 	if (attSelectRows.length != 1) {
@@ -167,56 +187,68 @@ function selffile() {
 	}
 //	archiveCommon.yesItems = attYesGridConfig.dataView.getItems();
 }
-//open upload file dialog
-function uploadfile() {
-	$("#uploader").pluploadQueue({
-        // General settings
-        runtimes : 'flash,html5,html4',
-        url : 'docUpload.action',
-        max_file_size : '200mb',
-        //缩略图形式。
-//        resize : {width :32, height : 32, quality : 90},
-//        unique_names : true,
-        chunk_size: '2mb',
-        // Specify what files to browse for
-//        filters : [
-//                   {title : "所有文件", extensions : "*.*"},
-//                   {title : "Image files", extensions : "jpg,gif,png"},
-//		           {title : "rar files", extensions : "rar"},
-//		           {title : "pdf files", extensions : "pdf"},
-//		           {title : "office files", extensions : "docx,ppt,pptx,xls,xlsx"},
-//		           {title : "exe files", extensions : "exe"},
-//		           {title : "Zip files", extensions : "zip,rar,exe"}
-//            
-//        ],
-
-        // Flash settings
-        flash_swf_url : '../../js/plupload/js/plupload.flash.swf'
-        // Silverlight settings
-//        silverlight_xap_url : '/example/plupload/js/plupload.silverlight.xap'
-    });
-    $('#formId').submit(function(e) {
-        var uploader = $('#uploader').pluploadQueue();
-        if (uploader.files.length > 0) {
-            // When all files are uploaded submit form
-            uploader.bind('StateChanged', function() {
-                if (uploader.files.length === (uploader.total.uploaded + uploader.total.failed)) {
-                    $('#formId')[0].submit();
-                }
-            });
-            uploader.start();
-        } else {
-        	us.openalert('请先上传数据文件。',
-    				'系统提示',
-    				'alertbody alert_Information'
-    		);
-        }
-        return false;
-    });
-    $( "#uploadFile" ).dialog( "open");
+//上传文件后，刷新“未挂接文件”
+function uploadend() {
+    getNoAttData();
+    attNoGridConfig.dataView.beginUpdate();
+    attNoGridConfig.dataView.setItems(attNoGridConfig.rows);
+    attNoGridConfig.dataView.endUpdate();
 }
-//move no att
-function deletefile() {
+
+//上传电子文件
+function uploadfile() {
+    var url = 'docUpload.action';
+    us.upload_multi(url,'uploadend');
+
+
+//	$("#uploader").pluploadQueue({
+//        // General settings
+//        runtimes : 'flash,html5,html4',
+//        url : 'docUpload.action',
+//        max_file_size : '200mb',
+//        //缩略图形式。
+////        resize : {width :32, height : 32, quality : 90},
+////        unique_names : true,
+//        chunk_size: '2mb',
+//        // Specify what files to browse for
+////        filters : [
+////                   {title : "所有文件", extensions : "*.*"},
+////                   {title : "Image files", extensions : "jpg,gif,png"},
+////		           {title : "rar files", extensions : "rar"},
+////		           {title : "pdf files", extensions : "pdf"},
+////		           {title : "office files", extensions : "docx,ppt,pptx,xls,xlsx"},
+////		           {title : "exe files", extensions : "exe"},
+////		           {title : "Zip files", extensions : "zip,rar,exe"}
+////
+////        ],
+//
+//        // Flash settings
+//        flash_swf_url : '../../js/plupload/js/plupload.flash.swf'
+//        // Silverlight settings
+////        silverlight_xap_url : '/example/plupload/js/plupload.silverlight.xap'
+//    });
+//    $('#formId').submit(function(e) {
+//        var uploader = $('#uploader').pluploadQueue();
+//        if (uploader.files.length > 0) {
+//            // When all files are uploaded submit form
+//            uploader.bind('StateChanged', function() {
+//                if (uploader.files.length === (uploader.total.uploaded + uploader.total.failed)) {
+//                    $('#formId')[0].submit();
+//                }
+//            });
+//            uploader.start();
+//        } else {
+//        	us.openalert('请先上传数据文件。',
+//    				'系统提示',
+//    				'alertbody alert_Information'
+//    		);
+//        }
+//        return false;
+//    });
+//    $( "#uploadFile" ).dialog( "open");
+}
+//移除未挂接文件
+function removefile() {
 	var selectRows = attNoGridConfig.grid.getSelectedRows();
 	selectRows.sort(function compare(a, b) {
 		return b - a;
@@ -234,7 +266,47 @@ function deletefile() {
 		);
 	}
 }
-//move yes att file
+//物理  删除未挂接电子文件
+function deletefile() {
+    var selectRows = attNoGridConfig.grid.getSelectedRows();
+    selectRows.sort(function compare(a, b) {
+        return b - a;
+    });
+    var idStr = "";
+    if (selectRows.length > 0) {
+        for ( var i = 0; i < selectRows.length; i++) {
+            var item = attNoGridConfig.dataView.getItem(selectRows[i]);
+            attNoGridConfig.dataView.deleteItem(item.docid);
+            idStr += item.docid + ",";
+        }
+        idStr = idStr.substring(0,idStr.length-1);
+        var par = "nodocid=" + idStr;
+        $.ajax({
+            async : false,
+            url : "deleteno.action?" + par,
+            type : 'post',
+            dataType : 'script',
+            success : function(data) {
+                if (data != "error") {
+                    uploadend();
+                } else {
+                    us.openalert('<span style="color:red">删除未挂接文件时出错!<span></br>请关闭浏览器，重新登录尝试或与管理员联系。',
+                        '系统提示',
+                        'alertbody alert_Information'
+                    );
+                }
+            }
+        });
+    }
+    else {
+        us.openalert('请选择要删除的未挂接全文数据。',
+            '系统提示',
+            'alertbody alert_Information'
+        );
+    }
+}
+
+//移除已挂接的电子文件
 function deleteyesfile() {
 	var selectRows = attYesGridConfig.grid.getSelectedRows();
 	selectRows.sort(function compare(a, b) {
@@ -270,235 +342,123 @@ function deleteyesfile() {
 //	archiveCommon.yesItems = attYesGridConfig.dataView.getItems();
 }
 
-function aa() {
-	//以下设置解决批量挂接单页面多grid的高
-	$batchlayout = $jerTabContent.find('#batchlayout');
-	//如果批量挂接不存在
-	if ($batchlayout.height() == null) {
-		return;
-	}
-	$batchlayout.height($jerTabContent.innerHeight() - 5);
-	
-	$archive = $batchlayout.find('#archive');
-	$nofile = $batchlayout.find('#nofile');
-	$yesfile = $batchlayout.find('#yesfile');
-	$archive.height($batchlayout.innerHeight() * 0.4);
-	$nofile.height($batchlayout.innerHeight() * 0.3);
-	$yesfile.height($batchlayout.innerHeight() * 0.3);
-	
-	//设置archive grid 下的控件高。
-	$archive.find('#archiveAttachmentDiv').height($archive.innerHeight() - 20 - 65);
-	$archive.find('.slick-viewport').height(  $archive.find('#archiveAttachmentDiv').innerHeight() - 20 - 56);
-	
-	//设置yesfile已挂接的grid高
-	$yesfile.find('#archiveAttachmentDiv-yes').height($archive.innerHeight() - 20 - 100);
-	$yesfile.find('.slick-viewport').height(  $archive.find('#archiveAttachmentDiv-yes').innerHeight() - 20 - 56);
-	
-	//设置yesfile已挂接的grid高
-	$nofile.find('#archiveAttachmentDiv-no').height($archive.innerHeight() - 20 - 100);
-	$nofile.find('.slick-viewport').height(  $archive.find('#archiveAttachmentDiv-no').innerHeight() - 20 - 56);
-	
-	
-}
-$(function() {
-	aa();
-	//声明上传控件。#uploadFile，作为公共的资源，在archiveMgr.js里
-	$("#uploadFile").dialog({
-        autoOpen: false,
-        height: 460,
-        width: 630,
-        modal: true,
-        buttons: {
-            '关闭': function() {
-                $( this ).dialog( "close" );
+
+function show_batchAtt_list() {
+
+    archiveCommon.yesItems = [];
+
+    var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=" + archiveCommon.tableType + "&importType=1";
+    $.ajax({
+        async : false,
+        url : "getField.action?" + par,
+        type : 'post',
+        dataType : 'script',
+        success : function(data) {
+            if (data != "error") {
+                attGridConfig.columns_fields = fields;
+//                attGridConfig.fieldsDefaultValue = fieldsDefaultValue;
+            } else {
+                us.openalert('<span style="color:red">读取字段信息时出错!<span></br>请关闭浏览器，重新登录尝试或与管理员联系。',
+                    '系统提示',
+                    'alertbody alert_Information'
+                );
             }
-        },
-        close: function() {
-        	getNoAttData();
-        	attNoGridConfig.dataView.beginUpdate();
-        	attNoGridConfig.dataView.setItems(attNoGridConfig.rows);
-        	attNoGridConfig.dataView.endUpdate();
         }
     });
-	
-	batchLayoutPan = $('#batchlayout').layout({
-		applyDefaultStyles: false,
-		north: {
-			paneSelector:	"#archive",
-			size		:	"200",
-			spacing_open:	2,
-			closable	:	false,
-			resizable	:	true
-		},
-		center: {
-			paneSelector:	"#yesfile",
-			size		:	"100",
-			spacing_open:	2,
-			closable	:	false,
-			resizable	:	true
-		},
-		south: {
-			paneSelector:	"#nofile",
-			size		:	"170",
-			spacing_open:	2,
-			closable	:	false,
-			resizable	:	true
-		},
-		center__onresize:	function (pane, $pane, state, options) {
-			//当浏览器高度变化时。修改子对象的高
-			// 公共的高度
-			aa();
-		}
-	});
-	
-	
-	//生成档案grid
-	var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=" + archiveCommon.tableType + "&importType=1";
-	$.ajax({
-		async : false,
-		url : "getField.action?" + par,
-		type : 'post',
-		dataType : 'script',
-		success : function(data) {
-			if (data != "error") {
-				attGridConfig.columns = fields;
-				attGridConfig.fieldsDefaultValue = fieldsDefaultValue;
-			} else {
-				us.openalert('请选择要移除的数据。',
-						'系统提示',
-						'alertbody alert_Information'
-				);
-				us.openalert('<span style="color:red">读取字段信息时出错!<span></br>请关闭浏览器，重新登录尝试或与管理员联系。',
-						'系统提示',
-						'alertbody alert_Information'
-				);
-			}
-		}
-	});
-	// 创建dataview
-	attGridConfig.dataView = new Slick.Data.DataView({
-		inlineFilters : true
-	});
-	attGridConfig.options.enableAddRow = false;
-	attGridConfig.options.editable = false;
-	// 创建grid
-	attGridConfig.grid = new Slick.Grid("#archiveAttachmentDiv", attGridConfig.dataView, attGridConfig.columns, attGridConfig.options);
+//    attGridConfig.dataView.length = 0;
+//    for ( var i = 0; i < archiveCommon.items.length; i++) {
+//        attGridConfig.dataView.addItem(archiveCommon.items[i]);
+//    };
+    attGridConfig.dataView.setItems(archiveCommon.items);
 
-	// 设置grid的选择模式。行选择
-	attGridConfig.grid.setSelectionModel(new Slick.RowSelectionModel());
-	
-	// 注册grid的自动提示插件。只在字段内容过长时出现省略号时提示
-	attGridConfig.grid.registerPlugin(new Slick.AutoTooltips());
-	
-	attGridConfig.dataView.onRowCountChanged.subscribe(function(e, args) {
-		attGridConfig.grid.updateRowCount();
-		attGridConfig.grid.render();
-	});
+    var visibleColumns_att = [];//定义一个数组存放显示的列
 
-	attGridConfig.dataView.onRowsChanged.subscribe(function(e, args) {
-		attGridConfig.grid.invalidateRows(args.rows);
-		attGridConfig.grid.render();
-	});
-	
-	attGridConfig.grid.onSelectedRowsChanged.subscribe(function(e,args) {
-		var attYesItems = archiveCommon.yesItems;  //attYesGridConfig.dataView.getItems();
-		if (attYesItems.length > 0) {
-			if (args.rows.length > 0) {
-				attYesGridConfig.dataView.setItems([]);
-				for (var i=0;i<args.rows.length;i++) {
-					var item = attGridConfig.dataView.getItem(args.rows[i]);
-					for (var j=0;j<attYesItems.length;j++) {
-						if (item.id == attYesItems[j].fileid) {
-							attYesGridConfig.dataView.addItem(attYesItems[j]);
-						}
-					}
-				}
-			}
-		}
-	});
-	
-	attGridConfig.dataView.beginUpdate();
-	for ( var i = 0; i < archiveCommon.items.length; i++) {
-		attGridConfig.dataView.addItem(archiveCommon.items[i]);
-	};
-	attGridConfig.dataView.endUpdate();
-//	attGridConfig.grid.resizeCanvas();
-	//=========没有对应的全文grid============
-	
-	getNoAttData();
-	attNoGridConfig.columns = [
-         {id: "docoldname", name: "文件名", field: "docoldname" },
-         {id: "docext", name: "文件类型", field: "docext" },
-         {id: "doclength", name: "文件大小", field: "doclength" },
-         {id: "creater", name: "上传者", field: "creater" },
-         {id: "createtime", name: "上传时间", field: "createtime" }
-     ];
-	// 创建dataview
-	attNoGridConfig.dataView = new Slick.Data.DataView({
-		inlineFilters : true,
-		idField:"docid"
-	});
-	attNoGridConfig.options.enableAddRow = false;
-	attNoGridConfig.options.editable = false;
-	// 创建grid
-	attNoGridConfig.grid = new Slick.Grid("#archiveAttachmentDiv-no", attNoGridConfig.dataView, attNoGridConfig.columns, attNoGridConfig.options);
+//                // 加入其他列
+    for ( var i = 0; i < attGridConfig.columns_fields.length; i++) {
+        visibleColumns_att.push(attGridConfig.columns_fields[i]);
+    }
 
-	// 设置grid的选择模式。行选择
-	attNoGridConfig.grid.setSelectionModel(new Slick.RowSelectionModel());
-	// 注册grid的自动提示插件。只在字段内容过长时出现省略号时提示
-	attNoGridConfig.grid.registerPlugin(new Slick.AutoTooltips());
-	
-	attNoGridConfig.dataView.onRowCountChanged.subscribe(function(e, args) {
-		attNoGridConfig.grid.updateRowCount();
-		attNoGridConfig.grid.render();
-	});
+    //设置grid的列
+    attGridConfig.grid.setColumns(visibleColumns_att);
 
-	attNoGridConfig.dataView.onRowsChanged.subscribe(function(e, args) {
-		attNoGridConfig.grid.invalidateRows(args.rows);
-		attNoGridConfig.grid.render();
-	});
-	attNoGridConfig.dataView.beginUpdate();
-	attNoGridConfig.dataView.setItems(attNoGridConfig.rows);
-	attNoGridConfig.dataView.endUpdate();
-//	attNoGridConfig.grid.resizeCanvas();
-	//=====================
-	
-	//========已对应的全文grid=========
-	attYesGridConfig.columns = [
-                   {id: "docoldname", name: "文件名", field: "docoldname" },
-                   {id: "docext", name: "文件类型", field: "docext" },
-                   {id: "doclength", name: "文件大小", field: "doclength" },
-                   {id: "creater", name: "上传者", field: "creater" },
-                   {id: "createtime", name: "上传时间", field: "createtime" },
-                   {id: "fileid", name: "id", field: "fileid" }
-               ];
-  	// 创建dataview
-	attYesGridConfig.dataView = new Slick.Data.DataView({ 
-  		inlineFilters : true,
-  		idField:"docid"
-  	});
-	attYesGridConfig.options.enableAddRow = false;
-	attYesGridConfig.options.editable = false;
-  	// 创建grid
-	attYesGridConfig.grid = new Slick.Grid("#archiveAttachmentDiv-yes", attYesGridConfig.dataView, attYesGridConfig.columns, attYesGridConfig.options);
+    attGridConfig.grid.setSelectionModel(new Slick.RowSelectionModel());
 
-  	// 设置grid的选择模式。行选择
-	attYesGridConfig.grid.setSelectionModel(new Slick.RowSelectionModel());
-  	// 注册grid的自动提示插件。只在字段内容过长时出现省略号时提示
-	attYesGridConfig.grid.registerPlugin(new Slick.AutoTooltips());
-          	
-  	attYesGridConfig.dataView.onRowCountChanged.subscribe(function(e, args) {
-  		attYesGridConfig.grid.updateRowCount();
-  		attYesGridConfig.grid.render();
-  	});
-  
-  	attYesGridConfig.dataView.onRowsChanged.subscribe(function(e, args) {
-  		attYesGridConfig.grid.invalidateRows(args.rows);
-  		attYesGridConfig.grid.render();
-  	});
-          	
+    attGridConfig.grid.onSelectedRowsChanged.subscribe(function(e,args) {
+        var attYesItems = archiveCommon.yesItems;  //attYesGridConfig.dataView.getItems();
+        if (attYesItems.length > 0) {
+            if (args.rows.length > 0) {
+                attYesGridConfig.dataView.setItems([]);
+                for (var i=0;i<args.rows.length;i++) {
+                    var item = attGridConfig.dataView.getItem(args.rows[i]);
+                    for (var j=0;j<attYesItems.length;j++) {
+                        if (item.id == attYesItems[j].fileid) {
+                            attYesGridConfig.dataView.addItem(attYesItems[j]);
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+    //初始化待挂接文件grid
+    //创建待挂接文件gird
+    getNoAttData();
+    attNoGridConfig.columns = [
+        {id: "docoldname", name: "文件名", field: "docoldname" },
+        {id: "docext", name: "文件类型", field: "docext" },
+        {id: "doclength", name: "文件大小", field: "doclength" },
+        {id: "creater", name: "上传者", field: "creater" },
+        {id: "createtime", name: "上传时间", field: "createtime" }
+    ];
+    attNoGridConfig.dataView.setItems(attNoGridConfig.rows);
+    //设置grid的列
+    attNoGridConfig.grid.setColumns(attNoGridConfig.columns);
+    attNoGridConfig.grid.setSelectionModel(new Slick.RowSelectionModel());
+
+    //已挂接文件gird
+    attYesGridConfig.columns = [
+        {id: "docoldname", name: "文件名", field: "docoldname" },
+        {id: "docext", name: "文件类型", field: "docext" },
+        {id: "doclength", name: "文件大小", field: "doclength" },
+        {id: "creater", name: "上传者", field: "creater" },
+        {id: "createtime", name: "上传时间", field: "createtime" }
+//        {id: "fileid", name: "id", field: "fileid" }
+    ];
+
+    //设置grid的列
+    attYesGridConfig.grid.setColumns(attYesGridConfig.columns);
+    attYesGridConfig.grid.setSelectionModel(new Slick.RowSelectionModel());
+
+}
+
+
+$(function() {
+    $('#batchAtttab').hide();
+
+    //创建档案gird
+    attGridConfig.options.editable = false;
+    attGridConfig.is_add_new_item = false;
+    attGridConfig.is_cellchange = false;
+    attGridConfig.is_pager = false;
+    attGridConfig.init_grid(attGridConfig,"#archiveAttachmentDiv","","");
+
+
+    attNoGridConfig.options.editable = false;
+    attNoGridConfig.is_add_new_item = false;
+    attNoGridConfig.is_cellchange = false;
+    attNoGridConfig.is_pager = false;
+    attNoGridConfig.init_grid(attNoGridConfig,"#archiveAttachmentDiv-no","","","docid");
+
+    attYesGridConfig.options.editable = false;
+    attYesGridConfig.is_add_new_item = false;
+    attYesGridConfig.is_cellchange = false;
+    attYesGridConfig.is_pager = false;
+    attYesGridConfig.init_grid(attYesGridConfig,"#archiveAttachmentDiv-yes","","","docid");
+
 });
 
+//读取未挂接电子文件
 function getNoAttData() {
 	//同步读取当前帐户上传到全文库中的电子文件数据
 	$.ajax({

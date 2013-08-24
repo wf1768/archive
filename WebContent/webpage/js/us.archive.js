@@ -51,8 +51,11 @@ us.archive.Archive.prototype.showBatchAttachment = function(grid,tableType,rows)
 		var item = grid.dataView.getItem(rows[i]);
 		archiveCommon.items.push(item);
 	};
-	var url = "dispatch.action?page=/webpage/archive/archive/ArchiveBatchAttachment.html";
-	us.addtab($("#batchatttab"),'批量挂接','ajax', url);
+//	var url = "dispatch.action?page=/webpage/archive/archive/ArchiveBatchAttachment.html";
+//	us.addtab($("#batchatttab"),'批量挂接','ajax', url);
+    $('#batchAtttab').show();
+    $('#batchAtttab').click();
+    show_batchAtt_list();
 	
 }
 

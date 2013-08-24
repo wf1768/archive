@@ -52,12 +52,22 @@ us.archive.ui.Gridconfig = function() {
     }
     this.tabletype = '';
 
-    this.init_grid = function(gridObject,grid_div,pager,filterPanel) {
+    this.init_grid = function(gridObject,grid_div,pager,filterPanel,idfield) {
 
-        // 创建dataview
-        this.dataView = new Slick.Data.DataView({
-            inlineFilters : false
-        });
+        if (idfield) {
+            // 创建dataview
+            this.dataView = new Slick.Data.DataView({
+                inlineFilters : false,
+                idField:idfield
+            });
+        }
+        else {
+            // 创建dataview
+            this.dataView = new Slick.Data.DataView({
+                inlineFilters : false
+            });
+        }
+
         if (this.is_add_new_item) {
             this.options.enableAddRow = true;
         }

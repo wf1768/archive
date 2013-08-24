@@ -32,6 +32,7 @@ import org.springframework.dao.support.DaoSupport;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -76,6 +77,19 @@ public class DocAction extends BaseAction{
     //fileid treeid 为单个档案挂接上传文件时用到
     private String fileid;
     private String treeid;
+
+
+
+    //未挂接的电子全文，删除用
+    private String nodocid;
+
+    public String getNodocid() {
+        return nodocid;
+    }
+
+    public void setNodocid(String nodocid) {
+        this.nodocid = nodocid;
+    }
 
     public String getSavePath() {
         return savePath;
@@ -371,6 +385,36 @@ public class DocAction extends BaseAction{
         	out.write(result);
         }
     	out.write(result);
+        return null;
+    }
+
+    /**
+     * 删除未挂接的电子文件
+     * @return
+     */
+    public String deleteNo() throws IOException {
+        PrintWriter out = this.getPrintWriter();
+        String result = "success";
+
+        //获取id参数
+        String[] idArray = nodocid.split(",");
+
+        List idList = Arrays.asList(idArray);
+
+        int num = docService.deleteDoc(idList);
+
+//        for (String docid :idArray) {
+//            docService.deleteDoc(docid);
+//        }
+
+
+        if (num <= 0) {
+            result = "error";
+            out.write(result);
+            return null;
+        }
+
+        out.write(result);
         return null;
     }
 
