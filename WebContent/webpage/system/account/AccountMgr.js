@@ -13,11 +13,6 @@ function funcheck(){
 	return flag;
 }
 $(function () {
-//http://blog.csdn.net/kdiller/article/details/6059700
-//http://blog.csdn.net/xushichang/article/details/5795532
-//http://hi.baidu.com/danghj/item/b3c123a99f172e706cd455bd
-//http://www.jstree.com/demo
-	
 	$("#demo").bind("before.jstree", function (e, data) {
 		if (data.func == "remove") {
 			if(funcheck()){
