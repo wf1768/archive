@@ -256,6 +256,7 @@
                     <div class="tab-pane" id="batchAtt">
                         <div class="span9" style="margin-left: 0px;">
                             <div class="widget">
+                                当前挂接条件：<span id="gjtj"></span> 更改挂接条件：<select id="fieldselect"></select> <button class="btn btn-small" onclick="setArchiveField()">更改挂接条件</button>
                                 <div id="grid_header_batchAtt" class="widget-header">
                                     <h3>挂接档案</h3>
                                 </div>
@@ -265,6 +266,7 @@
                                             <li><a href="javascript:void(0);" onClick="setcondition()">设置挂接条件</a></li>
                                             <li><a href="javascript:void(0);" onClick="deletearchive()">移除档案</a></li>
                                             <li><a href="javascript:void(0);" onClick="savearchive()">保存</a></li>
+                                            <li><a href="javascript:void(0);" onClick="closs()">关闭批量挂接</a></li>
                                         </ul>
                                     </div>
                                     <div id="archiveAttachmentDiv" class="grid-div" style="position: relative; width: 99.8%; height: 180px;"></div>

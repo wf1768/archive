@@ -70,9 +70,12 @@ function deletearchive() {
             for (var z = removeItem.length;z > 0;z--) {
                 archiveCommon.yesItems.splice(removeItem[z-1],1);
             }
-
-            attYesGridConfig.dataView = [];
 		}
+
+        var allItem = attYesGridConfig.dataView.getItems();
+        for (var i=0;i<allItem.length;i++) {
+            attYesGridConfig.dataView.deleteItem(allItem[i].docid);
+        }
 	}
 	else {
 		us.openalert('<span style="color:red">请选择要移除的数据!<span>',
@@ -100,6 +103,18 @@ function savearchive() {
 				'alertbody alert_Information'
 		);
 	}
+}
+
+function setArchiveField() {
+    var selectField = $("#fieldselect").val();
+    var selectFieldcn = $("#fieldselect").find("option:selected").text();
+
+    archiveCommon.archiveField = selectField;
+    archiveCommon.archiveFieldcn = selectFieldcn;
+
+    $('#gjtj').html(archiveCommon.archiveFieldcn);
+
+
 }
 // 自动挂接
 function autofile() {
@@ -365,6 +380,15 @@ function show_batchAtt_list() {
             }
         }
     });
+
+    $('#gjtj').html(archiveCommon.archiveFieldcn);
+    $("#fieldselect").empty();
+    for (var i=0;i<attGridConfig.columns_fields.length;i++) {
+        if (attGridConfig.columns_fields[i].id != "rownum" && attGridConfig.columns_fields[i].id != "isdoc" && attGridConfig.columns_fields[i].id != "files") {
+            $("#fieldselect").append("<option value='"+attGridConfig.columns_fields[i].id+"'>"+attGridConfig.columns_fields[i].name+"</option>");
+        }
+    }
+
 //    attGridConfig.dataView.length = 0;
 //    for ( var i = 0; i < archiveCommon.items.length; i++) {
 //        attGridConfig.dataView.addItem(archiveCommon.items[i]);
@@ -430,6 +454,16 @@ function show_batchAtt_list() {
     attYesGridConfig.grid.setColumns(attYesGridConfig.columns);
     attYesGridConfig.grid.setSelectionModel(new Slick.RowSelectionModel());
 
+}
+
+function closs() {
+    $('#batchAtttab').hide();
+    $('#ajtab').click();
+    var allItem = attYesGridConfig.dataView.getItems();
+    for (var i=0;i<allItem.length;i++) {
+        attYesGridConfig.dataView.deleteItem(allItem[i].docid);
+    }
+    archiveCommon.yesItems = [];
 }
 
 
