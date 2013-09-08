@@ -12,7 +12,6 @@ import com.yapu.system.util.lucene.Indexer;
 
 public class IndexerService implements IIndexerService {
 
-	@Override
 	public void createIndex(String tablename, List fieldList, List dataList,
 			String openMode) {
 		Indexer indexer = new Indexer();
@@ -20,7 +19,6 @@ public class IndexerService implements IIndexerService {
 
 	}
 
-	@Override
 	public String createIndex(String docServerid, List<SysDoc> docList,
 			HashMap<String, String> contentMap, String openMode) {
 		Indexer indexer = new Indexer();

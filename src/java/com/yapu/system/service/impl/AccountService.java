@@ -519,56 +519,51 @@ public class AccountService implements IAccountService {
 		this.roleDao = roleDao;
 	}
 
-	@Override
 	public List<SysAccountTree> getAccountOfTree(SysAccount account) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	@Override
 	public Boolean deleteAccountOfTree(List<SysAccountTree> list) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public Boolean deleteAccountOfTree(SysAccountTreeExample example) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public Boolean insertAccountOfTree(List<SysAccountTree> list) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public int updateAccountOfTree(SysAccountTree AccountTree) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
+	
 	public SysAccountTree getAccountOfTree(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public int updateAccountOfTree(SysAccountTree record,
 			SysAccountTreeExample ex) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
+	
 	public List<SysTree> getTree(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public List<SysAccountTree> getAccountOfTree(String accountid, String treeid) {
 		// TODO Auto-generated method stub
 		return null;

@@ -26,7 +26,7 @@ public class DynamicService implements IDynamicService {
 	public int rowCount(String sql){
 		return dynamicDao.countByExample(sql);
 	}
-    @Override
+    
     public boolean insert(List<HashMap<String, String>> list,String tableName,List<SysTempletfield> fieldList) {
 
         //sb存储insert语句values前的
@@ -94,7 +94,7 @@ public class DynamicService implements IDynamicService {
         return true;
     }
 
-    @Override
+    
     public boolean update(List<HashMap<String, String>> list, String tableName, List<SysTempletfield> fieldList) {
         //sb存储update语句
         StringBuffer sb = new StringBuffer();
@@ -157,7 +157,7 @@ public class DynamicService implements IDynamicService {
 		return result;
 	}
 
-	@Override
+	
 	public boolean update(List<String> sqlList) {
 		boolean result = false;
 		if (sqlList.size() > 0) {

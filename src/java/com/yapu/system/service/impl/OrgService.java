@@ -340,7 +340,7 @@ public class OrgService implements IOrgService {
 	/**
 	 * 继承类publicorgservice实现
 	 */
-	@Override
+	
 	public List<SysOrgTree> getOrgOfTree(SysOrg org) {
 		// TODO Auto-generated method stub
 		return null;
@@ -348,7 +348,7 @@ public class OrgService implements IOrgService {
 	/**
 	 * 继承类publicorgservice实现
 	 */
-	@Override
+	
 	public Boolean deleteOrgOfTree(List<SysOrgTree> list) {
 		// TODO Auto-generated method stub
 		return null;
@@ -356,7 +356,7 @@ public class OrgService implements IOrgService {
 	/**
 	 * 继承类publicorgservice实现
 	 */
-	@Override
+	
 	public Boolean insertOrgOfTree(List<SysOrgTree> list) {
 		// TODO Auto-generated method stub
 		return null;
@@ -364,7 +364,7 @@ public class OrgService implements IOrgService {
 	/**
 	 * 继承类publicorgservice实现
 	 */
-	@Override
+	
 	public int updateOrgOfTree(SysOrgTree orgTree) {
 		// TODO Auto-generated method stub
 		return 0;
@@ -373,7 +373,7 @@ public class OrgService implements IOrgService {
 	/**
 	 * 继承类publicorgservice实现
 	 */
-	@Override
+	
 	public Boolean deleteOrgOfTree(SysOrgTreeExample example) {
 		// TODO Auto-generated method stub
 		return null;
@@ -381,7 +381,7 @@ public class OrgService implements IOrgService {
 	/**
 	 * 继承类publicorgservice实现
 	 */
-	@Override
+	
 	public SysOrgTree getOrgOfTree(String id) {
 		// TODO Auto-generated method stub
 		return null;
@@ -389,7 +389,7 @@ public class OrgService implements IOrgService {
 	/**
 	 * 继承类publicorgservice实现
 	 */
-	@Override
+	
 	public int updateOrgOfTree(SysOrgTree record, SysOrgTreeExample ex) {
 		// TODO Auto-generated method stub
 		return 0;
@@ -410,12 +410,12 @@ public class OrgService implements IOrgService {
 	public void setRoleDao(SysRoleDAO roleDao) {
 		this.roleDao = roleDao;
 	}
-	@Override
+	
 	public List<SysTree> getTree(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Override
+	
 	public List<SysOrgTree> getOrgOfTree(String orgid, String treeid) {
 		// TODO Auto-generated method stub
 		return null;

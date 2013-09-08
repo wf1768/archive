@@ -57,7 +57,7 @@ public class SearchService implements ISearchService {
 	 * (non-Javadoc)
 	 * @see com.yapu.archive.service.itf.ISearchService#searchNumber(java.lang.String, java.lang.String[], java.lang.String, java.lang.String)
 	 */
-	@Override
+	
 	public HashMap searchNumber(String tableName, String[] fields,
 			String searchTxt, String treeid) {
 		String path = indexDir + "/" + tableName;
@@ -167,7 +167,7 @@ public class SearchService implements ISearchService {
 	 * (non-Javadoc)
 	 * @see com.yapu.archive.service.itf.ISearchService#search(java.lang.String, java.util.List, java.lang.String, int, int)
 	 */
-	@Override
+	
 	public HashMap search(String tableName,List<SysTempletfield> tmpList, String searchTxt,int currentPage,int pageSize)
 			throws IOException {
 		
@@ -444,7 +444,7 @@ public class SearchService implements ISearchService {
 	 * (non-Javadoc)
 	 * @see com.yapu.archive.service.itf.ISearchService#search(java.lang.String, java.lang.String, int, int)
 	 */
-	@Override
+	
 	public HashMap search(String keyword, String docserverid, List<SysTree> treeList,int currentPage,
 			int pageSize) {
 		
