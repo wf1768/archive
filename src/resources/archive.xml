@@ -253,6 +253,13 @@
         <property name="dynamicService" ref="dynamicService" />
         <property name="templetfieldService" ref="templetfieldService" />
     </bean>
+    
+    <bean id="archiveGroupAction" class="com.yapu.archive.action.ArchiveGroupAction">
+        <property name="treeService" ref="treeService" />
+        <property name="dynamicService" ref="dynamicService" />
+        <property name="templetfieldService" ref="templetfieldService" />
+    </bean>
+    
     <bean id="importAction" class="com.yapu.archive.action.ImportAction">
     	<property name="treeService" ref="treeService" />
     	<property name="dynamicService" ref="dynamicService" />

@@ -87,12 +87,20 @@ $(function() {
 	    $("#tab1").append(html);
 	  }
 	});
+	//预归档
+	$.ajax({
+	  url: "ArchiveGroupPre.html",
+	  cache: false,
+	  success: function(html){
+	    $("#tab2").html(html);
+	  }
+	});
 	//归档组卷
 	$.ajax({
 	  url: "ArchiveGroupVolume.html",
 	  cache: false,
 	  success: function(html){
-	    $("#tab2").html(html);
+	    $("#tab3").html(html);
 	  }
 	});
 	//档案
@@ -100,10 +108,9 @@ $(function() {
 	  url: "ArchiveGroupFiling.html",
 	  cache: false,
 	  success: function(html){
-	    $("#tab3").html(html);
+	    $("#tab4").html(html);
 	  }
 	});
-		
 	
 });
 
