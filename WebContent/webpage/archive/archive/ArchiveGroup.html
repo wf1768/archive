@@ -2,113 +2,104 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <!-- 系统基本css -->
+    <link rel="stylesheet" type="text/css" href="../../css/style.css"/>
+    <!-- 各种图标 按钮 tab等 1-->
+    <link rel="stylesheet" type="text/css" href="../../images/images.css"/>
 
-<!-- 系统基本css -->
-<link rel="stylesheet" type="text/css" href="../../css/style.css" />
-<!-- 一个form的css 现在没有用到 1-->
-<link rel="stylesheet" type="text/css" href="../../css/formStyle.css" />
-<!-- 各种图标 按钮 tab等 1-->
-<link rel="stylesheet" type="text/css" href="../../images/images.css" />
+    <!-- jquery -->
+    <script type="text/javascript" src="../../js/jquery-1.7.1.js"></script>
 
-<!-- jquery -->
-<script type="text/javascript" src="../../js/jquery-1.7.1.js"></script>
+    <!-- archive的通用对象 -->
+    <script type="text/javascript" src="../../js/us.archive.js"></script>
+    <script type="text/javascript" src="../../js/us.archive.ui.js"></script>
+    <script type="text/javascript" src="../../js/us.archive.util.js"></script>
 
-<!-- archive的通用对象 -->
-<script type="text/javascript" src="../../js/us.archive.js"></script>
-<script type="text/javascript" src="../../js/us.archive.ui.js"></script>
-<script type="text/javascript" src="../../js/us.archive.util.js"></script>
-
-<!-- json2 -->
-<script type="text/javascript" src="../../js/json2.js"></script>
-<!-- 1 -->
-<script type="text/javascript" src="../../js/uuid.js"></script>
-<!-- 对话框1 -->
-<link rel="stylesheet" type="text/css" href="../../js/zebra-dialog/css/zebra_dialog.css" />
-<script type="text/javascript" src="../../js/zebra-dialog/js/zebra_dialog.js"></script>
-<!-- javascript 的map。在客户端环境下实现复制，粘贴功能时用到 12-->
-<script type="text/javascript" src="../../js/map.js"></script>
-
-<!-- jquery ui css 有一些插件用到了jquery ui。例如新的grid 12-->
-<!--<link rel="stylesheet" href="../../js/SlickGrid/css/smoothness/jquery-ui-1.8.16.custom.css" type="text/css" />
- <link rel="stylesheet" type="text/css" href="../../js/jquery-ui/css/cupertino/jquery-ui-1.8.23.custom.css" />
- <script type="text/javascript" src="../../js/jquery-ui/jquery-ui-1.8.23.custom.min.js"></script>-->
- <!---->
-<link href="../../js/bootstrap/css/bootstrap.css" rel="stylesheet">
-<link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-<link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
-<link href="../../js/bootstrap/css/adminia.css" rel="stylesheet"> 
-<link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
-<link href="../../js/bootstrap/css/unicorn.main.css" rel="stylesheet">
-
-<script type="text/javascript" src="../../js/bootstrap/js/bootstrap.js"></script>
-<script type="text/javascript" src="../../js/account/account.js"></script>
+    <!-- json2 -->
+    <script type="text/javascript" src="../../js/json2.js"></script>
 
 
-<!-- slick grid -->
-<link rel="stylesheet" href="../../js/SlickGrid/slick.grid.css" type="text/css" />
-<link rel="stylesheet" href="../../js/SlickGrid/myGrid.css" type="text/css" />
-<!-- slick grid分页插件-->
-<link rel="stylesheet" href="../../js/SlickGrid/controls/slick.pager.css" type="text/css" />
-<script type="text/javascript" src="../../js/SlickGrid/lib/firebugx.js"></script>
+    <!-- 模块专用 -->
+    <script type="text/javascript" src="ArchiveMgr.js"></script>
+
+    <script type="text/javascript" src="../../js/uuid.js"></script>
+    <!--&lt;!&ndash; 对话框1 &ndash;&gt;-->
+    <!--<link rel="stylesheet" type="text/css" href="../../js/zebra-dialog/css/zebra_dialog.css" />-->
+    <!--<script type="text/javascript" src="../../js/zebra-dialog/js/zebra_dialog.js"></script>-->
+    <!-- javascript 的map。在客户端环境下实现复制，粘贴功能时用到 12-->
+    <script type="text/javascript" src="../../js/map.js"></script>
+
+    <!-- jquery ui css 有一些插件用到了jquery ui。例如新的grid 12-->
+    <!--<link rel="stylesheet" href="../../js/SlickGrid/css/smoothness/jquery-ui-1.8.16.custom.css" type="text/css" />
+     <link rel="stylesheet" type="text/css" href="../../js/jquery-ui/css/cupertino/jquery-ui-1.8.23.custom.css" />
+     <script type="text/javascript" src="../../js/jquery-ui/jquery-ui-1.8.23.custom.min.js"></script>-->
+    <!---->
+    <link href="../../js/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../../js/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../js/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="../../js/bootstrap/css/font-awesome.css" rel="stylesheet">
+    <link href="../../js/bootstrap/css/adminia.css" rel="stylesheet">
+    <link href="../../js/bootstrap/css/adminia-responsive.css" rel="stylesheet">
+    <link href="../../js/bootstrap/css/unicorn.main.css" rel="stylesheet">
+
+    <script type="text/javascript" src="../../js/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap/js/bootbox.min.js"></script>
+
+    <!-- slick grid -->
+    <link rel="stylesheet" href="../../js/SlickGrid/slick.grid.css" type="text/css"/>
+    <link rel="stylesheet" href="../../js/SlickGrid/myGrid.css" type="text/css"/>
+    <!-- slick grid分页插件-->
+    <link rel="stylesheet" href="../../js/SlickGrid/controls/slick.pager.css" type="text/css"/>
+    <script type="text/javascript" src="../../js/SlickGrid/lib/firebugx.js"></script>
 
 
-<script type="text/javascript" src="../../js/SlickGrid/lib/jquery.event.drag-2.0.min.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/lib/jquery.event.drag-2.2.js"></script>
+    <!--<script type="text/javascript" src="../../js/SlickGrid/lib/jquery.event.drag-2.0.min.js"></script>-->
 
-<script type="text/javascript" src="../../js/SlickGrid/slick.core.js"></script>
-<script type="text/javascript" src="../../js/SlickGrid/plugins/slick.checkboxselectcolumn.js"></script>
-<script type="text/javascript" src="../../js/SlickGrid/plugins/slick.autotooltips.js"></script>
-<script type="text/javascript" src="../../js/SlickGrid/plugins/slick.rowselectionmodel.js"></script>
-<script type="text/javascript" src="../../js/SlickGrid/slick.dataview.js"></script>
-<script type="text/javascript" src="../../js/SlickGrid/slick.formatters.js"></script>
-<script type="text/javascript" src="../../js/SlickGrid/slick.editors.js"></script>
-<script type="text/javascript" src="../../js/SlickGrid/SelectCellEditor.js"></script>
-<script type="text/javascript" src="../../js/SlickGrid/controls/slick.pager.js"></script>
-<script type="text/javascript" src="../../js/SlickGrid/controls/slick.columnpicker.js"></script>
-<script type="text/javascript" src="../../js/SlickGrid/slick.grid.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/slick.core.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/plugins/slick.checkboxselectcolumn.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/plugins/slick.autotooltips.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/plugins/slick.rowselectionmodel.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/slick.dataview.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/slick.formatters.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/slick.editors.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/SelectCellEditor.js"></script>
+    <link rel="stylesheet" href="../../js/SlickGrid/controls/slick.columnpicker.css" type="text/css"/>
+    <script type="text/javascript" src="../../js/SlickGrid/controls/slick.pager.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/controls/slick.columnpicker.js"></script>
+    <script type="text/javascript" src="../../js/SlickGrid/slick.grid.js"></script>
 
+    <!-- tree -->
+    <link type="text/css" href="../../js/jstree/themes/default/style.css" rel="stylesheet">
+    <script type="text/javascript" src="../../js/jstree/jquery.jstree.js"></script>
 
-<!-- jqueyr-window js 1
-<script type="text/javascript" src="../../js/jquery-window/jquery.window.js"></script>-->
+    <link type="text/css" href="../../js/plupload/js/jquery.plupload.queue/css/jquery.plupload.queue.css"
+          rel="stylesheet">
+    <script type="text/javascript" src="../../js/plupload/js/plupload.full.js"></script>
+    <script type="text/javascript" src="../../js/plupload/js/jquery.plupload.queue/jquery.plupload.queue.js"></script>
+    <script type="text/javascript" src="../../js/plupload/js/i18n/cn.js"></script>
 
-<!-- tree -->
-<link type="text/css" href="../../js/jstree/themes/default/style.css" rel="stylesheet">
-<script type="text/javascript" src="../../js/jstree/jquery.jstree.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../js/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css"/>
+    <script type="text/javascript" src="../../js/jquery-ui/jquery-ui-1.8.16.custom.min.js"></script>
 
-<link type="text/css" href="../../js/jerichotab/css/jquery.jerichotab.css" rel="stylesheet">
-<script type="text/javascript" src="../../js/jerichotab/jquery.jerichotab.js"></script>
-<script type="text/javascript" src="../../js/jerichotab/jquery.resizable.js"></script>
+    <link href="../../js/bootstrap/js/datepicker/datepicker.css" rel="stylesheet">
+    <script type="text/javascript" src="../../js/bootstrap/js/datepicker/bootstrap-datepicker.js"></script>
 
-<link type="text/css" href="../../js/plupload/js/jquery.plupload.queue/css/jquery.plupload.queue.css" rel="stylesheet">
-<script type="text/javascript" src="../../js/plupload/js/plupload.full.js"></script>
-<script type="text/javascript" src="../../js/plupload/js/jquery.plupload.queue/jquery.plupload.queue.js"></script>
-<script type="text/javascript" src="../../js/plupload/js/i18n/cn.js"></script>
-
-<link rel="stylesheet" type="text/css" href="../../js/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css" />
- <script type="text/javascript" src="../../js/jquery-ui/jquery-ui-1.8.16.custom.min.js"></script>
-
-<!-- 1 -->
- <link rel="stylesheet" type="text/css" href="../../js/jquery.layout/layout-default-latest.css" />
-<script type="text/javascript" src="../../js/jquery.layout/jquery.layout-latest.js"></script>
-
-<link href="../../js/bootstrap/js/datepicker/datepicker.css" rel="stylesheet">
-<script type="text/javascript" src="../../js/bootstrap/js/datepicker/bootstrap-datepicker.js"></script>
-
-<!-- 模块专用 -->
-<script type="text/javascript" src="ArchiveGroup.js"></script>
-<script src="../../js/bootbox.min.js"></script>
-<script type="text/javascript" src="ArchiveImportList.js"></script>
- 
-<script type="text/javascript">
-//客户端实现 复制、粘贴 功能用的map
-var copyMap = new HashMap();
-</script>
-
-<style type="text/css">
-	.nav{margin-bottom: 0;}
-	.grid-div{border: 1px solid #D3D3D3;}
-	.tab-content {display: inline;}
-</style>
+	<!-- 模块专用 -->
+	<script type="text/javascript" src="../../js/account/account.js"></script>
+	<script type="text/javascript" src="ArchiveGroup.js"></script>
+	<script type="text/javascript" src="ArchiveImportList.js"></script>
+	 
+	<script type="text/javascript">
+	//客户端实现 复制、粘贴 功能用的map
+	var copyMap = new HashMap();
+	</script>
+	
+	<style type="text/css">
+		.nav{margin-bottom: 0;}
+		.grid-div{border: 1px solid #D3D3D3;}
+		.tab-content {display: inline;}
+	</style>
 <title></title>
 </head>
 <body>
@@ -137,8 +128,9 @@ var copyMap = new HashMap();
 						<div style="margin-bottom: 18px;" class="tabbable">
 			              <ul class="nav nav-tabs">
 			                <li class="active"><a id="zlwj" data-toggle="tab" href="#tab1">整理文件</a></li>
-			                <li class=""><a id="gdzj" data-toggle="tab" href="#tab2">归档组卷</a></li>
-			                <li class=""><a id="dan" data-toggle="tab" href="#tab3">档案</a></li>
+			                <li class=""><a id="ygd" data-toggle="tab" href="#tab2">预组卷</a></li>
+			                <li class=""><a id="gdzj" data-toggle="tab" href="#tab3">归档组卷</a></li>
+			                <li class=""><a id="dan" data-toggle="tab" href="#tab4">档案</a></li>
 			              </ul>
 		            	</div>
 		            	<div style="padding-bottom: 9px; border-bottom: 1px solid #ddd;" class="tab-content">
@@ -146,12 +138,16 @@ var copyMap = new HashMap();
 			                <div id="tab1" class="tab-pane active">
 			                  
 			                </div>
-			                <!-- 归档组卷 -->
+			                <!-- 预归档 -->
 			                <div id="tab2" class="tab-pane">
 			                  
 			                </div>
-			                <!-- 案卷 -->
+			                <!-- 归档组卷 -->
 			                <div id="tab3" class="tab-pane">
+			                  
+			                </div>
+			                <!-- 案卷 -->
+			                <div id="tab4" class="tab-pane">
 			                 
 			                </div>
 			                
@@ -180,5 +176,44 @@ var copyMap = new HashMap();
 	    </div>
 	</div>
     
+    <!-- 导入 -->
+	<div id="importwindows" class="modal hide fade" aria-hidden="true" style="left: 40%;width: 800px;margin: -280px 0 0 -280px;">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <div id="importtitle">数据导入</div>
+	    </div>
+	    <div class="modal-body" style="height: 400px;">
+	        <div id="importdiv" class="grid-div"
+	             style="width: 100%;height: 400px; "></div>
+	    </div>
+	    <div class="modal-footer">
+	        <a href="javascript:;" onclick="selectfile()" class="btn btn-primary">选择文件</a>
+	        <!--<a href="javascript:;" id="importdelete" onclick="importdelete()" class="btn btn-primary">删除</a>-->
+	        <!--<a href="javascript:;" id="importbatchupdate" onclick="importsave()" class="btn btn-primary">保存</a>-->
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+	    </div>
+	</div>
+	
+	<!-- Modal -->
+	<div id="selectfilewindows" class="modal hide fade" aria-hidden="true">
+	    <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	        <div>上传导入文件</div>
+	    </div>
+	    <div class="modal-body">
+	        <form id="importArchiveForm" class="form-horizontal" enctype="multipart/form-data"
+	              action="upload.action" method="post" target="hidden_frame">
+	            <input type="file" size="40px" class="span2" style="width: 300px" id="selectfile" name="selectfile">
+	            <iframe name="hidden_frame" id="hidden_frame" style="display: none"></iframe>
+	        </form>
+	    </div>
+	    <div class="modal-footer">
+	        <a href="javascript:;" onclick="importArchive()" class="btn btn-primary">导入</a>
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+	    </div>
+	</div>
+	
+	
+	
 </body>
 </html>

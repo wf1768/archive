@@ -32,6 +32,9 @@ public class ArchiveGroupAction extends BaseAction {
     private String status;
 
 	private String par;
+	
+	private String fieldname; 		//字段
+	private String fieldvalue; 	//字段值
 
 	public String showArchive() {
 		return SUCCESS;
@@ -235,6 +238,79 @@ public class ArchiveGroupAction extends BaseAction {
 		return null;
 	}
 
+	/**
+	 * 预归档
+	 * 归档规则
+	 * */
+	public String getList() throws IOException {
+
+		PrintWriter out = getPrintWriter();
+		StringBuilder result = new StringBuilder();
+		//如果没有得到树节点id，返回error
+		if (null == treeid || "".equals(treeid)) {
+			result.append("error");
+			out.write(result.toString());
+			return null;
+		}
+
+		//得到树节点对应的表集合
+		List<SysTable> tableList = treeService.getTreeOfTable(treeid);
+
+		DynamicExample de = new DynamicExample();
+        DynamicExample.Criteria criteria = de.createCriteria();
+        criteria.andEqualTo("treeid",treeid);
+        
+        criteria.andEqualTo("status", status);//零散文件
+        
+        criteria.andEqualTo(fieldname, fieldvalue); //查询案卷的条件字段
+        
+        if ("0".equals(isAllWj) && "02".equals(tableType)) {
+            criteria.andEqualTo("parentid",selectAid);
+        }
+
+		for (int i=0;i<tableList.size();i++) {
+			if (tableList.get(i).getTabletype().equals(tableType)) {
+				de.setTableName(tableList.get(i).getTablename());
+				break;
+			}
+		}
+		List dynamicList = dynamicService.selectByExample(de);
+
+		//得到字段列表
+		List<SysTempletfield> templetfieldList = treeService.getTreeOfTempletfield(treeid, tableType);
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("var rowList = [");
+		SysTemplet templet = treeService.getTreeOfTemplet(treeid);
+		if(null!=dynamicList && dynamicList.size()>0){
+			for (int i =0; i< dynamicList.size();i++) {
+				HashMap tempMap = (HashMap) dynamicList.get(i);
+				sb.append("{");
+                //添加文件级标识
+                if ("A".equals(templet.getTemplettype())) {
+                    sb.append("\"files\":\"").append(tempMap.get("ID").toString()).append("\",");
+                }
+                //添加电子全文标识
+                sb.append("\"rownum\":").append(i+1).append(",");
+                //grid控件需要小写的id。数据库中存的是大写的id，这里全部采用小写字段名
+				for (SysTempletfield sysTempletfield : templetfieldList) {
+						if (null == tempMap.get(sysTempletfield.getEnglishname())) {
+							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\"\",");
+						}
+						else {
+							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\""+tempMap.get(sysTempletfield.getEnglishname())+"\",");
+						}
+				}
+				sb.deleteCharAt(sb.length() - 1).append("},");
+			}
+		}else{
+			sb.append(",");
+		}
+		sb.deleteCharAt(sb.length() - 1).append("]");
+		out.write(sb.toString());
+		return null;
+	}
+	
     /**
      * 读取原始的档案表数据。不是为grid
      * @return
@@ -395,7 +471,32 @@ public class ArchiveGroupAction extends BaseAction {
     }
 
     /**
-     * 查找案卷下是否还存在文件
+     * 查找案卷是否存在
+     * @param parentid 案卷ID
+     * return true:该案卷存在；false：不存在
+     * */
+    public boolean isExistArchive(String parentid){
+    	//得到树节点对应的表集合
+    	List<SysTable> tableList = new ArrayList<SysTable>();
+    	DynamicExample de = new DynamicExample();
+    	DynamicExample.Criteria criteria = de.createCriteria();
+    	criteria.andEqualTo("treeid", treeid);
+    	criteria.andEqualTo("id", parentid);// 案卷ID
+    	for(int i=0;i<tableList.size();i++){
+    		if(tableList.get(i).getTabletype().equals(tableType)){
+    			de.setTableName(tableList.get(i).getTablename());
+    			break;
+    		}
+    	}
+    	List dynamicList = dynamicService.selectByExample(de);
+    	if(dynamicList.size()>0){
+    		return true;//存在
+    	}else{
+    		return false;//不存在
+    	}
+    }
+    /**
+     * 查找案卷下是否还存在文件级
      * @param parentid 案卷ID
      * @return true：存在已归档的文件；false：不存在
      * */
@@ -477,33 +578,131 @@ public class ArchiveGroupAction extends BaseAction {
 		wjSql.append("update ").append(tableNameWj).append(" set parentid ='',status=2 where parentid in (");
 		HashMap<String,String> row = (HashMap<String,String>) archiveList.get(0);
 		wjSql.append("'").append(row.get("id").toString()).append("',");
-		wjSql.append(wjSql.deleteCharAt(wjSql.length() - 1)).append(")");
+		wjSql.deleteCharAt(wjSql.length() - 1).append(")");
 		List<String> sqlList = new ArrayList<String>();
 		sqlList.add(wjSql.toString());
 		
 		boolean flag = dynamicService.update(sqlList);
-		
-		if(isExistFile(row.get("id").toString())){
-			//存在 把案卷的状态改回正常的已归档状态
-			StringBuffer ajSql = new StringBuffer();
-			ajSql.append("update ").append(tableNameWj).append(" set status=0 where id in (");
-			ajSql.append("'").append(row.get("id").toString()).append("',");
-			ajSql.append(ajSql.deleteCharAt(ajSql.length() - 1)).append(")");
-			List<String> ajSqlList = new ArrayList<String>();
-			ajSqlList.add(ajSql.toString());
-			
-			boolean ajflag = dynamicService.update(ajSqlList);
-		}else{
-			//不存在，删除
-			
-		}
-		
 		if(!flag){
 			result = "拆卷失败！";
+		}else{
+			if(isExistFile(row.get("id").toString())){
+				//存在 把案卷的状态改回正常的已归档状态
+				StringBuffer ajSql = new StringBuffer();
+				ajSql.append("update ").append(tableName).append(" set status=0 where id in (");
+				ajSql.append("'").append(row.get("id").toString()).append("',");
+				ajSql.append(ajSql.deleteCharAt(ajSql.length() - 1)).append(")");
+				List<String> ajSqlList = new ArrayList<String>();
+				ajSqlList.add(ajSql.toString());
+				
+				dynamicService.update(ajSqlList);
+			}else{
+				//不存在，删除案卷
+				StringBuffer ajSql = new StringBuffer();
+				ajSql.append("delete from ").append(tableName).append(" where id in (");
+				ajSql.append("'").append(row.get("id").toString()).append("',");
+				ajSql.deleteCharAt(ajSql.length() - 1).append(")");
+				dynamicService.delete((ajSql.toString()));
+				
+				//案卷的物理文件 删除
+			}
 		}
 
 		out.write(result);
 		return null;
+    }
+    /**
+     * 预组卷-归档组卷 
+     * @throws IOException 
+     * */
+    public String archiveGroup() throws IOException{
+    	String result = "SUCCESS";
+		PrintWriter out = getPrintWriter();
+
+		Gson gson = new Gson();
+		List<HashMap<String,String>> archiveList = new ArrayList<HashMap<String, String>>();
+
+		try {
+			//将传入的json字符串，转换成list
+			archiveList = (List)gson.fromJson(par, new TypeToken<List<HashMap<String,String>>>(){}.getType());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			result = "获取数据失败，请重新尝试，或与管理员联系。";
+			out.write(result);
+			return null;
+		}
+
+		if (archiveList.size() <= 0) {
+			result = "没有找到数据，请重新尝试或与管理员联系。";
+			out.write(result);
+			return null;
+		}
+
+		List<SysTable> tableList = treeService.getTreeOfTable(archiveList.get(0).get("treeid").toString());
+		SysTemplet templet = treeService.getTreeOfTemplet(archiveList.get(0).get("treeid").toString());
+		HashMap<String,String> row = (HashMap<String,String>) archiveList.get(0);
+		
+		String tableName = "";
+		String tableNameWj = "";
+		//得到表名
+		for (int i=0;i<tableList.size();i++) {
+			if (templet.getTemplettype().equals("F")) {
+				if (tableList.get(i).getTabletype().equals(tableType)) {
+					tableName = tableList.get(i).getTablename();
+					break;
+				}
+			}else if (templet.getTemplettype().equals("A")) {
+				if (tableList.get(i).getTabletype().equals(tableType) && tableType.equals("01")) {
+					tableName = tableList.get(i).getTablename();
+				}else if (tableList.get(i).getTabletype().equals(tableType) && tableType.equals("02")){
+					tableNameWj = tableList.get(i).getTablename();
+					break;
+				}else {
+					tableName = tableList.get(i).getTablename();
+				}
+			}
+
+		}
+		/*
+		 * 处理逻辑
+		 * 1.案卷是否是新增的
+		 * 2.如果是新增的那么就要进行案卷的插入，状态为归档组卷
+		 * 3.如果不是新增的那么就修改状态为归档组卷
+		 * 4.是否是新增，文件都要修改为归档组卷状态
+		*/
+		//案卷是否存在
+		if(isExistArchive(row.get("id").toString())){
+			//案卷级
+			StringBuffer ajSql = new StringBuffer();
+			ajSql.append("update ").append(tableName).append(" set status=0 where id in (");
+			ajSql.append("'").append(row.get("id").toString()).append("',");
+			ajSql.deleteCharAt(ajSql.length() - 1).append(")");
+			List<String> ajSqlList = new ArrayList<String>();
+			ajSqlList.add(ajSql.toString());
+			
+//			dynamicService.update(ajSqlList);
+			
+			//文件级
+			StringBuffer wjSql = new StringBuffer();
+			wjSql.append("update ").append(tableNameWj).append(" set status=0 where parentid in (");
+			wjSql.append("'").append(row.get("id").toString()).append("',");
+			wjSql.deleteCharAt(wjSql.length() - 1).append(")");
+			List<String> wjSqlList = new ArrayList<String>();
+			wjSqlList.add(wjSql.toString());
+			
+		}else{
+			StringBuffer ajSql = new StringBuffer();
+//			ajSql.append("insert into ").append(tableName).append(b)
+		}
+		
+//		boolean flag = dynamicService.update(wjSqlList);
+//		if(!flag){
+//			result = "归档失败！";
+//		}
+
+		out.write(result);
+		return null;
+
     }
     
     /**
@@ -535,8 +734,8 @@ public class ArchiveGroupAction extends BaseAction {
 
 		List<SysTable> tableList = treeService.getTreeOfTable(archiveList.get(0).get("treeid").toString());
 		SysTemplet templet = treeService.getTreeOfTemplet(archiveList.get(0).get("treeid").toString());
-		//sb存储update语句
-		StringBuffer sb = new StringBuffer();
+		HashMap<String,String> row = (HashMap<String,String>) archiveList.get(0);
+		
 		String tableName = "";
 		String tableNameWj = "";
 		//得到表名
@@ -550,29 +749,37 @@ public class ArchiveGroupAction extends BaseAction {
 				if (tableList.get(i).getTabletype().equals(tableType) && tableType.equals("01")) {
 					tableName = tableList.get(i).getTablename();
 				}else if (tableList.get(i).getTabletype().equals(tableType) && tableType.equals("02")){
-					tableName = tableList.get(i).getTablename();
+					tableNameWj = tableList.get(i).getTablename();
 					break;
 				}else {
-					tableNameWj = tableList.get(i).getTablename();
+					tableName = tableList.get(i).getTablename();
 				}
 			}
 
 		}
-		sb.append("update ").append(tableName).append(" set parentid ='',status=2 where parentid in (");
-		StringBuffer sbSql = new StringBuffer();
-		for (int z=0;z<archiveList.size();z++) {
-			//得到id集合
-			HashMap<String,String> row = (HashMap<String,String>) archiveList.get(z);
-			sbSql.append("'").append(row.get("id").toString()).append("',");
-		}
-		sb.append(sbSql.deleteCharAt(sbSql.length() - 1)).append(")");
-		List<String> sqlList = new ArrayList<String>();
-		sqlList.add(sb.toString());
 		
-		boolean flag = dynamicService.update(sqlList);
-		if(!flag){
-			result = "拆卷失败！";
-		}
+		//案卷级
+		StringBuffer ajSql = new StringBuffer();
+		ajSql.append("update ").append(tableName).append(" set status=0 where id in (");
+		ajSql.append("'").append(row.get("id").toString()).append("',");
+		ajSql.deleteCharAt(ajSql.length() - 1).append(")");
+		List<String> ajSqlList = new ArrayList<String>();
+		ajSqlList.add(ajSql.toString());
+		
+//		dynamicService.update(ajSqlList);
+		
+		//文件级
+		StringBuffer wjSql = new StringBuffer();
+		wjSql.append("update ").append(tableNameWj).append(" set status=0 where parentid in (");
+		wjSql.append("'").append(row.get("id").toString()).append("',");
+		wjSql.deleteCharAt(wjSql.length() - 1).append(")");
+		List<String> wjSqlList = new ArrayList<String>();
+		wjSqlList.add(wjSql.toString());
+		
+//		boolean flag = dynamicService.update(wjSqlList);
+//		if(!flag){
+//			result = "归档失败！";
+//		}
 
 		out.write(result);
 		return null;
@@ -642,6 +849,22 @@ public class ArchiveGroupAction extends BaseAction {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getFieldname() {
+		return fieldname;
+	}
+
+	public void setFieldname(String fieldname) {
+		this.fieldname = fieldname;
+	}
+
+	public String getFieldvalue() {
+		return fieldvalue;
+	}
+
+	public void setFieldvalue(String fieldvalue) {
+		this.fieldvalue = fieldvalue;
 	}
 
 

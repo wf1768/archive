@@ -152,14 +152,10 @@ function unwind(){
         			tableType = "tableType=01";
         		}
         		var par = "par=" + JSON.stringify(sRows) + "&"+tableType;//"&tableType=02";
-        		alert(par);
         		$.post("hitchBacks.action",par,function(data){
     				if (data == "SUCCESS") {
-//    					for ( var i = 0; i < selectRows.length; i++) {
-//        					var item = wjGridconfig.dataView.getItem(selectRows[i]);
-//        					wjGridconfig.dataView.deleteItem(item.id);
-//        				};
-        				us.openalert('已成功拆卷。 ','系统提示','alertbody alert_Information');
+    					$('#gdzj').click();
+    					us.openalert('已成功拆卷。 ','系统提示','alertbody alert_Information');
     				}else {
     					us.openalert(data,'系统提示','alertbody alert_Information');
     				}

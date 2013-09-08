@@ -90,6 +90,10 @@
 		</action>
 		<!-- 显示文件列表-->
 		<action name="listArchiveF" class="archiveGroupAction" method="list"></action>
+		<!-- 条件列表-->
+		<action name="listArchiveT" class="archiveGroupAction" method="getList"></action>
+		<!-- 归档组卷-->
+		<action name="archiveGroup" class="archiveGroupAction" method="archiveGroup"></action>
 		<!-- 拆卷 -->
 		<action name="hitchBacks" class="archiveGroupAction" method="hitchBacks"></action>
 		<!-- 归档 -->
