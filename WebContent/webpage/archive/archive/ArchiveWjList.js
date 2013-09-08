@@ -155,6 +155,7 @@ function wjrefresh() {
 
 //read wj Archive data
 function readwjdata() {
+    wjGridconfig.dataView.setItems([]);
 	//同步读取数据
 	var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=02&isAllWj=" + archiveCommon.isAllWj +"&selectAid=" + archiveCommon.selectAid;
 	$.ajax({
