@@ -40,6 +40,8 @@ us.archive.Archive = function() {
 	this.fileField = "docoldname";
 	//存储批量挂接对应上关系的文件items。
 	this.yesItems = [];
+	//是否是新增的
+	this.isNew = false;
 }
 
 /**

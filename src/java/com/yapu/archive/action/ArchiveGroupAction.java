@@ -530,10 +530,8 @@ public class ArchiveGroupAction extends BaseAction {
 	public String hitchBacks() throws IOException{
     	String result = "SUCCESS";
 		PrintWriter out = getPrintWriter();
-
 		Gson gson = new Gson();
 		List<HashMap<String,String>> archiveList = new ArrayList<HashMap<String, String>>();
-
 		try {
 			//将传入的json字符串，转换成list
 			archiveList = (List)gson.fromJson(par, new TypeToken<List<HashMap<String,String>>>(){}.getType());
@@ -543,7 +541,6 @@ public class ArchiveGroupAction extends BaseAction {
 			out.write(result);
 			return null;
 		}
-
 		if (archiveList.size() <= 0) {
 			result = "没有找到数据，请重新尝试或与管理员联系。";
 			out.write(result);
@@ -552,8 +549,6 @@ public class ArchiveGroupAction extends BaseAction {
 
 		List<SysTable> tableList = treeService.getTreeOfTable(archiveList.get(0).get("treeid").toString());
 		SysTemplet templet = treeService.getTreeOfTemplet(archiveList.get(0).get("treeid").toString());
-		//sb存储update语句
-		StringBuffer wjSql = new StringBuffer();
 		String tableName = "";
 		String tableNameWj = "";
 		//得到表名
@@ -575,39 +570,56 @@ public class ArchiveGroupAction extends BaseAction {
 			}
 
 		}
-		wjSql.append("update ").append(tableNameWj).append(" set parentid ='',status=2 where parentid in (");
-		HashMap<String,String> row = (HashMap<String,String>) archiveList.get(0);
-		wjSql.append("'").append(row.get("id").toString()).append("',");
-		wjSql.deleteCharAt(wjSql.length() - 1).append(")");
-		List<String> sqlList = new ArrayList<String>();
-		sqlList.add(wjSql.toString());
 		
-		boolean flag = dynamicService.update(sqlList);
-		if(!flag){
-			result = "拆卷失败！";
-		}else{
-			if(isExistFile(row.get("id").toString())){
-				//存在 把案卷的状态改回正常的已归档状态
-				StringBuffer ajSql = new StringBuffer();
-				ajSql.append("update ").append(tableName).append(" set status=0 where id in (");
-				ajSql.append("'").append(row.get("id").toString()).append("',");
-				ajSql.append(ajSql.deleteCharAt(ajSql.length() - 1)).append(")");
-				List<String> ajSqlList = new ArrayList<String>();
-				ajSqlList.add(ajSql.toString());
-				
-				dynamicService.update(ajSqlList);
+		if(templet.getTemplettype().equals("F")){
+			//纯文件级
+			StringBuffer ajSql = new StringBuffer();
+			ajSql.append("update ").append(tableName).append(" set status=2 where id in (");
+			HashMap<String,String> row = (HashMap<String,String>) archiveList.get(0);
+			ajSql.append("'").append(row.get("id").toString()).append("',");
+			ajSql.deleteCharAt(ajSql.length() - 1).append(")");
+			List<String> sqlList = new ArrayList<String>();
+			sqlList.add(ajSql.toString());
+			boolean flag = dynamicService.update(sqlList);
+			if(!flag){
+				result = "拆卷失败！";
+			}
+		}else if(templet.getTemplettype().equals("A")){
+			StringBuffer wjSql = new StringBuffer();
+			wjSql.append("update ").append(tableNameWj).append(" set parentid ='',status=2 where parentid in (");
+			HashMap<String,String> row = (HashMap<String,String>) archiveList.get(0);
+			wjSql.append("'").append(row.get("id").toString()).append("',");
+			wjSql.deleteCharAt(wjSql.length() - 1).append(")");
+			wjSql.append("and status=1");
+			List<String> sqlList = new ArrayList<String>();
+			sqlList.add(wjSql.toString());
+			
+			boolean flag = dynamicService.update(sqlList);
+			if(!flag){
+				result = "拆卷失败！";
 			}else{
-				//不存在，删除案卷
-				StringBuffer ajSql = new StringBuffer();
-				ajSql.append("delete from ").append(tableName).append(" where id in (");
-				ajSql.append("'").append(row.get("id").toString()).append("',");
-				ajSql.deleteCharAt(ajSql.length() - 1).append(")");
-				dynamicService.delete((ajSql.toString()));
-				
-				//案卷的物理文件 删除
+				if(isExistFile(row.get("id").toString())){
+					//存在 把案卷的状态改回正常的已归档状态
+					StringBuffer ajSql = new StringBuffer();
+					ajSql.append("update ").append(tableName).append(" set status=0 where id in (");
+					ajSql.append("'").append(row.get("id").toString()).append("',");
+					ajSql.deleteCharAt(ajSql.length() - 1).append(")");
+					List<String> ajSqlList = new ArrayList<String>();
+					ajSqlList.add(ajSql.toString());
+					
+					dynamicService.update(ajSqlList);
+				}else{
+					//不存在，删除案卷
+					StringBuffer ajSql = new StringBuffer();
+					ajSql.append("delete from ").append(tableName).append(" where id in (");
+					ajSql.append("'").append(row.get("id").toString()).append("',");
+					ajSql.deleteCharAt(ajSql.length() - 1).append(")");
+					dynamicService.delete((ajSql.toString()));
+					
+					//案卷的物理文件 删除
+				}
 			}
 		}
-
 		out.write(result);
 		return null;
     }
@@ -663,43 +675,19 @@ public class ArchiveGroupAction extends BaseAction {
 			}
 
 		}
-		/*
-		 * 处理逻辑
-		 * 1.案卷是否是新增的
-		 * 2.如果是新增的那么就要进行案卷的插入，状态为归档组卷
-		 * 3.如果不是新增的那么就修改状态为归档组卷
-		 * 4.是否是新增，文件都要修改为归档组卷状态
-		*/
-		//案卷是否存在
-		if(isExistArchive(row.get("id").toString())){
-			//案卷级
-			StringBuffer ajSql = new StringBuffer();
-			ajSql.append("update ").append(tableName).append(" set status=0 where id in (");
-			ajSql.append("'").append(row.get("id").toString()).append("',");
-			ajSql.deleteCharAt(ajSql.length() - 1).append(")");
-			List<String> ajSqlList = new ArrayList<String>();
-			ajSqlList.add(ajSql.toString());
+	
+		//案卷级
+		StringBuffer ajSql = new StringBuffer();
+		ajSql.append("update ").append(tableName).append(" set status=1 where id in (");
+		ajSql.append("'").append(row.get("id").toString()).append("',");
+		ajSql.deleteCharAt(ajSql.length() - 1).append(")");
+		List<String> ajSqlList = new ArrayList<String>();
+		ajSqlList.add(ajSql.toString());
 			
-//			dynamicService.update(ajSqlList);
-			
-			//文件级
-			StringBuffer wjSql = new StringBuffer();
-			wjSql.append("update ").append(tableNameWj).append(" set status=0 where parentid in (");
-			wjSql.append("'").append(row.get("id").toString()).append("',");
-			wjSql.deleteCharAt(wjSql.length() - 1).append(")");
-			List<String> wjSqlList = new ArrayList<String>();
-			wjSqlList.add(wjSql.toString());
-			
-		}else{
-			StringBuffer ajSql = new StringBuffer();
-//			ajSql.append("insert into ").append(tableName).append(b)
+		boolean flag = dynamicService.update(ajSqlList);
+		if(!flag){
+			result = "组卷失败！";
 		}
-		
-//		boolean flag = dynamicService.update(wjSqlList);
-//		if(!flag){
-//			result = "归档失败！";
-//		}
-
 		out.write(result);
 		return null;
 
@@ -757,29 +745,29 @@ public class ArchiveGroupAction extends BaseAction {
 			}
 
 		}
-		
-		//案卷级
+		//案卷
 		StringBuffer ajSql = new StringBuffer();
 		ajSql.append("update ").append(tableName).append(" set status=0 where id in (");
 		ajSql.append("'").append(row.get("id").toString()).append("',");
 		ajSql.deleteCharAt(ajSql.length() - 1).append(")");
-		List<String> ajSqlList = new ArrayList<String>();
-		ajSqlList.add(ajSql.toString());
-		
-//		dynamicService.update(ajSqlList);
-		
-		//文件级
-		StringBuffer wjSql = new StringBuffer();
-		wjSql.append("update ").append(tableNameWj).append(" set status=0 where parentid in (");
-		wjSql.append("'").append(row.get("id").toString()).append("',");
-		wjSql.deleteCharAt(wjSql.length() - 1).append(")");
-		List<String> wjSqlList = new ArrayList<String>();
-		wjSqlList.add(wjSql.toString());
-		
-//		boolean flag = dynamicService.update(wjSqlList);
-//		if(!flag){
-//			result = "归档失败！";
-//		}
+		List<String> sqlList = new ArrayList<String>();
+		sqlList.add(ajSql.toString());
+		boolean flag = dynamicService.update(sqlList);
+		if(!flag){
+			result = "归档失败！";
+		}else{
+			//文件
+			if(templet.getTemplettype().equals("A")){
+				List<String> wJsqlList = new ArrayList<String>();
+				StringBuffer wjSql = new StringBuffer();
+				wjSql.append("update ").append(tableNameWj).append(" set status=0 where parentid in (");
+				wjSql.append("'").append(row.get("id").toString()).append("',");
+				wjSql.deleteCharAt(wjSql.length() - 1).append(")");
+				wjSql.append("and status=1");
+				wJsqlList.add(wjSql.toString());
+				dynamicService.update(wJsqlList);
+			}
+		}
 
 		out.write(result);
 		return null;

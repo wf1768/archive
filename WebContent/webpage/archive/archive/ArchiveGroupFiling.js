@@ -22,7 +22,7 @@ $(function() {
 
 //读取档案数据
 function readArchiveData() {
-    var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01"+"&status=1";
+    var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01"+"&status=0";
     $.ajax({
         async : false,
         url : "listArchiveF.action?" + par,

@@ -5,7 +5,11 @@ $(function(){
 	
 	wjGridconfig.tabletype = '02';
 	wjGridconfig.init_grid(wjGridconfig,"#wjdiv","pager_wj","inlineFilterPanel_wj");
-	ajGridconfig.tabletype = '02';
+	ajGridconfig.tabletype = '01';
+	ajGridconfig.options.editable = false;
+    ajGridconfig.is_add_new_item = false;
+    ajGridconfig.is_cellchange = false;
+    ajGridconfig.is_pager = false;
 	ajGridconfig.init_grid(ajGridconfig,"#rulediv","","");
 	
 	$("#txtSearch_wj").keyup(function(e) {
@@ -98,14 +102,10 @@ function readwjdata(tableType) {
                 }
                 //设置grid的列
                 wjGridconfig.grid.setColumns(visibleColumns);
-
-//                wjGridconfig.dataView.beginUpdate();
-//                wjGridconfig.dataView.setItems(wjGridconfig.rows);
                 wjGridconfig.dataView.setFilterArgs({
                     searchString : archiveCommon.searchString
                 });
                 wjGridconfig.dataView.setFilter(us.myFilter);
-//                wjGridconfig.dataView.endUpdate();
 
                 // 注册grid的checkbox功能插件
                 wjGridconfig.grid.registerPlugin(checkboxSelector);
@@ -407,7 +407,7 @@ function wjimport() {
  *  组卷条件
  * */
 function read_aj_rows(gridObject){
-    var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01&importType=0";
+    var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01&importType=1";
     $.ajax({
         async : false,
         url : "getField.action?" + par,
@@ -429,26 +429,41 @@ function read_aj_rows(gridObject){
 }
 //组卷-规则设定
 function condition_group(){
-	read_aj_rows(ajGridconfig);
-	
 	var selectRows = wjGridconfig.grid.getSelectedRows();
 	if (selectRows.length > 0) {
 		selectRows.sort(function compare(a, b) {
 			return a - b;
 		});
-		//字段
-		for (var i=0;i<ajGridconfig.columns_fields.length;i++) {
-			if (ajGridconfig.columns_fields[i].id != "rownum" && ajGridconfig.columns_fields[i].id != "isdoc" && ajGridconfig.columns_fields[i].id != "files") {
-				$("#condition_field_aj").append("<option value='"+ajGridconfig.columns_fields[i].id+"'>"+ajGridconfig.columns_fields[i].name+"</option>");
+		//纯文件级直接归档组卷
+		if(archiveCommon.archiveType == "F"){
+			//纯文件级
+			var upRows = [];
+    		for ( var i = 0; i < selectRows.length; i++) {
+				var item = wjGridconfig.dataView.getItem(selectRows[i]);
+				item.status = 1;
+				upRows.push(item);
 			}
+			var par = "importData=" + JSON.stringify(upRows) + "&tableType=01";
+		    $.post("updateImportArchive.action",par,function(data){
+		            if (data != "保存完毕。") {
+		            	us.openalert(data,'系统提示','alertbody alert_Information');
+		            }else{
+		            	$('#gdzj').click();
+		            }
+		        }
+		    );
+		}else{
+			//案卷级——文件级
+			read_aj_rows(ajGridconfig);
+			//字段
+			$("#condition_field_aj").html('');//清空
+			for (var i=0;i<ajGridconfig.columns_fields.length;i++) {
+				if (ajGridconfig.columns_fields[i].id != "rownum" && ajGridconfig.columns_fields[i].id != "isdoc" && ajGridconfig.columns_fields[i].id != "files") {
+					$("#condition_field_aj").append("<option value='"+ajGridconfig.columns_fields[i].id+"'>"+ajGridconfig.columns_fields[i].name+"</option>");
+				}
+			}
+	        $("#condition_group").modal('show');//{backdrop:'static'}
 		}
-//		var resizeTimer = null;
-//		if (resizeTimer) clearTimeout(resizeTimer);
-//		//需要延迟一会，要不然数据不显示
-//        resizeTimer = setTimeout("readRuleData()", 100);
-        
-        $("#condition_group").modal('show');//{backdrop:'static'}
-	        
 	}else {
 		us.openalert('请选择要组卷的记录! ',
 				'系统提示',
@@ -466,7 +481,6 @@ function ruleSel(){
 
 //组卷
 function wj_group(){
-	$('#ygd').click();
 	var selectRowsAj = ajGridconfig.grid.getSelectedRows(); //案卷
 	var selectRows = wjGridconfig.grid.getSelectedRows();	//所选文件
 	if (selectRows.length > 0) {
@@ -474,23 +488,49 @@ function wj_group(){
 			return a - b;
 		});
 		
-		//所选案卷
-		archiveCommon.yesItems = [];
-		
-		var aj_item =ajGridconfig.dataView.getItem(selectRowsAj[0])
-		archiveCommon.yesItems.push(aj_item);
-		
-		//整理文件-所选文件
-		archiveCommon.items = []; 
-		for ( var i = 0; i < selectRows.length; i++) {
-			var item = wjGridconfig.dataView.getItem(selectRows[i]);
-			item.parentid = aj_item.id
-			archiveCommon.items.push(item);
+		if (selectRowsAj.length <= 1) {
+			selectRowsAj.sort(function compare(a, b) {
+				return a - b;
+			});
+			//存放所选案卷
+			archiveCommon.yesItems = [];
+			var aj_item = [];
+            if(selectRowsAj.length == 0){
+            	//所查案卷不存在
+            	var item = $.extend({},ajGridconfig.newItemTemplate);
+                item.id = UUID.prototype.createUUID ();
+                item.treeid = archiveCommon.selectTreeid;
+                item.files = item.id;
+                item.rownum = 1;
+                aj_item = item;
+            	archiveCommon.yesItems.push(aj_item);
+            	archiveCommon.isNew = true; //为新增
+            }else{
+            	aj_item =ajGridconfig.dataView.getItem(selectRowsAj[0]);
+    			archiveCommon.yesItems.push(aj_item);
+    			archiveCommon.isNew = false;
+            }
 			
+			
+			//整理文件-所选文件
+			archiveCommon.items = []; 
+			for ( var i = 0; i < selectRows.length; i++) {
+				var item = wjGridconfig.dataView.getItem(selectRows[i]);
+				item.status = 1;
+				item.parentid = aj_item.id;
+				archiveCommon.items.push(item);
+				
+			}
+			
+			$('#ygd').click();
+			$("#condition_group").modal('hide');
+		}else{
+			us.openalert('只能选择一条案卷记录! ',
+		            '系统提示',
+		            'alertbody alert_Information'
+		        );
 		}
 	}
-
-	$("#condition_group").modal('hide');
 }
 
 //读取档案数据
@@ -508,11 +548,11 @@ function readRuleData(fieldname,fieldvalue) {
               ajGridconfig.dataView.setItems(ajGridconfig.rows);
 
               // 创建checkbox列
-              var checkboxSelector = new Slick.CheckboxSelectColumn({
-                  cssClass : "slick-cell-checkboxsel"
-              });
+//              var checkboxSelector = new Slick.CheckboxSelectColumn({
+//                  cssClass : "slick-cell-checkboxsel"
+//              });
               var visibleColumns = [];//定义一个数组存放显示的列
-              visibleColumns.push(checkboxSelector.getColumnDefinition());//将columns的第一列push进去
+//              visibleColumns.push(checkboxSelector.getColumnDefinition());//将columns的第一列push进去
 
 //              // 加入其他列
               for ( var i = 0; i < ajGridconfig.columns_fields.length; i++) {
@@ -522,15 +562,12 @@ function readRuleData(fieldname,fieldvalue) {
               //设置grid的列
               ajGridconfig.grid.setColumns(visibleColumns);
 
-//              ajGridconfig.dataView.beginUpdate();
-//              ajGridconfig.dataView.setItems(ajGridconfig.rows);
               ajGridconfig.dataView.setFilterArgs({
                   searchString : archiveCommon.searchString
               });
               ajGridconfig.dataView.setFilter(us.myFilter);
-//              ajGridconfig.dataView.endUpdate();
               // 注册grid的checkbox功能插件
-              ajGridconfig.grid.registerPlugin(checkboxSelector);
+//              ajGridconfig.grid.registerPlugin(checkboxSelector);
 
 
               //新建行时，将系统必须的默认值与字段默认值合并
@@ -544,32 +581,8 @@ function readRuleData(fieldname,fieldvalue) {
           }
       }
   });
+  
+  ajGridconfig.grid.setSelectionModel(new Slick.RowSelectionModel());
+
 }
 
-//档案
-//function show_rule_list() {
-//  //同步读取字段
-//  var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01&importType=0";
-//  $.ajax({
-//      async : false,
-//      url : "getField.action?" + par,
-//      type : 'post',
-//      dataType : 'script',
-//      success : function(data) {
-//          if (data != "error") {
-//              ajGridconfig.columns_fields = fields;
-//              ajGridconfig.fieldsDefaultValue = fieldsDefaultValue;
-//              ajGridconfig.selectTableid = tableid;
-//          } else {
-//              us.openalert('<span style="color:red">读取字段信息时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',
-//                  '系统提示',
-//                  'alertbody alert_Information'
-//              );
-//          }
-//      }
-//  });
-//  readRuleData();
-//
-//  $("#rule_header").html('<h3>'+archiveCommon.selectTreeName + '_案卷结果列表'+'</h3>');
-//
-//}

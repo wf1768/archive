@@ -1,5 +1,5 @@
 
-//组卷
+//组卷-AJ
 var volumeGridconfig = new us.archive.ui.Gridconfig();
 //文件
 var organizeGridconfig = new us.archive.ui.Gridconfig();
@@ -20,11 +20,18 @@ $(function() {
 		if(treeid!=''){
 			if (resizeTimer) clearTimeout(resizeTimer);
 			//需要延迟一会，要不然数据不显示
-	        resizeTimer = setTimeout("show_zj_archive_list('01',volumeGridconfig,0)", 100);
-	        archiveCommon.isAllWj=0; //文件级
-	        archiveCommon.selectAid='';//初始为空
-	        resizeTimer = setTimeout("show_zj_archive_list('02',organizeGridconfig,1)", 100);
-//			show_zj_archive_list('01',volumeGridconfig);
+			if(archiveCommon.archiveType == "F"){
+				//纯文件级
+//				$('#gdzjWjDiv').css({"display":"none"});
+				resizeTimer = setTimeout("show_zj_archive_list('01',volumeGridconfig,0)", 100);
+			}else{
+				//文件级
+//				$('#gdzjWjDiv').css({"display":"block"});
+				resizeTimer = setTimeout("show_zj_archive_list('01',volumeGridconfig,0)", 100);
+				archiveCommon.isAllWj=0; //文件级
+		        archiveCommon.selectAid='';//初始为空
+		        resizeTimer = setTimeout("show_zj_archive_list('02',organizeGridconfig,1)", 100);
+			}
 		}
 	});
 	
@@ -164,7 +171,7 @@ function unwind(){
         });
 		
 	}else if(selectRows.length > 1){
-		us.openalert('只能选择一条要拆卷的档案记录!',
+		us.openalert('只能选择一条档案进行拆卷!',
 				'系统提示',
 				'alertbody alert_Information'
 		);
@@ -179,11 +186,11 @@ function unwind(){
 //归档
 function file(){
 	var selectRows = volumeGridconfig.grid.getSelectedRows();
-	if (selectRows.length > 0) {
+	if (selectRows.length == 1) {
 		selectRows.sort(function compare(a, b) {
 			return a - b;
 		});
-		var prompt='确定要进行归档吗？ ';
+		var prompt='确定要进行归档吗？ <br><span style="color:red">注：归档后将不能进行更改操作！</span>';
 		bootbox.confirm(prompt, function(result) {
             if(result){
             	var fileRows = [];
@@ -197,15 +204,11 @@ function file(){
         			//纯文件级
         			tableType = "tableType=01";
         		}
-        		var par = "par=" + JSON.stringify(fileRows) + "&"+tableType;//"&tableType=02";
-        		alert(par);
+        		var par = "par=" + JSON.stringify(fileRows) + "&"+tableType;
         		$.post("filing.action",par,function(data){
     				if (data == "SUCCESS") {
-//    					for ( var i = 0; i < selectRows.length; i++) {
-//        					var item = wjGridconfig.dataView.getItem(selectRows[i]);
-//        					wjGridconfig.dataView.deleteItem(item.id);
-//        				};
         				us.openalert('已成功归档。 ','系统提示','alertbody alert_Information');
+        				$('#dan').click();
     				}else {
     					us.openalert(data,'系统提示','alertbody alert_Information');
     				}
@@ -213,6 +216,11 @@ function file(){
             }
         });
 		
+	}else if(selectRows.length > 1){
+		us.openalert('只能选择一条档案进行归档!',
+				'系统提示',
+				'alertbody alert_Information'
+		);
 	}else {
 		us.openalert('请选择要归档的记录! ',
 				'系统提示',

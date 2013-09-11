@@ -107,7 +107,7 @@ public class DynamicService implements IDynamicService {
                 sb.append("update ").append(tableName).append(" set ");
 
                 for (SysTempletfield field : fieldList) {
-                    if (field.getSort() != -1) {
+//                    if (field.getSort() != -1) { 
                         if (!"id".equals(field.getEnglishname().toLowerCase())) {
                             sb.append(field.getEnglishname().toLowerCase()).append("=");
                             String value = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
@@ -119,7 +119,7 @@ public class DynamicService implements IDynamicService {
                                 sb.append(value).append(",");
                             }
                         }
-                    }
+//                    }
                 }
                 sb.deleteCharAt(sb.length() -1).append(" where id='").append(row.get("id").toString()).append("'");
 
