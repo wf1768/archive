@@ -111,7 +111,14 @@ $(function() {
 	    $("#tab4").html(html);
 	  }
 	});
-	
+	//批量挂接
+	$.ajax({
+	  url: "ArchiveGroupBatchAttachment.html",
+	  cache: false,
+	  success: function(html){
+	    $("#batchAtt").html(html);
+	  }
+	});
 });
 
 /**
@@ -139,10 +146,12 @@ function showTreeList(id,text) {
     //标准档案A/纯文件级F
     if (archiveType == "F") {
     	archiveCommon.archiveType="F";
-    	show_wj_list("01");
+//    	show_wj_list("01");
+    	$('#zlwj').click();
     }else if(archiveType == "A"){
     	archiveCommon.archiveType="A";
-    	show_wj_list("02");
+//    	show_wj_list("02");
+    	$('#zlwj').click();
     }else{
     	openalert("类型错误！");
     }

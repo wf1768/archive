@@ -22,11 +22,14 @@ $(function() {
 			//需要延迟一会，要不然数据不显示
 			if(archiveCommon.archiveType == "F"){
 				//纯文件级
-//				$('#gdzjWjDiv').css({"display":"none"});
+				$('#gdzjWjDiv').css({"display":"none"});
+				$('#gdzjAjDiv').css({"height":"410"});
+				
 				resizeTimer = setTimeout("show_zj_archive_list('01',volumeGridconfig,0)", 100);
 			}else{
 				//文件级
-//				$('#gdzjWjDiv').css({"display":"block"});
+				$('#gdzjWjDiv').css({"display":"block"});
+				$('#gdzjAjDiv').css({"height":"210"});
 				resizeTimer = setTimeout("show_zj_archive_list('01',volumeGridconfig,0)", 100);
 				archiveCommon.isAllWj=0; //文件级
 		        archiveCommon.selectAid='';//初始为空
@@ -237,5 +240,7 @@ function showWjTab(id,isAllWj) {
 	archiveCommon.selectAid = id;
 	archiveCommon.isAllWj = isAllWj;
 	show_zj_archive_list('02',organizeGridconfig,1);
+	//档案的--方式不好
+	show_archive_list('02',filingGridconfigWj,1);
 }
 

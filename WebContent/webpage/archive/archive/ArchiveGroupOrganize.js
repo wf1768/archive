@@ -36,7 +36,22 @@ $(function(){
 		//纯文件级
 		wjGridconfig.tabletype = "01";
 	}
-	
+	//整理文件
+	var resizeTimer = null;
+	$('#zlwj').click(function(){
+		var treeid = archiveCommon.selectTreeid;
+		if(treeid!=''){
+			if (resizeTimer) clearTimeout(resizeTimer);
+			//需要延迟一会，要不然数据不显示
+			if(archiveCommon.archiveType == "F"){
+				//纯文件级
+				resizeTimer = setTimeout("show_wj_list('01')", 100);
+			}else if(archiveCommon.archiveType == "A"){
+				//文件级
+				resizeTimer = setTimeout("show_wj_list('02')", 100);
+			}
+		}
+	});
 });
 
 /**
@@ -44,7 +59,7 @@ $(function(){
  * @param tableType 01:纯文件/02:文件 
  * */
 function show_wj_list(tableType){
-	$('#zlwj').click();
+//	$('#zlwj').click();
 	wjGridconfig.tabletype = tableType;
 	var par = "treeid=" + archiveCommon.selectTreeid + "&tableType="+tableType+"&importType=0";
 	$.ajax({
@@ -260,6 +275,23 @@ function wjlinkfile() {
     var item = wjGridconfig.dataView.getItem(selectRows[0]);
     showDocwindow(item.id,wjGridconfig.selectTableid);
 }
+//批量挂接
+function wjbatchatt() {
+    var selectRows = wjGridconfig.grid.getSelectedRows();
+    if (selectRows.length > 0) {
+        selectRows.sort(function compare(a, b) {
+            return a - b;
+        });
+        archiveCommon.showBatchAttachment(wjGridconfig,'02',selectRows);
+    }
+    else {
+        us.openalert('请选择要批量挂接的档案记录! ',
+            '系统提示',
+            'alertbody alert_Information'
+        );
+    }
+}
+
 //打开电子全文windows
 function showDocwindow(id, tableid) {
     archiveCommon.selectRowid = id;

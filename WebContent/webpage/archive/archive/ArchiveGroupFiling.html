@@ -1,21 +1,14 @@
 
 <script type="text/javascript" src="ArchiveGroupFiling.js"></script>
-
-<div class="gridC" style="height:380px;;width:100%; ">
-	<div class="widget-header" id="grid_header_aj"><h3>&nbsp;档案</h3></div>
-    <!--<div class="grid-menu" style="width:100%; height:35px">
-        <ul style="background-color: #F5F5F5; border: 1px solid #D3D3D3" class="nav nav-pills">
-            <li><a onclick="add()" href="javascript:void(0);">添加</a></li>
-            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">编辑 <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li><a onclick="update()" href="javascript:void(0);">编辑状态</a></li>
-                    <li><a onclick="endupdate()" href="javascript:void(0);">取消编辑状态</a></li>
-                    <li class="divider"></li>
-                    <li><a onclick="batchupdate()" href="javascript:void(0);">批量修改</a></li>
-                </ul>
-            </li>
-            <li><a onclick="refresh()" href="javascript:void(0);">刷新</a></li>
-        </ul>
-    </div>
-	--><div id="archiveGroupFilingDiv" class="grid-div" style="width: -1%; height: 89%;"></div>
+<div class="widget">
+	<div id="daAjDiv" style="width:100%;height: 210px;">
+		<div class="widget-header"><h3>&nbsp;案卷</h3></div>
+		<div id="archiveGroupFilingAjDiv" class="grid-div" style="width: -1%; height:88%;position: relative;"></div>
+	</div>
+</div>
+<div class="widget">
+	<div id="daWjDiv" style="width:100% ;height: 210px;">
+		<div class="widget-header"><h3>&nbsp;文件</h3></div>
+		<div id="archiveGroupFilingWjDiv" class="grid-div" style="width: -1%; height: 88%;position: relative;"></div>
+	</div>
 </div>
