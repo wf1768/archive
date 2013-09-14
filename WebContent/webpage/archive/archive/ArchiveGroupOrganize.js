@@ -567,7 +567,7 @@ function wj_group(){
 
 //读取档案数据
 function readRuleData(fieldname,fieldvalue) {
-  var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01"+"&status=0"+"&fieldname="+fieldname+"&fieldvalue="+fieldvalue;
+  var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01"+"&fieldname="+fieldname+"&fieldvalue="+fieldvalue;
   $.ajax({
       async : false,
       url : "listArchiveT.action?" + par,

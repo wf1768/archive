@@ -260,8 +260,6 @@ public class ArchiveGroupAction extends BaseAction {
         DynamicExample.Criteria criteria = de.createCriteria();
         criteria.andEqualTo("treeid",treeid);
         
-        criteria.andEqualTo("status", status);//零散文件
-        
         criteria.andLike(fieldname, fieldvalue); //查询案卷的条件字段
         
         if ("0".equals(isAllWj) && "02".equals(tableType)) {
