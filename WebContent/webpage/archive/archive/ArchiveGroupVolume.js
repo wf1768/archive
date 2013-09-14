@@ -8,9 +8,17 @@ var organizeGridconfig = new us.archive.ui.Gridconfig();
 $(function() {
 	
 	volumeGridconfig.tabletype = '01';
+	volumeGridconfig.options.editable = false;
+    volumeGridconfig.is_add_new_item = false;
+    volumeGridconfig.is_cellchange = false;
+    volumeGridconfig.is_pager = false;
 	volumeGridconfig.init_grid(volumeGridconfig,"#archiveGroupVolumeDiv","","");
 	
 	organizeGridconfig.tabletype = '02';
+	organizeGridconfig.options.editable = false;
+    organizeGridconfig.is_add_new_item = false;
+    organizeGridconfig.is_cellchange = false;
+    organizeGridconfig.is_pager = false;
 	organizeGridconfig.init_grid(organizeGridconfig,"#organizefileDiv","","");
 	
 	//归档组卷

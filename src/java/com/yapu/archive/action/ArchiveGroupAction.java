@@ -262,7 +262,7 @@ public class ArchiveGroupAction extends BaseAction {
         
         criteria.andEqualTo("status", status);//零散文件
         
-        criteria.andEqualTo(fieldname, fieldvalue); //查询案卷的条件字段
+        criteria.andLike(fieldname, fieldvalue); //查询案卷的条件字段
         
         if ("0".equals(isAllWj) && "02".equals(tableType)) {
             criteria.andEqualTo("parentid",selectAid);

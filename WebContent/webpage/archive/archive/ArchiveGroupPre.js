@@ -119,7 +119,7 @@ function show_zj_archive_list_pre(tableType,gridObject,type) {
 function filing(){
 	var item = volumeGridconfigPre.dataView.getItems();
 	if(item!=''){
-		var prompt='确定要归档组建吗？ ';
+		var prompt='确定要归档组卷吗？ ';
 		bootbox.confirm(prompt, function(result) {
 	        if(result){
 	    		//案卷是否为新增

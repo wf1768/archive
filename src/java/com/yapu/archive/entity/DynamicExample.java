@@ -234,6 +234,10 @@ public class DynamicExample {
             return this;
         }
 
+        public Criteria andLike(String fieldName,String value) {
+        	addCriterion(fieldName + " like", "'%" + value + "%'", fieldName);
+            return this;
+        }
     }
 
 }
