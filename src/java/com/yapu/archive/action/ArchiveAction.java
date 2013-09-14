@@ -206,8 +206,16 @@ public class ArchiveAction extends BaseAction {
 		DynamicExample de = new DynamicExample();
         DynamicExample.Criteria criteria = de.createCriteria();
         criteria.andEqualTo("treeid",treeid);
+
         if ("0".equals(isAllWj) && "02".equals(tableType)) {
             criteria.andEqualTo("parentid",selectAid);
+            criteria.andLessThan("status",Long.parseLong("1"));
+        }
+        else if ("1".equals(isAllWj) && "02".equals(tableType)) {
+            criteria.andLessThan("status",Long.parseLong("1"));
+        }
+        else if ("01".equals(tableType)){
+            criteria.andLessThan("status",Long.parseLong("2"));
         }
 
 		for (int i=0;i<tableList.size();i++) {

@@ -48,7 +48,7 @@ us.archive.ui.Gridconfig = function() {
     //声明新建行的系统默认值
     this.newItemTemplate = {
         isdoc	: "0",
-        status	: "1"
+        status	: "0"
     }
     this.tabletype = '';
 

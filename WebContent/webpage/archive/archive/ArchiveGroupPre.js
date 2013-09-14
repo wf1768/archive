@@ -175,7 +175,8 @@ function updateWj(){
  * @param id		打开的文件所属案卷id
  * @param isAllWj	是否现在该节点下全部文件。
  */
-function showWjTab(id,isAllWj) {
-	show_zj_archive_list_pre('02',organizeGridconfigPre,1);
-}
+//function showWjTab(id,isAllWj) {
+//    alert('555');
+//	show_zj_archive_list_pre('02',organizeGridconfigPre,1);
+//}
 

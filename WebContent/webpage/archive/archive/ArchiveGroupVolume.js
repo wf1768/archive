@@ -247,6 +247,8 @@ function file(){
 function showWjTab(id,isAllWj) {
 	archiveCommon.selectAid = id;
 	archiveCommon.isAllWj = isAllWj;
+
+
 	show_zj_archive_list('02',organizeGridconfig,1);
 	//档案的--方式不好
 	show_archive_list('02',filingGridconfigWj,1);
