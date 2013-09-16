@@ -16,6 +16,27 @@ if (us.archive.ui == null || us.archive.ui == undefined ) {
 	us.archive.ui = {};
 }
 
+us.archive.ui.loading = function() {
+	this.show = function(gridObject) {
+		var loadingIndicator = null;
+		if (!loadingIndicator) {
+			var $g = $("#"+gridObject);
+	        loadingIndicator = $("<span class='loading-indicator'><label>正在处理，请等待...</label></span>").appendTo($g);
+	        	
+	        loadingIndicator
+	            .css("position", "absolute")
+//	            .css("top", $g.position().top + $g.height() / 2 - loadingIndicator.height() / 2)
+	            .css("top", $g.height() / 2 - loadingIndicator.height() / 2)
+	            .css("left", $g.position().left + $g.width() / 2 - loadingIndicator.width() / 2);
+	    }
+	    loadingIndicator.show();
+	}
+	
+	this.remove = function() {
+		$(".loading-indicator").remove();
+	}
+}
+
 
 //grid
 us.archive.ui.Gridconfig = function() {
@@ -172,7 +193,7 @@ us.archive.ui.Gridconfig = function() {
 us.archive.ui.Gridconfig.prototype.comparer = function(a, b) {
     var x = a[this.sortcol], y = b[this.sortcol];
     return (x == y ? 0 : (x > y ? 1 : -1));
-}
+};
 
 
 

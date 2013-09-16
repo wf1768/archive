@@ -155,6 +155,10 @@ function wjrefresh() {
 
 //read wj Archive data
 function readwjdata() {
+	
+	var loading = new us.archive.ui.loading();
+	loading.show("wjdiv");
+	
     wjGridconfig.dataView.setItems([]);
 	//同步读取数据
 	var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=02&isAllWj=" + archiveCommon.isAllWj +"&selectAid=" + archiveCommon.selectAid;
@@ -242,8 +246,7 @@ function readwjdata() {
 //                });
 //
                 wjGridconfig.grid.invalidate();
-//                var viewHeight = $('#wjdiv').find(".grid-canvas").height();
-//                $('#wjdiv').height(viewHeight+40);
+                loading.remove();
 
 			} else {
 				us.openalert('<span style="color:red">读取数据时出错!<span></br>请尝试重新操作或与管理员联系。',

@@ -149,6 +149,9 @@ $(function() {
 //read Archive data
 function readData() {
 
+	var loading = new us.archive.ui.loading();
+	loading.show("archivediv");
+	
     //同步读取数据
     var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01";
     $.ajax({
@@ -203,6 +206,7 @@ function readData() {
                 //新建行时，将系统必须的默认值与字段默认值合并
                 ajGridconfig.newItemTemplate = $.extend({},ajGridconfig.newItemTemplate,ajGridconfig.fieldsDefaultValue);
                 ajGridconfig.grid.invalidate();
+                loading.remove();
             } else {
                 us.openalert('<span style="color:red">读取数据时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',
                     '系统提示',
