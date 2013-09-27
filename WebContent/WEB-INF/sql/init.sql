@@ -66,7 +66,7 @@ INSERT INTO SYS_ORG (
 	ORGORDER
 ) VALUES (
 	'1',
-	'档案资料管理系统',
+	'档案管理系统',
 	0,
 	1
 );

@@ -269,7 +269,7 @@ function showResultList(list) {
 	var doc = "";
 	for (var i=0;i<list.length;i++) {
 		doc += "<table class=\"table table-bordered table-condensed\" width=\"100%\">";
-		doc += "<tr><td width=\"70px\">所属档案库</td><td>"+$("#" + list[i].treeid + "-name").html()+"</td>";
+		doc += "<tr id="+list[i].id+" name="+list[i].id+"><td width=\"70px\">所属档案库</td><td>"+$("#" + list[i].treeid + "-name").html()+"</td>";
 		
 		var ajhOrWjh = "";
 		if (searchCommon.tabletype == '01') {
@@ -291,7 +291,7 @@ function showResultList(list) {
 		}
 		doc += "<tr><td>归档单位</td><td>"+list[i].gddw+"</td><td>归档日期</td><td>"+list[i].gdrq+"</td></tr>";
 		doc += "<tr><td>题名</td><td colspan=\"3\">"+list[i].tm+"</td></tr>";
-		doc += "<tr><td colspan=\"4\"><button  class=\"btn btn-info btn-small\" onClick=\"tabinfo('content','"+list[i].id+"')\">查看详细</button>  <button class=\"btn btn-info btn-small\" onclick=\"showDoc('"+list[i].id+"','"+list[i].treeid+"');\">查看全文</button></td></tr>";
+		doc += "<tr><td colspan=\"4\"><button  class=\"btn btn-info\" onClick=\"tabinfo('content','"+list[i].id+"')\">查看详细</button>  <button class=\"btn btn-info\" onclick=\"showDoc('"+list[i].id+"','"+list[i].treeid+"');\">查看全文</button></td></tr>";
 		doc += "</table>";
 	}
 	return doc;
@@ -312,6 +312,7 @@ function searchByTreeid(treeid,tabletype) {
 }
 
 function tabinfo(tabType,selectid) {
+	$('#hide_a').attr('href','#'+selectid);
 	if (tabType == "list") {
 		$("#listTab").addClass("active");
 		$("#list").addClass("active");
@@ -355,19 +356,29 @@ function tabinfo(tabType,selectid) {
 		});
 		
 		var content = "";
+		content += "<table class=\"table table-bordered table-condensed\" width=\"100%\">";
 		for (var i=0;i<fields.length;i++) {
 			var field = fields[i];
 			var a = field.englishname;//toLowerCase()
 			var value = data[0][a];
+			if (value == null) {
+				value = "";
+			}
 			if (field.isgridshow == 1) {
-				content += "<div class=\"control-group\">";
-				content += "<label for=\""+field.englishname+"\" class=\"control-label\">"+field.chinesename+"</label>";
-				content += "<div class=\"controls\">";
-				content += "<input type=\"text\" id=\""+field.englishname+"\" value=\""+value+"\" readonly class=\"input-xlarge\">";
-				content += "</div>";
-				content += "</div>";
+//				content += "<div class=\"control-group\">";
+//				content += "<label for=\""+field.englishname+"\" class=\"control-label\">"+field.chinesename+"</label>";
+//				content += "<div class=\"controls\">";
+//				content += "<p id=\""+field.englishname+"\">"+value+"</p>";
+////				content += "<input type=\"text\" id=\""+field.englishname+"\" value=\""+value+"\" readonly class=\"input-xlarge\">";
+//				content += "</div>";
+//				content += "</div>";
+				
+				
+				content += "<tr><td width=\"170px\">"+field.chinesename+"</td><td>"+value+"</td></tr>";
+				
 			}
 		}
+		content += "</table>";
 		$("#data").html(content);
 	}
 }

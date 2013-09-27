@@ -219,6 +219,9 @@ function readData() {
 
 function show_aj_archive_list() {
     $('#ajtab').click();
+    $("#allwj").css('display','block');
+    $('#wjtab').show();
+    $('#ajtab').text('案卷');
     //同步读取字段
     var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01&importType=0";
     $.ajax({
@@ -231,9 +234,12 @@ function show_aj_archive_list() {
                 ajGridconfig.columns_fields = fields;
                 ajGridconfig.fieldsDefaultValue = fieldsDefaultValue;
                 ajGridconfig.selectTableid = tableid;
-                var temptype = templettype;
-                if (temptype == "F") {
-                    $('#allwj').button("disable");
+//                var temptype = templettype;
+                archiveCommon.templettype = templettype
+                if (archiveCommon.templettype == "F") {
+                	$("#allwj").css('display','none');
+                	$('#wjtab').hide();
+                	$('#ajtab').text('文件');
                 }
             } else {
                 us.openalert('<span style="color:red">读取字段信息时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',
@@ -245,7 +251,13 @@ function show_aj_archive_list() {
     });
     readData();
 
-    $("#grid_header_aj").html('<h3>'+archiveCommon.selectTreeName + '_案卷档案列表'+'</h3>');
+    if (archiveCommon.templettype == "F") {
+    	$("#grid_header_aj").html('<h3>'+archiveCommon.selectTreeName + '_文件档案列表'+'</h3>');
+    }
+    else {
+    	$("#grid_header_aj").html('<h3>'+archiveCommon.selectTreeName + '_案卷档案列表'+'</h3>');
+    }
+    
 
 }
 
@@ -291,8 +303,13 @@ function del() {
     }
 
     if (deleteRows.length > 0) {
-        bootbox.confirm("确定要删除选中的 <span style='color:red'>"+deleteRows.length+"</span> 条案卷记录吗?<br> <font color='red'>" +
-            "注意：删除案卷记录，将同时删除案卷及案卷下所有文件数据、电子全文，请谨慎操作！</font> ", function(result) {
+    	var str = "确定要删除选中的 <span style='color:red'>"+deleteRows.length+"</span> 条案卷记录吗?<br> <font color='red'>" +
+        "注意：删除案卷记录，将同时删除案卷及案卷下所有文件数据、电子全文，请谨慎操作！</font> ";
+    	if (archiveCommon.templettype == "F") {
+    		var str = "确定要删除选中的 <span style='color:red'>"+deleteRows.length+"</span> 条文件记录吗?<br> <font color='red'>" +
+            "注意：删除记录，将不能恢复，请谨慎操作！</font> ";
+    	}
+        bootbox.confirm(str, function(result) {
             if(result){
                 var par = "par=" + JSON.stringify(deleteRows) + "&tableType=01";
 
@@ -443,7 +460,7 @@ function showDocwindow(id, tableid) {
 //        }
 //    });
 
-    $('#upload-doc-dialog').modal('show');
+//    $('#upload-doc-dialog').modal('show');
 
 //    $("#docwindows").dialog('option', 'title', '电子全文列表--(共 ' + rowList.length + "个文件)");
 //    $("#docwindows").dialog( "open" );
@@ -460,18 +477,61 @@ function showdoc() {
         type : 'post',
         dataType : 'script',
         success : function(data) {
-            if (data != "error") {
-                rowList = eval(docList);
-                $("#doclist").html("");
+        	var isAuth = isNotAuth;
 
-                for (var i=0;i<rowList.length;i++) {
-                    $("#doclist").append(getDoclist(rowList[i]));
-                }
-            } else {
-                us.openalert('读取数据时出错，请尝试重新操作或与管理员联系! ','系统提示','alertbody alert_Information');
-            }
+        	if (isAuth == 1) {
+//        		rowList = eval(docList);
+                $("#doclist").html(getDocTable(docList));
+                $('#upload-doc-dialog').modal('show');
+        	}
+        	else {
+        		us.openalert('没有浏览电子全文权限，或读取数据时出错，请尝试重新操作或与管理员联系! ','系统提示','alertbody alert_Information');
+        	}
+        	
+        	
+//            if (data != "error") {
+//                rowList = eval(docList);
+//                $("#doclist").html(getDocTable(docList));
+//                $('#upload-doc-dialog').modal('show');
+//
+////                for (var i=0;i<rowList.length;i++) {
+////                    $("#doclist").append(getDoclist(rowList[i]));
+////                }
+//            } else {
+//                us.openalert('没有浏览电子全文权限，或读取数据时出错，请尝试重新操作或与管理员联系! ','系统提示','alertbody alert_Information');
+//            }
         }
     });
+}
+
+function getDocTable(list) {
+	var content = "";
+	content += "<table class=\"table table-bordered table-condensed\" width=\"100%\">";
+	content += "<thead>";
+	content += "<tr>";
+	content += "<th>序号</th>";
+	content += "<th>文件名</th>";
+	content += "<th>类型</th>";
+	content += "<th>大小</th>";
+	content += "<th>操作</th>";
+	content += "</tr>";
+	content += "</thead>";
+	content += "<tbody>";
+	
+	for (var i=0;i<list.length;i++) {
+		var doc = list[i];
+		var num = i+1;
+		content += "<tr>";
+		content += "<td>"+num+"</td>";
+		content += "<td>"+doc.docoldname+"</td>";
+		content += "<td>"+doc.docext+"</td>";
+		content += "<td>"+doc.doclength+"</td>";
+		content += "<td><button type='button' class='btn btn-primary' onclick=\"fileDown('"+doc.docid+"','"+archiveCommon.selectTreeid+"')\">下载</button><button type='button' class='btn btn-danger' style='margin-left: 10px;' onclick=\"delectDoc('"+doc.docid+"')\">删除</button></td>";
+		content += "</tr>";
+	}
+	content += "</tbody>";
+	content += "</table>";
+	return content;
 }
 
 /*

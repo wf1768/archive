@@ -42,6 +42,9 @@ us.archive.Archive = function() {
 	this.yesItems = [];
 	//是否是新增的
 	this.isNew = false;
+	
+	//点击树节点后，纪录当前的档案模版类型。
+	this.templettype = '';
 }
 
 /**

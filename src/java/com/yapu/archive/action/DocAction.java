@@ -132,10 +132,10 @@ public class DocAction extends BaseAction{
 //	        criteria.andTableidEqualTo(tableid);
 	     	List<SysDoc> docList = docService.selectByWhereNotPage(example);
 	     	Gson gson = new Gson();
-	     	result += "var isNotAuth = '1';";
+	     	result = "var isNotAuth = '1';";
 	     	result += "var docList = "+gson.toJson(docList);
     	}else{
-    		result += "var isNotAuth = '0';"; //没有权限
+    		result = "var isNotAuth = '0';"; //没有权限
     	}
     	out.write(result);
      	return null;
