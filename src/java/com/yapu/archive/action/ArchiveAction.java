@@ -6,7 +6,12 @@ import com.yapu.archive.entity.*;
 import com.yapu.archive.service.itf.IDynamicService;
 import com.yapu.archive.service.itf.ITempletfieldService;
 import com.yapu.archive.service.itf.ITreeService;
+import com.yapu.archive.vo.Auth;
 import com.yapu.system.common.BaseAction;
+import com.yapu.system.entity.SysAccount;
+import com.yapu.system.entity.SysOrg;
+import com.yapu.system.service.itf.IAccountService;
+import com.yapu.system.service.itf.IOrgService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,6 +26,8 @@ public class ArchiveAction extends BaseAction {
 	private ITreeService treeService;
 	private IDynamicService dynamicService;
 	private ITempletfieldService templetfieldService;
+	private IAccountService accountService;
+	private IOrgService orgService;
 	private String treeid;
 	private String parentid;
 	private String tableType;
@@ -81,7 +88,14 @@ public class ArchiveAction extends BaseAction {
 	                break;
 	            }
 	        }
-	        result.append("if (value>0) {return  '<img src=\"../../images/icons/flag_blue.png\" style=\"cursor:pointer\" title=\"点击查看电子文件\" onclick=\"showDocwindow(\\''+ dataContext.id + '\\',\\'"+tableid+"\\')\" />'  } else { return \"\"}}},");
+	        Auth auth = this.isAuth(treeid);
+	        if (auth.getFilescan()) {
+	        	result.append("if (value>0) {return  '<img src=\"../../images/icons/flag_blue.png\" style=\"cursor:pointer\" title=\"点击查看电子文件\" onclick=\"showDocwindow(\\''+ dataContext.id + '\\',\\'"+tableid+"\\')\" />'  } else { return \"\"}}},");
+	        }
+	        else {
+	        	result.append(" return \"\"}},");
+	        }
+//	        result.append("if (value>0) {return  '<img src=\"../../images/icons/flag_blue.png\" style=\"cursor:pointer\" title=\"点击查看电子文件\" onclick=\"showDocwindow(\\''+ dataContext.id + '\\',\\'"+tableid+"\\')\" />'  } else { return \"\"}}},");
         }
 
 //		//返回字段特殊属性，例如默认值，在页面添加时，直接赋值
@@ -432,6 +446,54 @@ public class ArchiveAction extends BaseAction {
         out.write(a);
         return null;
     }
+    
+    /**
+     * 是否有（查看、下载、打印）权限
+     * @param fileType :filescan(查看) filedown(下载) fileprint(打印)
+     * @return
+     * */
+    public Auth isAuth(String treeid){
+    	Auth auth = new Auth();
+    	auth.setFilescan(false);
+    	int filescan = 0;
+    	int filedown = 0;
+    	int fileprint = 0;
+    	SysAccount account = super.getAccount();
+		//先查看账户本身是否有权限
+		List<SysAccountTree> accountTreeList =  accountService.getAccountOfTree(account.getAccountid(), treeid);
+		if(accountTreeList.size() >0 && accountTreeList != null){
+			SysAccountTree accountTree = accountTreeList.get(0);
+			if (accountTree.getFilescan() == 1) {
+				auth.setFilescan(true);
+			}
+			if (accountTree.getFiledown() == 1) {
+				auth.setFiledown(true);
+			}
+			if (accountTree.getFileprint() == 1) {
+				auth.setFileprint(true);
+			}
+		}else{
+			//否则查看该账户的所在组
+			SysOrg sysOrg = accountService.getAccountOfOrg(account);
+			if(sysOrg!=null){
+			 	List<SysOrgTree> orgTreeList = orgService.getOrgOfTree(sysOrg.getOrgid(), treeid);
+			 	if(orgTreeList.size() >0 && orgTreeList != null){
+			 		SysOrgTree orgTree = orgTreeList.get(0);
+			 		
+			 		if (orgTree.getFilescan() == 1) {
+						auth.setFilescan(true);
+					}
+					if (orgTree.getFiledown() == 1) {
+						auth.setFiledown(true);
+					}
+					if (orgTree.getFileprint() == 1) {
+						auth.setFileprint(true);
+					}
+			 	}
+			}
+		}
+		return auth;
+    }
 
 	public String getTreeid() {
 		return treeid;
@@ -489,6 +551,14 @@ public class ArchiveAction extends BaseAction {
 
 	public void setParentid(String parentid) {
 		this.parentid = parentid;
+	}
+
+	public void setAccountService(IAccountService accountService) {
+		this.accountService = accountService;
+	}
+
+	public void setOrgService(IOrgService orgService) {
+		this.orgService = orgService;
 	}
 
 

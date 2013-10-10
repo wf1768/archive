@@ -38,6 +38,26 @@
         top: 40px;
         z-index: 1;
     }
+    .navbar-inner {
+    	background-color: #23538E;
+	    background: none repeat scroll 0 0 #23538E;
+	    /* background-color: #2C2C2C;
+	    background-image: -moz-linear-gradient(center top , #333333, #222222); */
+	    background-repeat: repeat-x;
+	    border-radius: 4px 4px 4px 4px;
+	    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 -1px 0 rgba(0, 0, 0, 0.1) inset;
+	    padding-left: 20px;
+	    padding-right: 20px;
+	    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#23538E', endColorstr='#23538E', GradientType=0);
+	}
+	.navbar .nav > li > a {
+	    color: #FFFFFF;
+	    float: none;
+	    line-height: 19px;
+	    padding: 10px 10px 11px;
+	    text-decoration: none;
+	    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	}
 </style>
 <script language="javascript">
 	function setit(){
@@ -284,7 +304,7 @@
                 </div>
             </div>
             <div class="control-group" id="newpassdiv">
-                <label for="newpassword" style="font-size:13px" class="control-label">更改内容</label>
+                <label for="newpassword" style="font-size:13px" class="control-label">更改密码</label>
 
                 <div class="controls">
                     <input type="password" id="newpassword" class="span2" onMouseOut="updatePassMouseOut('new')">

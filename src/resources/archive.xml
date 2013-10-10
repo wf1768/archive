@@ -252,6 +252,8 @@
         <property name="treeService" ref="treeService" />
         <property name="dynamicService" ref="dynamicService" />
         <property name="templetfieldService" ref="templetfieldService" />
+        <property name="accountService" ref="publicAccountService" />
+        <property name="orgService" ref="publicOrgService" />
     </bean>
     
     <bean id="archiveGroupAction" class="com.yapu.archive.action.ArchiveGroupAction">

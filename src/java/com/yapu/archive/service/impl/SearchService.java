@@ -408,7 +408,8 @@ public class SearchService implements ISearchService {
 					SysTempletfield field = tmpList.get(j);
 					if (field.getIssearch() == 1) {
 						String str = doc.get(field.getEnglishname().toLowerCase());
-						highlighter.setTextFragmenter(new SimpleFragmenter(str.length()));
+//						highlighter.setTextFragmenter(new SimpleFragmenter(str.length()));
+						highlighter.setTextFragmenter(new SimpleFragmenter(2000));
 						TokenStream tk = analyzer.tokenStream(field.getEnglishname().toLowerCase(),new StringReader(str));
 						String htext = highlighter.getBestFragment(tk, str);
 						if (null != htext && !"".equals(htext)) {

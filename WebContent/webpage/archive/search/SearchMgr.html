@@ -26,6 +26,24 @@
 <script type="text/javascript" src="../../js/account/account.js"></script> 
 <script type="text/javascript" src="SearchMgr.js"></script>
 
+<style type="text/css">
+	body {
+		font-size:14px;
+	}
+</style>
+
+<script>
+	function dingwei(){
+		var link = $('#hide_a').attr('href');
+		window.location.hash=link; 
+	}
+	$(function(){
+		$('#listTab').click(function(){
+			resizeTimer = setTimeout("dingwei()", 50);
+		});
+	});
+</script>
+
 <title></title>
 
 </head>
@@ -90,6 +108,7 @@
 						<div class="tabbale">
 							<ul class="nav nav-tabs">
 								<li id="listTab" class="active"><a href="#list" data-toggle="tab">查询</a></li>
+								<a id="hide_a"></a>
 					    		<li id="contentTab" ><a href="#contentInfo" data-toggle="tab">详细</a></li>
 							</ul>
 							<div class="tab-content">
