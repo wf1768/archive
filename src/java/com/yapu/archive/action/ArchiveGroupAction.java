@@ -35,6 +35,9 @@ public class ArchiveGroupAction extends BaseAction {
 	
 	private String fieldname; 		//字段
 	private String fieldvalue; 	//字段值
+	//分页
+	private int index;
+	private int size;
 
 	public String showArchive() {
 		return SUCCESS;
@@ -201,7 +204,10 @@ public class ArchiveGroupAction extends BaseAction {
 				break;
 			}
 		}
+		
 		List dynamicList = dynamicService.selectByExample(de);
+//		List dynamicList = dynamicService.selectBySql(de, index, size);
+		
 
 		//得到字段列表
 		List<SysTempletfield> templetfieldList = treeService.getTreeOfTempletfield(treeid, tableType);
@@ -238,6 +244,80 @@ public class ArchiveGroupAction extends BaseAction {
 		return null;
 	}
 
+	/**
+	 * 分页查询
+	 * */
+	@SuppressWarnings("unchecked")
+	public String pageList() throws IOException {
+
+		PrintWriter out = getPrintWriter();
+		StringBuilder result = new StringBuilder();
+		//如果没有得到树节点id，返回error
+		if (null == treeid || "".equals(treeid)) {
+			result.append("error");
+			out.write(result.toString());
+			return null;
+		}
+
+		//得到树节点对应的表集合
+		List<SysTable> tableList = treeService.getTreeOfTable(treeid);
+
+		DynamicExample de = new DynamicExample();
+        DynamicExample.Criteria criteria = de.createCriteria();
+        criteria.andEqualTo("treeid",treeid);
+        criteria.andEqualTo("status", status);//零散文件
+        if(fieldvalue!=null && !fieldvalue.equals("")){
+        	criteria.andLike(fieldname, fieldvalue); //字段查询
+        }
+        if ("0".equals(isAllWj) && "02".equals(tableType)) {
+            criteria.andEqualTo("parentid",selectAid);
+        }
+
+		for (int i=0;i<tableList.size();i++) {
+			if (tableList.get(i).getTabletype().equals(tableType)) {
+				de.setTableName(tableList.get(i).getTablename());
+				break;
+			}
+		}
+		
+//		List dynamicList = dynamicService.selectByExample(de);
+		List dynamicList = dynamicService.selectListPageByExample(de, index, size);
+		
+
+		//得到字段列表
+		List<SysTempletfield> templetfieldList = treeService.getTreeOfTempletfield(treeid, tableType);
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("var rowList = [");
+		SysTemplet templet = treeService.getTreeOfTemplet(treeid);
+		if(null!=dynamicList && dynamicList.size()>0){
+			for (int i =0; i< dynamicList.size();i++) {
+				HashMap tempMap = (HashMap) dynamicList.get(i);
+				sb.append("{");
+                //添加文件级标识
+                if ("A".equals(templet.getTemplettype())) {
+                    sb.append("\"files\":\"").append(tempMap.get("ID").toString()).append("\",");
+                }
+                //添加电子全文标识
+                sb.append("\"rownum\":").append(i+1).append(",");
+                //grid控件需要小写的id。数据库中存的是大写的id，这里全部采用小写字段名
+				for (SysTempletfield sysTempletfield : templetfieldList) {
+						if (null == tempMap.get(sysTempletfield.getEnglishname())) {
+							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\"\",");
+						}
+						else {
+							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\""+tempMap.get(sysTempletfield.getEnglishname())+"\",");
+						}
+				}
+				sb.deleteCharAt(sb.length() - 1).append("},");
+			}
+		}else{
+			sb.append(",");
+		}
+		sb.deleteCharAt(sb.length() - 1).append("]");
+		out.write(sb.toString());
+		return null;
+	}
 	/**
 	 * 预归档
 	 * 归档规则
@@ -853,5 +933,21 @@ public class ArchiveGroupAction extends BaseAction {
 		this.fieldvalue = fieldvalue;
 	}
 
+	public int getIndex() {
+		return index;
+	}
 
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	
 }

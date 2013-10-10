@@ -79,9 +79,16 @@ public class DynamicDAOImpl extends SqlMapClientDaoSupport implements DynamicDAO
 		
 		return list;
 	}
-	
 	public List selectListPageBySql(String sql,int index,int size){
 		HashMap map = new HashMap();
+		map.put("sql", sql);
+		List list = getSqlMapClientTemplate().queryForList("Dynamic.selectBySql", map,index,size);
+		return list;
+	}
+	public List selectListPageByExample(DynamicExample example,int index,int size){
+		HashMap map = new HashMap();
+		//去创建sql语句
+		String sql = createQuerySql(example);
 		map.put("sql", sql);
 		List list = getSqlMapClientTemplate().queryForList("Dynamic.selectBySql", map,index,size);
 		return list;

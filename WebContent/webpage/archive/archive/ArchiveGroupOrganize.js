@@ -1,8 +1,9 @@
 var wjGridconfig = new us.archive.ui.Gridconfig();
 var ajGridconfig = new us.archive.ui.Gridconfig();
-
+var loader = new Slick.Data.RemoteModel();
+var loadingIndicator = null;
+var loading = new us.archive.ui.loading();
 $(function(){
-	
 	wjGridconfig.tabletype = '02';
 	wjGridconfig.init_grid(wjGridconfig,"#wjdiv","pager_wj","inlineFilterPanel_wj");
 	ajGridconfig.tabletype = '01';
@@ -11,17 +12,6 @@ $(function(){
     ajGridconfig.is_cellchange = false;
     ajGridconfig.is_pager = false;
 	ajGridconfig.init_grid(ajGridconfig,"#rulediv","","");
-	
-	$("#txtSearch_wj").keyup(function(e) {
-		Slick.GlobalEditorLock.cancelCurrentEdit();
-		// clear on Esc
-		if (e.which == 27) {
-			this.value = "";
-		}
-		archiveCommon.clName = $("#selectfield_wj").val();
-		archiveCommon.searchString = this.value;
-		us.updateFilter(wjGridconfig.dataView);
-	});
 	
 	//声明新建行的系统默认值
 	wjGridconfig.newItemTemplate = {
@@ -52,6 +42,19 @@ $(function(){
 			}
 		}
 	});
+	
+	loader.onDataLoading.subscribe(function () {
+//    	if (!loadingIndicator) {
+//			var $g = $("#wjdiv");
+//	        loadingIndicator = $("<span class='loading-indicator'><label>正在处理，请等待...</label></span>").appendTo($g);
+//	        loadingIndicator
+//	            .css("position", "absolute")
+//	            .css("top", $g.height() / 2 - loadingIndicator.height() / 2)
+//	            .css("left", $g.position().left + $g.width() / 2 - loadingIndicator.width() / 2);
+//	    }
+//	    loadingIndicator.show();
+		loading.show("wjdiv");
+    });
 });
 
 /**
@@ -94,6 +97,105 @@ function show_wj_list(tableType){
 function readwjdata(tableType) {
 	//同步读取数据
 	var par = "treeid=" + archiveCommon.selectTreeid + "&tableType="+tableType+"&isAllWj=false"+"&status=2";// + archiveCommon.isAllWj ;//+"&selectAid=" + archiveCommon.selectAid;
+	//分页查询
+    var url = "listArchiveP.action?"+par;
+	pageList(url);
+				
+	// 创建checkbox列
+	var checkboxSelector = new Slick.CheckboxSelectColumn({
+		cssClass : "slick-cell-checkboxsel"
+	});
+	var visibleColumns = [];//定义一个数组存放显示的列
+    visibleColumns.push(checkboxSelector.getColumnDefinition());//将columns的第一列push进去
+
+    // 加入其他列
+    for ( var i = 0; i < wjGridconfig.columns_fields.length; i++) {
+        visibleColumns.push(wjGridconfig.columns_fields[i]);
+    }
+    //设置grid的列
+    wjGridconfig.grid.setColumns(visibleColumns);
+    wjGridconfig.dataView.setFilterArgs({
+        searchString : archiveCommon.searchString
+    });
+    
+    wjGridconfig.dataView.setFilter(us.myFilter);
+
+    // 注册grid的checkbox功能插件
+    wjGridconfig.grid.registerPlugin(checkboxSelector);
+
+    //生成过滤选择字段
+    $("#selectfield_wj").empty();
+	for (var i=0;i<wjGridconfig.columns_fields.length;i++) {
+		if (wjGridconfig.columns_fields[i].id != "rownum" && wjGridconfig.columns_fields[i].id != "isdoc" && wjGridconfig.columns_fields[i].id != "files") {
+			$("#selectfield_wj").append("<option value='"+wjGridconfig.columns_fields[i].id+"'>"+wjGridconfig.columns_fields[i].name+"</option>");
+		}
+	}
+	
+	//新建行时，将系统必须的默认值与字段默认值合并
+	wjGridconfig.newItemTemplate = $.extend({},wjGridconfig.newItemTemplate,wjGridconfig.fieldsDefaultValue);
+	wjGridconfig.grid.invalidate();
+
+}
+
+/**
+ * 分页读取数据
+ * @param url	
+ **/
+function pageList(url){
+	loader.clear();
+	loader.setPage(0);
+	var data = [];
+	wjGridconfig.dataView.setItems(data);
+	
+	wjGridconfig.grid.onViewportChanged.subscribe(function (e, args) {
+      var vp = wjGridconfig.grid.getViewport();
+      loader.ensureData(vp.top, vp.bottom,url);
+    });
+    wjGridconfig.grid.onSort.subscribe(function (e, args) {
+//      loader.setSort(args.sortCol.field, args.sortAsc ? 1 : -1);
+      var vp = wjGridconfig.grid.getViewport();
+      loader.ensureData(vp.top, vp.bottom,url);
+    });
+
+    loader.onDataLoaded.subscribe(function (e, args) {
+    	var data = [];
+    	if(args.flag){
+	    	for (var i = args.from; i < (args.to+args.from); i++) {
+	    		loader.data[i].rownum = i+1;
+	    		data.push(loader.data[i]);
+	    		wjGridconfig.dataView.addItem(loader.data[i]);
+	    	}
+	    	args.flag = false;
+	    	for (var i = args.from; i <= args.to; i++) {
+	            wjGridconfig.grid.invalidateRow(i);
+	    	}
+
+	    	wjGridconfig.grid.updateRowCount();
+	    	wjGridconfig.grid.render();
+
+//	    	loadingIndicator.fadeOut();
+	    	 loading.remove();
+    	}
+    });
+    //过滤
+    $("#txtSearch_wj").keyup(function (e) {
+    	loader.clear();
+    	loader.setPage(0);
+    	var data = [];
+    	wjGridconfig.dataView.setItems(data);
+        loader.setSearch($("#selectfield_wj").val(),$(this).val());
+        var vp = wjGridconfig.grid.getViewport();
+        loader.ensureData(vp.top, vp.bottom,url);
+    });
+    wjGridconfig.grid.setSortColumn("date", false);
+    // load the first page
+    wjGridconfig.grid.onViewportChanged.notify();
+    
+}
+
+/*function readwjdata(tableType) {
+	//同步读取数据
+	var par = "treeid=" + archiveCommon.selectTreeid + "&tableType="+tableType+"&isAllWj=false"+"&status=2";// + archiveCommon.isAllWj ;//+"&selectAid=" + archiveCommon.selectAid;
 	$.ajax({
 		async : false,
 		url : "listArchiveF.action?" + par,
@@ -120,6 +222,7 @@ function readwjdata(tableType) {
                 wjGridconfig.dataView.setFilterArgs({
                     searchString : archiveCommon.searchString
                 });
+                
                 wjGridconfig.dataView.setFilter(us.myFilter);
 
                 // 注册grid的checkbox功能插件
@@ -145,9 +248,7 @@ function readwjdata(tableType) {
 			}
 		}
 	});
-}
-
-
+}*/
 //添加一行
 function wjadd() {
 	wjGridconfig.grid.setOptions({

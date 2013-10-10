@@ -22,6 +22,10 @@ public class DynamicService implements IDynamicService {
 	public List selectBySql(String sql,int index,int size) {
 		return dynamicDao.selectListPageBySql(sql, index, size);
 	}
+	//分页
+	public List selectListPageByExample(DynamicExample example,int index,int size) {
+		return dynamicDao.selectListPageByExample(example, index, size);
+	}
 	
 	public int rowCount(String sql){
 		return dynamicDao.countByExample(sql);

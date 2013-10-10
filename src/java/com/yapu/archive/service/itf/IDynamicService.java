@@ -25,6 +25,8 @@ public interface IDynamicService {
 
 	@SuppressWarnings("unchecked")
 	List selectBySql(String sql,int index,int size);
+	//分页
+	List selectListPageByExample(DynamicExample example,int index,int size);
 	
 	int rowCount(String sql);
     /**
