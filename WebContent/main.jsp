@@ -58,6 +58,14 @@
 	    text-decoration: none;
 	    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	}
+	.navbar .divider-vertical {
+	    background-color: #23538E;
+	    border-right: 1px solid #215A95;
+	    height: 40px;
+	    margin: 0 9px;
+	    overflow: hidden;
+	    width: 1px;
+	}
 </style>
 <script language="javascript">
 	function setit(){
