@@ -45,6 +45,8 @@ us.archive.Archive = function() {
 	
 	//点击树节点后，纪录当前的档案模版类型。
 	this.templettype = '';
+	//是归档组卷，还是档案：false为归档组卷，true为档案
+	this.isZjOrDa = false;
 }
 
 /**

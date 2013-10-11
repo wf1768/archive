@@ -24,6 +24,7 @@ $(function() {
 	//归档组卷
 	var resizeTimer = null;
 	$('#gdzj').click(function(){
+		archiveCommon.isZjOrDa = false;
 		var treeid = archiveCommon.selectTreeid;
 		if(treeid!=''){
 			if (resizeTimer) clearTimeout(resizeTimer);
@@ -248,9 +249,12 @@ function showWjTab(id,isAllWj) {
 	archiveCommon.selectAid = id;
 	archiveCommon.isAllWj = isAllWj;
 
-
-	show_zj_archive_list('02',organizeGridconfig,1);
-	//档案的--方式不好
-	show_archive_list('02',filingGridconfigWj,1);
+	if(!archiveCommon.isZjOrDa){
+		//归档组卷
+		show_zj_archive_list('02',organizeGridconfig,1);
+	}else{
+		//档案
+		show_archive_list('02',filingGridconfigWj,loader_Wj,1);
+	}
 }
 
