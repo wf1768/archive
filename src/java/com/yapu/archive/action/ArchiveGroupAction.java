@@ -306,7 +306,11 @@ public class ArchiveGroupAction extends BaseAction {
 							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\"\",");
 						}
 						else {
-							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\""+tempMap.get(sysTempletfield.getEnglishname())+"\",");
+							String value = tempMap.get(sysTempletfield.getEnglishname()).toString().replaceAll("\\\\","\\\\\\\\");
+                            value = value.replace("'","\\\'");
+                            value = value.replace("\"","\\\"");
+                            sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\""+value+"\",");
+//							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\""+tempMap.get(sysTempletfield.getEnglishname())+"\",");
 						}
 				}
 				sb.deleteCharAt(sb.length() - 1).append("},");
