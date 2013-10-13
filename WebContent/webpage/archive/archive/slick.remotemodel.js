@@ -126,7 +126,7 @@
     }
 
     function onSuccess(resp) {
-//    	alert(resp.length);
+//    	alert('rowList_length'+resp.length);
 //    	alert(JSON.stringify(resp));
 		
 //      var from = resp.request.start, to = from + resp.results.length;
