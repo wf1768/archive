@@ -44,15 +44,6 @@ $(function(){
 	});
 	
 	loader.onDataLoading.subscribe(function () {
-//    	if (!loadingIndicator) {
-//			var $g = $("#wjdiv");
-//	        loadingIndicator = $("<span class='loading-indicator'><label>正在处理，请等待...</label></span>").appendTo($g);
-//	        loadingIndicator
-//	            .css("position", "absolute")
-//	            .css("top", $g.height() / 2 - loadingIndicator.height() / 2)
-//	            .css("left", $g.position().left + $g.width() / 2 - loadingIndicator.width() / 2);
-//	    }
-//	    loadingIndicator.show();
 		loading.show("wjdiv");
     });
 });
@@ -99,8 +90,8 @@ function readwjdata(tableType) {
 	var par = "treeid=" + archiveCommon.selectTreeid + "&tableType="+tableType+"&isAllWj=false"+"&status=2";// + archiveCommon.isAllWj ;//+"&selectAid=" + archiveCommon.selectAid;
 	//分页查询
     var url = "listArchiveP.action?"+par;
-	pageList(url);
-				
+    wjGridconfig.pageList(url,wjGridconfig,loader,"txtSearch_wj","selectfield_wj",loading);
+//	pageList(url);
 	// 创建checkbox列
 	var checkboxSelector = new Slick.CheckboxSelectColumn({
 		cssClass : "slick-cell-checkboxsel"
@@ -141,57 +132,57 @@ function readwjdata(tableType) {
  * 分页读取数据
  * @param url	
  **/
-function pageList(url){
-	loader.clear();
-	loader.setPage(0);
-	var data = [];
-	wjGridconfig.dataView.setItems(data);
-	
-	wjGridconfig.grid.onViewportChanged.subscribe(function (e, args) {
-      var vp = wjGridconfig.grid.getViewport();
-      loader.ensureData(vp.top, vp.bottom,url);
-    });
-    wjGridconfig.grid.onSort.subscribe(function (e, args) {
-//      loader.setSort(args.sortCol.field, args.sortAsc ? 1 : -1);
-      var vp = wjGridconfig.grid.getViewport();
-      loader.ensureData(vp.top, vp.bottom,url);
-    });
-
-    loader.onDataLoaded.subscribe(function (e, args) {
-    	var data = [];
-    	if(args.flag){
-	    	for (var i = args.from; i < (args.to+args.from); i++) {
-	    		loader.data[i].rownum = i+1;
-	    		data.push(loader.data[i]);
-	    		wjGridconfig.dataView.addItem(loader.data[i]);
-	    	}
-	    	args.flag = false;
-	    	for (var i = args.from; i <= args.to; i++) {
-	            wjGridconfig.grid.invalidateRow(i);
-	    	}
-
-	    	wjGridconfig.grid.updateRowCount();
-	    	wjGridconfig.grid.render();
-
-//	    	loadingIndicator.fadeOut();
-	    	 loading.remove();
-    	}
-    });
-    //过滤
-    $("#txtSearch_wj").keyup(function (e) {
-    	loader.clear();
-    	loader.setPage(0);
-    	var data = [];
-    	wjGridconfig.dataView.setItems(data);
-        loader.setSearch($("#selectfield_wj").val(),$(this).val());
-        var vp = wjGridconfig.grid.getViewport();
-        loader.ensureData(vp.top, vp.bottom,url);
-    });
-    wjGridconfig.grid.setSortColumn("date", false);
-    // load the first page
-    wjGridconfig.grid.onViewportChanged.notify();
-    
-}
+//function pageList(url){
+//	loader.clear();
+//	loader.setPage(0);
+//	var data = [];
+//	wjGridconfig.dataView.setItems(data);
+//	
+//	wjGridconfig.grid.onViewportChanged.subscribe(function (e, args) {
+//      var vp = wjGridconfig.grid.getViewport();
+//      loader.ensureData(vp.top, vp.bottom,url);
+//    });
+//    wjGridconfig.grid.onSort.subscribe(function (e, args) {
+////      loader.setSort(args.sortCol.field, args.sortAsc ? 1 : -1);
+//      var vp = wjGridconfig.grid.getViewport();
+//      loader.ensureData(vp.top, vp.bottom,url);
+//    });
+//
+//    loader.onDataLoaded.subscribe(function (e, args) {
+//    	var data = [];
+//    	if(args.flag){
+//	    	for (var i = args.from; i < (args.to+args.from); i++) {
+//	    		loader.data[i].rownum = i+1;
+//	    		data.push(loader.data[i]);
+//	    		wjGridconfig.dataView.addItem(loader.data[i]);
+//	    	}
+//	    	args.flag = false;
+//	    	for (var i = args.from; i <= args.to; i++) {
+//	            wjGridconfig.grid.invalidateRow(i);
+//	    	}
+//
+//	    	wjGridconfig.grid.updateRowCount();
+//	    	wjGridconfig.grid.render();
+//
+////	    	loadingIndicator.fadeOut();
+//	    	 loading.remove();
+//    	}
+//    });
+//    //过滤
+//    $("#txtSearch_wj").keyup(function (e) {
+//    	loader.clear();
+//    	loader.setPage(0);
+//    	var data = [];
+//    	wjGridconfig.dataView.setItems(data);
+//        loader.setSearch($("#selectfield_wj").val(),$(this).val());
+//        var vp = wjGridconfig.grid.getViewport();
+//        loader.ensureData(vp.top, vp.bottom,url);
+//    });
+//    wjGridconfig.grid.setSortColumn("date", false);
+//    // load the first page
+//    wjGridconfig.grid.onViewportChanged.notify();
+//    
+//}
 
 /*function readwjdata(tableType) {
 	//同步读取数据
@@ -251,10 +242,19 @@ function pageList(url){
 }*/
 //添加一行
 function wjadd() {
-	wjGridconfig.grid.setOptions({
-		autoEdit : true
-	});
-	wjGridconfig.grid.gotoCell(wjGridconfig.dataView.getLength(),3,true);
+//	wjGridconfig.grid.setOptions({
+//		autoEdit : true
+//	});
+//	wjGridconfig.grid.gotoCell(wjGridconfig.dataView.getLength(),3,true);
+	//
+	wjGridconfig.addItem(wjGridconfig);
+	if(archiveCommon.archiveType == "F"){
+		//纯文件级
+		wjGridconfig.tabletype = "01";
+		readwjdata("01");
+	}else{
+		readwjdata("02");
+	}
 }
 //删除
 function wjdelete() {
@@ -286,6 +286,14 @@ function wjdelete() {
         					var item = wjGridconfig.dataView.getItem(selectRows[i]);
         					wjGridconfig.dataView.deleteItem(item.id);
         				};
+        				//刷新
+        				if(archiveCommon.archiveType == "F"){
+        					//纯文件级
+        					wjGridconfig.tabletype = "01";
+        					readwjdata("01");
+        				}else{
+        					readwjdata("02");
+        				}
         				us.openalert('删除成功。 ','系统提示','alertbody alert_Information');
     				}else {
     					us.openalert(data,'系统提示','alertbody alert_Information');
@@ -345,10 +353,10 @@ function wjrefresh() {
 	}else{
 		wjGridconfig.tabletype = '02';
 	}
-	var data = [];
+//	var data = [];
 	readwjdata(wjGridconfig.tabletype);
-	wjGridconfig.dataView.setItems(data);
-	wjGridconfig.dataView.setItems(wjGridconfig.rows);
+//	wjGridconfig.dataView.setItems(data);
+//	wjGridconfig.dataView.setItems(wjGridconfig.rows);
 }
 
 //过滤

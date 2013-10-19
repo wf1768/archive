@@ -194,6 +194,7 @@ public class TreeAction extends BaseAction {
 //		map.put("children", list);
 //		temp.add(map);
 		Gson gson = new Gson();
+		System.out.println(gson.toJson(list));
 		out.write(gson.toJson(list));
 		return null;
 	}

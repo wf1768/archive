@@ -97,7 +97,7 @@ us.archive.ui.Gridconfig = function() {
         );
     }
     
-    this.pageList = function(url,gridObject,loader_Obj,txtSearch,selectfield){
+    this.pageList = function(url,gridObject,loader_Obj,txtSearch,selectfield,loadingObj){
     	loader_Obj.clear();
     	loader_Obj.setPage(0);
     	var data = [];
@@ -127,8 +127,8 @@ us.archive.ui.Gridconfig = function() {
     	    	
     	    	gridObject.grid.updateRowCount();
     	    	gridObject.grid.render();
-
-//    	    	loading_Obj.remove();
+    	    	
+    	    	loadingObj.remove();
         	}
         });
         

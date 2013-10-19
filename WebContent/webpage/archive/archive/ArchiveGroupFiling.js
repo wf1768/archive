@@ -32,15 +32,15 @@ $(function() {
 				$('#daWjDiv').css({"display":"none"});
 				$('#daAjDiv').css({"height":"410"});
 				
-				resizeTimer = setTimeout("show_archive_list('01',filingGridconfigAj,loader_Aj,0)", 100);
+				resizeTimer = setTimeout("show_archive_list('01',filingGridconfigAj,loader_Aj,0,loading_aj)", 100);
 			}else{
 				//文件级
 				$('#daWjDiv').css({"display":"block"});
 				$('#daAjDiv').css({"height":"210"});
-				resizeTimer = setTimeout("show_archive_list('01',filingGridconfigAj,loader_Aj,0)", 100);
+				resizeTimer = setTimeout("show_archive_list('01',filingGridconfigAj,loader_Aj,0,loading_aj)", 100);
 				archiveCommon.isAllWj=0; //文件级
 		        archiveCommon.selectAid='';//初始为空
-		        resizeTimer = setTimeout("show_archive_list('02',filingGridconfigWj,loader_Wj,1)", 100);
+		        resizeTimer = setTimeout("show_archive_list('02',filingGridconfigWj,loader_Wj,1,loading_wj)", 100);
 			}
 		}
 	});
@@ -60,7 +60,7 @@ $(function() {
  *  @param loader_Obj
  *  @param type 0:案卷；1:文件级
  **/
-function readArchiveData(tableType,gridObject,loader_Obj,type) {
+function readArchiveData(tableType,gridObject,loader_Obj,type,loading_obj) {
     var par = "";
     if(type==0){
     	par = "treeid=" + archiveCommon.selectTreeid + "&tableType="+tableType+"&status=0";
@@ -69,8 +69,10 @@ function readArchiveData(tableType,gridObject,loader_Obj,type) {
     }
   //分页查询
     var url = "listArchiveP.action?"+par;
-    pageListAj_Wj(url,gridObject,loader_Obj);
-	
+    
+    gridObject.pageList(url,gridObject,loader_Obj,"","",loading_obj);
+//    pageListAj_Wj(url,gridObject,loader_Obj);
+   
 //    $.ajax({
 //        async : false,
 //        url : "listArchiveF.action?" + par,
@@ -115,48 +117,48 @@ function readArchiveData(tableType,gridObject,loader_Obj,type) {
  * 分页读取数据
  * @param url	
  **/
-function pageListAj_Wj(url,gridObject,loader_Obj){
-	loader_Obj.clear();
-	loader_Obj.setPage(0);
-	var data = [];
-	gridObject.dataView.setItems(data);
-	
-	gridObject.grid.onViewportChanged.subscribe(function (e, args) {
-      var vp = gridObject.grid.getViewport();
-      loader_Obj.ensureData(vp.top, vp.bottom,url);
-    });
-    gridObject.grid.onSort.subscribe(function (e, args) {
-//      loader_Obj.setSort(args.sortCol.field, args.sortAsc ? 1 : -1);
-      var vp = gridObject.grid.getViewport();
-      loader_Obj.ensureData(vp.top, vp.bottom,url);
-    });
-
-    loader_Obj.onDataLoaded.subscribe(function (e, args) {
-    	var data = [];
-    	if(args.flag){
-	    	for (var i = args.from; i < (args.to+args.from); i++) {
-	    		loader_Obj.data[i].rownum = i+1;
-	    		data.push(loader_Obj.data[i]);
-	    		gridObject.dataView.addItem(loader_Obj.data[i]);
-	    	}
-	    	args.flag = false;
-	    	for (var i = args.from; i <= args.to; i++) {
-	            gridObject.grid.invalidateRow(i);
-	    	}
-
-	    	gridObject.grid.updateRowCount();
-	    	gridObject.grid.render();
-
-	    	loading_aj.remove();
-	    	loading_wj.remove();
-    	}
-    });
-   
-    gridObject.grid.setSortColumn("date", false);
-    // load the first page
-    gridObject.grid.onViewportChanged.notify();
-    
-}
+//function pageListAj_Wj(url,gridObject,loader_Obj){
+//	loader_Obj.clear();
+//	loader_Obj.setPage(0);
+//	var data = [];
+//	gridObject.dataView.setItems(data);
+//	
+//	gridObject.grid.onViewportChanged.subscribe(function (e, args) {
+//      var vp = gridObject.grid.getViewport();
+//      loader_Obj.ensureData(vp.top, vp.bottom,url);
+//    });
+//    gridObject.grid.onSort.subscribe(function (e, args) {
+////      loader_Obj.setSort(args.sortCol.field, args.sortAsc ? 1 : -1);
+//      var vp = gridObject.grid.getViewport();
+//      loader_Obj.ensureData(vp.top, vp.bottom,url);
+//    });
+//
+//    loader_Obj.onDataLoaded.subscribe(function (e, args) {
+//    	var data = [];
+//    	if(args.flag){
+//	    	for (var i = args.from; i < (args.to+args.from); i++) {
+//	    		loader_Obj.data[i].rownum = i+1;
+//	    		data.push(loader_Obj.data[i]);
+//	    		gridObject.dataView.addItem(loader_Obj.data[i]);
+//	    	}
+//	    	args.flag = false;
+//	    	for (var i = args.from; i <= args.to; i++) {
+//	            gridObject.grid.invalidateRow(i);
+//	    	}
+//
+//	    	gridObject.grid.updateRowCount();
+//	    	gridObject.grid.render();
+//
+//	    	loading_aj.remove();
+//	    	loading_wj.remove();
+//    	}
+//    });
+//   
+//    gridObject.grid.setSortColumn("date", false);
+//    // load the first page
+//    gridObject.grid.onViewportChanged.notify();
+//    
+//}
 /**
  *  档案-显示列表
  *  @param tableType 
@@ -164,7 +166,7 @@ function pageListAj_Wj(url,gridObject,loader_Obj){
  *  @param loader_Obj 
  *  @param type 0：案卷；1：文件级  
  * */
-function show_archive_list(tableType,gridObject,loader_Obj,type) {
+function show_archive_list(tableType,gridObject,loader_Obj,type,loading_obj) {
     //同步读取字段
     var par = "treeid=" + archiveCommon.selectTreeid + "&tableType="+tableType+"&importType=0";
     $.ajax({
@@ -185,7 +187,7 @@ function show_archive_list(tableType,gridObject,loader_Obj,type) {
             }
         }
     });
-    readArchiveData(tableType,gridObject,loader_Obj,type);
+    readArchiveData(tableType,gridObject,loader_Obj,type,loading_obj);
 }
 /**
  * 打开文件页签
