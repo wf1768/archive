@@ -6,7 +6,7 @@
    */
   function RemoteModel() {
     // private
-    var PAGESIZE = 50;
+    var PAGESIZE = 20;
     var data = {length: 0};
     var searchstr = "";
     var fieldname = "";

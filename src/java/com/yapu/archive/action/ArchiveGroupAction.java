@@ -258,32 +258,44 @@ public class ArchiveGroupAction extends BaseAction {
 			out.write(result.toString());
 			return null;
 		}
+		//计算总行数,为分页
+		StringBuffer rowCount = new StringBuffer();
 
 		//得到树节点对应的表集合
 		List<SysTable> tableList = treeService.getTreeOfTable(treeid);
-
+		
 		DynamicExample de = new DynamicExample();
         DynamicExample.Criteria criteria = de.createCriteria();
-        criteria.andEqualTo("treeid",treeid);
-        criteria.andEqualTo("status", status);//零散文件
-        if(fieldvalue!=null && !fieldvalue.equals("")){
-        	criteria.andLike(fieldname, fieldvalue); //字段查询
-        }
-        if ("0".equals(isAllWj) && "02".equals(tableType)) {
-            criteria.andEqualTo("parentid",selectAid);
-        }
-
+		
 		for (int i=0;i<tableList.size();i++) {
 			if (tableList.get(i).getTabletype().equals(tableType)) {
 				de.setTableName(tableList.get(i).getTablename());
+				rowCount.append("select count(1) from ").append(tableList.get(i).getTablename());
 				break;
 			}
 		}
 		
-//		List dynamicList = dynamicService.selectByExample(de);
-		List dynamicList = dynamicService.selectListPageByExample(de, index, size);
+        criteria.andEqualTo("treeid",treeid);
+        rowCount.append(" where treeid = '").append(treeid).append("'");
+        criteria.andEqualTo("status", status);//零散文件
+        rowCount.append(" and status = ").append(status);
+        if(fieldvalue!=null && !fieldvalue.equals("")){
+        	criteria.andLike(fieldname, fieldvalue); //字段查询
+        	rowCount.append(" and ").append(fieldname).append(" like '%").append(fieldvalue).append("%'");
+        	
+        }
+        if ("0".equals(isAllWj) && "02".equals(tableType)) {
+            criteria.andEqualTo("parentid",selectAid);
+            rowCount.append(" and parentid='").append(selectAid).append("'");
+        }
+        
+        de.setOrderByClause("order by createtime desc");
 		
-
+//		List dynamicList = dynamicService.selectByExample(de);
+		int num = dynamicService.rowCount(rowCount.toString());
+		
+		List dynamicList = dynamicService.selectListPageByExample(de, index, size);
+		System.out.println(num + "  ++++++++++++");
 		//得到字段列表
 		List<SysTempletfield> templetfieldList = treeService.getTreeOfTempletfield(treeid, tableType);
 
@@ -319,6 +331,9 @@ public class ArchiveGroupAction extends BaseAction {
 			sb.append(",");
 		}
 		sb.deleteCharAt(sb.length() - 1).append("]");
+		
+		sb.append(";var rowCount=").append(num);
+		
 		out.write(sb.toString());
 		return null;
 	}

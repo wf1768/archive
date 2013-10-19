@@ -1,9 +1,12 @@
 var ajGridconfig = new us.archive.ui.Gridconfig();
+var loader = new Slick.Data.RemoteModel();
+var loading_aj = new us.archive.ui.loading();
 
 $(function() {
 
     ajGridconfig.tabletype = '01';
     ajGridconfig.init_grid(ajGridconfig,"#archivediv","pager_aj","inlineFilterPanel_aj");
+    
 
     // 创建checkbox列
 //    var checkboxSelector = new Slick.CheckboxSelectColumn({
@@ -60,16 +63,16 @@ $(function() {
 //    ajGridconfig.grid.registerPlugin(new Slick.AutoTooltips());
 //    $("#inlineFilterPanel_aj").appendTo(ajGridconfig.grid.getTopPanel()).show();
 
-    $("#txtSearch_aj").keyup(function(e) {
-        Slick.GlobalEditorLock.cancelCurrentEdit();
-        // clear on Esc
-        if (e.which == 27) {
-            this.value = "";
-        }
-        archiveCommon.clName = $("#selectfield_aj").val();
-        archiveCommon.searchString = this.value;
-        us.updateFilter(ajGridconfig.dataView);
-    });
+//    $("#txtSearch_aj").keyup(function(e) {
+//        Slick.GlobalEditorLock.cancelCurrentEdit();
+//        // clear on Esc
+//        if (e.which == 27) {
+//            this.value = "";
+//        }
+//        archiveCommon.clName = $("#selectfield_aj").val();
+//        archiveCommon.searchString = this.value;
+//        us.updateFilter(ajGridconfig.dataView);
+//    });
 //    //生成过滤选择字段
 //    for (var i=0;i<ajGridconfig.columns_fields.length;i++) {
 //        if (ajGridconfig.columns_fields[i].id != "rownum" && ajGridconfig.columns_fields[i].id != "isdoc" && ajGridconfig.columns_fields[i].id != "files") {
@@ -144,26 +147,75 @@ $(function() {
 //    ajGridconfig.dataView.syncGridSelection(ajGridconfig.grid, true);
 })
 
+///**
+// * 分页读取数据
+// * @param url	
+// **/
+//function pageList(url,gridObject,loader_Obj){
+//	loader_Obj.clear();
+//	loader_Obj.setPage(0);
+//	var data = [];
+//	gridObject.dataView.setItems(data);
+//	gridObject.grid.onViewportChanged.subscribe(function (e, args) {
+//      var vp = gridObject.grid.getViewport();
+//      loader_Obj.ensureData(vp.top, vp.bottom,url);
+//    });
+//    gridObject.grid.onSort.subscribe(function (e, args) {
+////      loader_Obj.setSort(args.sortCol.field, args.sortAsc ? 1 : -1);
+//      var vp = gridObject.grid.getViewport();
+//      loader_Obj.ensureData(vp.top, vp.bottom,url);
+//    });
+//    loader_Obj.onDataLoaded.subscribe(function (e, args) {
+//    	gridObject.totalRows = rowCount;
+//    	var data = [];
+//    	if(args.flag){
+//	    	for (var i = args.from; i < (args.to+args.from); i++) {
+//	    		loader_Obj.data[i].rownum = i+1;
+//	    		data.push(loader_Obj.data[i]);
+//	    		gridObject.dataView.addItem(loader_Obj.data[i]);
+//	    	}
+//	    	args.flag = false;
+//	    	for (var i = args.from; i <= args.to; i++) {
+//	            gridObject.grid.invalidateRow(i);
+//	    	}
+//	    	
+//	    	gridObject.grid.updateRowCount();
+//	    	gridObject.grid.render();
+//
+//	    	loading_aj.remove();
+//    	}
+//    });
+//   
+//    gridObject.grid.setSortColumn("date", false);
+//    // load the first page
+//    gridObject.grid.onViewportChanged.notify();
+//    
+//}
+
 
 
 //read Archive data
 function readData() {
 
-	var loading = new us.archive.ui.loading();
-	loading.show("archivediv");
+//	var loading = new us.archive.ui.loading();
+	loading_aj.show("archivediv");
 	
     //同步读取数据
-    var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01";
-    $.ajax({
-        async : false,
-        url : "listArchive.action?" + par,
-        type : 'post',
-        dataType : 'script',
-        success : function(data) {
-            if (data != "error") {
-                ajGridconfig.rows = rowList;
-
-                ajGridconfig.dataView.setItems(ajGridconfig.rows);
+    var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01&status=0";
+    //分页查询
+    var url = "listArchiveP.action?"+par;
+    ajGridconfig.pageList(url,ajGridconfig,loader,"txtSearch_aj","selectfield_aj");
+    loading_aj.remove();
+//    $.ajax({
+//        async : false,
+//        url : "listArchive.action?" + par,
+//        type : 'post',
+//        dataType : 'script',
+//        success : function(data) {
+//            if (data != "error") {
+//                ajGridconfig.rows = rowList;
+//
+//                ajGridconfig.dataView.setItems(ajGridconfig.rows);
 
                 // 创建checkbox列
                 var checkboxSelector = new Slick.CheckboxSelectColumn({
@@ -206,15 +258,15 @@ function readData() {
                 //新建行时，将系统必须的默认值与字段默认值合并
                 ajGridconfig.newItemTemplate = $.extend({},ajGridconfig.newItemTemplate,ajGridconfig.fieldsDefaultValue);
                 ajGridconfig.grid.invalidate();
-                loading.remove();
-            } else {
-                us.openalert('<span style="color:red">读取数据时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',
-                    '系统提示',
-                    'alertbody alert_Information'
-                );
-            }
-        }
-    });
+//                loading.remove();
+//            } else {
+//                us.openalert('<span style="color:red">读取数据时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',
+//                    '系统提示',
+//                    'alertbody alert_Information'
+//                );
+//            }
+//        }
+//    });
 }
 
 function show_aj_archive_list() {
@@ -263,10 +315,20 @@ function show_aj_archive_list() {
 
 //insert a new row
 function add() {
-    ajGridconfig.grid.setOptions({
-        autoEdit : true
-    });
-    ajGridconfig.grid.gotoCell(ajGridconfig.dataView.getLength(),4,true);
+//    ajGridconfig.grid.setOptions({
+//        autoEdit : true
+//    });
+//    var item = {
+//    		id		: "112",
+//            isdoc	: "0",
+//            status	: "0"
+//        }
+    ajGridconfig.addItem(ajGridconfig);
+    readData();
+//    ajGridconfig.grid.gotoCell(0,4,true);
+//    ajGridconfig.dataView.insertItem(0,item);
+//    ajGridconfig.grid.gotoCell(0,4,true);
+//    ajGridconfig.grid.gotoCell(ajGridconfig.dataView.getLength(),4,true);
 }
 //open update mode
 function update() {
@@ -427,8 +489,8 @@ function linkfile() {
 function refresh() {
     var data = [];
     readData();
-    ajGridconfig.dataView.setItems(data);
-    ajGridconfig.dataView.setItems(ajGridconfig.rows);
+//    ajGridconfig.dataView.setItems(data);
+//    ajGridconfig.dataView.setItems(ajGridconfig.rows);
 }
 
 // 打开电子全文windows

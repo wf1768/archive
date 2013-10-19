@@ -1,12 +1,12 @@
 (function ($) {
-  function SlickGridPager(dataView, grid, $container) {
+  function SlickGridPager(dataView, grid, $container,gridObject) {
     var $status;
 
     function init() {
       dataView.onPagingInfoChanged.subscribe(function (e, pagingInfo) {
         updatePager(pagingInfo);
       });
-
+      
       constructPagerUI();
       updatePager(dataView.getPagingInfo());
     }
@@ -33,30 +33,41 @@
     }
 
     function gotoFirst() {
-      if (getNavState().canGotoFirst) {
-        dataView.setPagingOptions({pageNum: 0});
-      }
+    	grid.gotoCell(0,1,false);
+//      if (getNavState().canGotoFirst) {
+//        dataView.setPagingOptions({pageNum: 0});
+//      }
     }
 
     function gotoLast() {
-      var state = getNavState();
-      if (state.canGotoLast) {
-        dataView.setPagingOptions({pageNum: state.pagingInfo.totalPages - 1});
-      }
+    	grid.gotoCell(dataView.getLength(),1,false);
+//      var state = getNavState();
+//      if (state.canGotoLast) {
+//        dataView.setPagingOptions({pageNum: state.pagingInfo.totalPages - 1});
+//      }
     }
 
     function gotoPrev() {
-      var state = getNavState();
-      if (state.canGotoPrev) {
-        dataView.setPagingOptions({pageNum: state.pagingInfo.pageNum - 1});
-      }
+    	
+//    	var selectRows = grid.getSelectedRows();
+//    	alert(selectRows[0]);
+//    	var row = dataView.getLength() - 50;
+//
+//    	grid.gotoCell(row,1,false);
+    	
+    	
+//      var state = getNavState();
+//      if (state.canGotoPrev) {
+//        dataView.setPagingOptions({pageNum: state.pagingInfo.pageNum - 1});
+//      }
     }
 
     function gotoNext() {
-      var state = getNavState();
-      if (state.canGotoNext) {
-        dataView.setPagingOptions({pageNum: state.pagingInfo.pageNum + 1});
-      }
+    	grid.gotoCell(dataView.getLength(),1,false);
+//      var state = getNavState();
+//      if (state.canGotoNext) {
+//        dataView.setPagingOptions({pageNum: state.pagingInfo.pageNum + 1});
+//      }
     }
 
     function constructPagerUI() {
@@ -66,9 +77,9 @@
       var $settings = $("<span class='slick-pager-settings' />").appendTo($container);
       $status = $("<span class='slick-pager-status' />").appendTo($container);
 
-      $settings
-          .append("<span class='slick-pager-settings-expanded' style='display:none'>Show: <a data=0>All</a><a data='-1'>Auto</a><a data=25>25</a><a data=50>50</a><a data=100>100</a></span>");
-
+//      $settings
+//          .append("<span class='slick-pager-settings-expanded' style='display:none'>显示:: <a data=0>全部</a><a data='-1'>自动</a><a data=25>25</a><a data=50>50</a><a data=100>100</a></span>");
+      $settings.append("拉动滚动条，上下翻页。");
       $settings.find("a[data]").click(function (e) {
         var pagesize = $(e.target).attr("data");
         if (pagesize != undefined) {
@@ -84,23 +95,23 @@
       var icon_prefix = "<span class='ui-state-default ui-corner-all ui-icon-container'><span class='ui-icon ";
       var icon_suffix = "' /></span>";
 
-      $(icon_prefix + "ui-icon-lightbulb" + icon_suffix)
-          .click(function () {
-            $(".slick-pager-settings-expanded").toggle()
-          })
-          .appendTo($settings);
+//      $(icon_prefix + "ui-icon-lightbulb" + icon_suffix)
+//          .click(function () {
+//            $(".slick-pager-settings-expanded").toggle()
+//          })
+//          .appendTo($settings);
 
       $(icon_prefix + "ui-icon-seek-first" + icon_suffix)
           .click(gotoFirst)
           .appendTo($nav);
 
-      $(icon_prefix + "ui-icon-seek-prev" + icon_suffix)
-          .click(gotoPrev)
-          .appendTo($nav);
+//      $(icon_prefix + "ui-icon-seek-prev" + icon_suffix)
+//          .click(gotoPrev)
+//          .appendTo($nav);
 
-      $(icon_prefix + "ui-icon-seek-next" + icon_suffix)
-          .click(gotoNext)
-          .appendTo($nav);
+//      $(icon_prefix + "ui-icon-seek-next" + icon_suffix)
+//          .click(gotoNext)
+//          .appendTo($nav);
 
       $(icon_prefix + "ui-icon-seek-end" + icon_suffix)
           .click(gotoLast)
@@ -133,9 +144,9 @@
       }
 
       if (pagingInfo.pageSize == 0) {
-        $status.text("Showing all " + pagingInfo.totalRows + " rows");
+        $status.text("正显示 当前 " + pagingInfo.totalRows + " 行。全部 "+gridObject.totalRows+" 行");
       } else {
-        $status.text("Showing page " + (pagingInfo.pageNum + 1) + " of " + pagingInfo.totalPages);
+        $status.text("正显示 页 " + (pagingInfo.pageNum + 1) + " of " + pagingInfo.totalPages);
       }
     }
 

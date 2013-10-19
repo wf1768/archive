@@ -37,7 +37,6 @@ us.archive.ui.loading = function() {
 	}
 }
 
-
 //grid
 us.archive.ui.Gridconfig = function() {
     // 声明列的数组
@@ -72,6 +71,82 @@ us.archive.ui.Gridconfig = function() {
         status	: "0"
     }
     this.tabletype = '';
+    
+    this.totalRows = 0;
+    this.pageSize = 50;
+    this.pageNum = 1;
+    
+    this.addItem = function(gridObject) {
+    	var item = {};
+    	var item = $.extend({}, this.newItemTemplate, item);
+        item.id = UUID.prototype.createUUID ();
+//        item.isdoc = "0";
+//        item.status = "0";
+        item.treeid = archiveCommon.selectTreeid;
+        item.files = item.id;
+//        item.rownum = (gridObject.dataView.getLength() + 1).toString();
+        var par = "importData=[" + JSON.stringify(item) + "]&tableType=" + gridObject.tabletype;
+        $.post("saveImportArchive.action",par,function(data){
+                if (data != "保存成功！") {
+                    us.openalert(data,
+                        '系统提示',
+                        'alertbody alert_Information'
+                    );
+                }
+            }
+        );
+    }
+    
+    this.pageList = function(url,gridObject,loader_Obj,txtSearch,selectfield){
+    	loader_Obj.clear();
+    	loader_Obj.setPage(0);
+    	var data = [];
+    	gridObject.dataView.setItems(data);
+    	gridObject.grid.onViewportChanged.subscribe(function (e, args) {
+          var vp = gridObject.grid.getViewport();
+          loader_Obj.ensureData(vp.top, vp.bottom,url);
+        });
+        gridObject.grid.onSort.subscribe(function (e, args) {
+//          loader_Obj.setSort(args.sortCol.field, args.sortAsc ? 1 : -1);
+          var vp = gridObject.grid.getViewport();
+          loader_Obj.ensureData(vp.top, vp.bottom,url);
+        });
+        loader_Obj.onDataLoaded.subscribe(function (e, args) {
+        	gridObject.totalRows = rowCount;
+        	var data = [];
+        	if(args.flag){
+    	    	for (var i = args.from; i < (args.to+args.from); i++) {
+    	    		loader_Obj.data[i].rownum = i+1;
+    	    		data.push(loader_Obj.data[i]);
+    	    		gridObject.dataView.addItem(loader_Obj.data[i]);
+    	    	}
+    	    	args.flag = false;
+    	    	for (var i = args.from; i <= args.to; i++) {
+    	            gridObject.grid.invalidateRow(i);
+    	    	}
+    	    	
+    	    	gridObject.grid.updateRowCount();
+    	    	gridObject.grid.render();
+
+//    	    	loading_Obj.remove();
+        	}
+        });
+        
+      //过滤
+        $("#"+txtSearch).keyup(function (e) {
+        	loader_Obj.clear();
+        	loader_Obj.setPage(0);
+        	var data = [];
+        	gridObject.dataView.setItems(data);
+        	loader_Obj.setSearch($("#"+selectfield).val(),$(this).val());
+            var vp = gridObject.grid.getViewport();
+            loader_Obj.ensureData(vp.top, vp.bottom,url);
+        });
+       
+        gridObject.grid.setSortColumn("date", false);
+        // load the first page
+        gridObject.grid.onViewportChanged.notify();
+    }
 
     this.init_grid = function(gridObject,grid_div,pager,filterPanel,idfield) {
 
@@ -122,7 +197,7 @@ us.archive.ui.Gridconfig = function() {
         });
         // 设置分页控件
         if (this.is_pager) {
-            var pager_aj = new Slick.Controls.Pager(this.dataView, this.grid, $("#"+pager));
+            var pager_aj = new Slick.Controls.Pager(this.dataView, this.grid, $("#"+pager),gridObject);
         }
         // 注册grid的自动提示插件。只在字段内容过长时出现省略号时提示
         this.grid.registerPlugin(new Slick.AutoTooltips());
