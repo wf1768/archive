@@ -27,12 +27,12 @@
                         <ul>
                             <li>
                                 <label><span></span> 用户名：</label>
-                                <input type="text" name="accountcode" id="accountcode" value = "guodh"/>
+                                <input type="text" name="accountcode" id="accountcode" value = "wangf"/>
                                 <strong class="" id="userpio_ico"></strong>
                             </li>
                             <li>
                                 <label><span></span>密　码： </label>
-                                <input type="password" name="password" id="password" value="guodh" />
+                                <input type="password" name="password" id="password" value="password" />
                                 <strong class="" id="passpio_ico"></strong>
                                 <span class="prompt" id="passpio_msg"></span>
                             </li>
