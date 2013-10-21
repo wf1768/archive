@@ -3,16 +3,28 @@ package com.yapu.archive.action;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yapu.archive.entity.*;
+import com.yapu.archive.service.itf.IDocService;
+import com.yapu.archive.service.itf.IDocserverService;
 import com.yapu.archive.service.itf.IDynamicService;
 import com.yapu.archive.service.itf.ITempletfieldService;
 import com.yapu.archive.service.itf.ITreeService;
 import com.yapu.system.common.BaseAction;
+import com.yapu.system.util.CommonUtils;
+import com.yapu.system.util.DBUtil;
+import com.yapu.system.util.DatabaseManager;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class ArchiveGroupAction extends BaseAction {
 
@@ -21,6 +33,8 @@ public class ArchiveGroupAction extends BaseAction {
 	private ITreeService treeService;
 	private IDynamicService dynamicService;
 	private ITempletfieldService templetfieldService;
+	private IDocserverService docserverService;
+	private IDocService docService;
 	private String treeid;
 	private String parentid;
 	private String tableType;
@@ -38,7 +52,11 @@ public class ArchiveGroupAction extends BaseAction {
 	//分页
 	private int index;
 	private int size;
+	//文档类型，1.发文，2.收文，3.内请
+	private String edoc_property;
 
+	private DatabaseManager manager = new DatabaseManager();
+	
 	public String showArchive() {
 		return SUCCESS;
 	}
@@ -870,6 +888,128 @@ public class ArchiveGroupAction extends BaseAction {
 		return null;
     }
     
+    /**
+     * 读取OA数据
+     * */
+    public String readOaList(){
+    	//文档类型EDOC_Property，1.发文，2.收文，3.内请
+    	String sql = "SELECT Archive_ID AS id,DocNO AS wjh,Title AS tm,SubmitUnit AS cbdw,SubmitUser AS jbr,SubmitDate AS wjrq,CenterName AS zxmc,signuser AS cbswqbr,signcomment AS cbswqbyj,checkuser AS cbswhgr,checkcomment AS cbswhgyj,meetcomment AS hq,leadercomment AS ldps,doccomeunit AS lwdw,sender AS cs, '"+
+    	treeid+"' as treeid,2 as status FROM EDoc_Archive where isend=? and EDOC_Property=?";
+    	Object[] param = new Object[2];
+    	param[0] = 1;
+    	param[1] = edoc_property;
+    	List list = manager.queryForList(sql, param);
+    	//得到表名
+		String tableName = getTableName();
+    	List<SysTempletfield> fieldList = treeService.getTreeOfTempletfield(treeid, tableType);
+    	//添加到本库
+    	dynamicService.insert(list, tableName, fieldList);
+    	//修改OA库
+    	Object[] param_up = new Object[3];
+    	param_up[0] = 0;
+    	param_up[1] = 1;
+    	param_up[2] = edoc_property;
+    	String oa_sql_up = "UPDATE EDoc_Archive SET isend=? WHERE isend=? AND EDOC_Property=?";
+    	manager.updateObject(sql, param);
+    	//读取文件
+    	for(int i=0;i<list.size();i++){
+    		Map data = (Map) list.get(i);
+    		String archiveId = String.valueOf(data.get("id"));
+    		readSysDoc(archiveId);
+    	}
+    	
+    	
+
+    	return null;
+    }
+    //获取用户名
+    private String getTableName(){
+    	List<SysTable> tableList = treeService.getTreeOfTable(treeid); 
+		String tableName = "";
+		//得到表名
+		for (int i=0;i<tableList.size();i++) {
+			if (tableList.get(i).getTabletype().equals(tableType)) {
+				tableName = tableList.get(i).getTablename();
+				break;
+			}
+		}
+		return tableName;
+    }
+    /**
+     * 读取物理文件信息入库
+     * @param archiveId
+     * */
+    private void readSysDoc(String archiveId){
+    	Object[] param = new Object[1];
+    	param[0] = archiveId;
+    	String sql ="SELECT id,archive_id,file_name,file_type,content,file_size FROM Doc_Content where archive_id=?";
+    	List sysList = manager.queryForList(sql, param);
+		for(int i=0;i<sysList.size();i++){
+			SysDoc sysDoc = new SysDoc();
+        	String docid = UUID.randomUUID().toString();
+        	sysDoc.setDocid(docid);
+        	
+    		Map doc = (Map) sysList.get(i);
+    		String fileName = String.valueOf(doc.get("file_name")); //文件名称
+    		String file_type = String.valueOf(doc.get("file_type"));	//文件类型
+    		
+    		sysDoc.setDocoldname(fileName);
+    		sysDoc.setDocext(file_type); //扩展名   
+    		sysDoc.setDocnewname(docid + file_type); //新的文件名
+    		sysDoc.setDocpath(docid + file_type); //
+    		sysDoc.setDoclength(String.valueOf(doc.get("file_size"))); //文件大小
+    		String content = String.valueOf(doc.get("content")); //文件内容
+    		
+    		Map<String, String> docServer = getDocServer();
+        	sysDoc.setDocserverid(docServer.get("serverId"));
+        	sysDoc.setDoctype("0");
+        	sysDoc.setCreatetime(CommonUtils.getTimeStamp());
+        	sysDoc.setFileid(archiveId);
+        	sysDoc.setTableid("a189736b-90b0-4ff2-92e9-8de1195d036c");
+        	//
+        	writeFile(docServer.get("serverPath"), fileName, content);
+        	
+        	docService.insertDoc(sysDoc);
+        	String tableName = getTableName();
+        	String archive_sql = "update " + tableName + " set isdoc = 1 where id='" + archiveId + "'";
+        	List<String> sqlList = new ArrayList<String>();
+        	sqlList.add(sql);
+        	dynamicService.update(sqlList);
+		}
+    }
+    //写物理文件
+    private void writeFile(String filePath,String fileName,String content){
+    	File file=new File(filePath+fileName);//可以是任何图片格式.jpg,.png等
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(file);
+//			BASE64Decoder decoder=new BASE64Decoder();
+//			fos.write(decoder.decodeBuffer(imgdata));
+			fos.write(content.getBytes());
+			fos.flush();
+			fos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+    /**
+     * 获取DocServer
+     * */
+    private Map<String, String> getDocServer(){
+    	Map<String, String> docServer = new HashMap<String, String>();
+    	SysDocserverExample example = new SysDocserverExample();
+		List<SysDocserver> docserverList = docserverService.selectByWhereNotPage(example);
+		if(null!=docserverList && docserverList.size()>0){
+			for (SysDocserver sysDoc : docserverList) {
+				if(sysDoc.getServerstate()==1){
+					docServer.put("serverId", sysDoc.getDocserverid());
+					docServer.put("serverPath", sysDoc.getServerpath());
+				}
+			}
+		}
+		return docServer;
+    }
+    
 	public String getTreeid() {
 		return treeid;
 	}
@@ -966,6 +1106,30 @@ public class ArchiveGroupAction extends BaseAction {
 
 	public void setSize(int size) {
 		this.size = size;
+	}
+
+	public IDocserverService getDocserverService() {
+		return docserverService;
+	}
+
+	public void setDocserverService(IDocserverService docserverService) {
+		this.docserverService = docserverService;
+	}
+
+	public IDocService getDocService() {
+		return docService;
+	}
+
+	public void setDocService(IDocService docService) {
+		this.docService = docService;
+	}
+
+	public String getEdoc_property() {
+		return edoc_property;
+	}
+
+	public void setEdoc_property(String edocProperty) {
+		edoc_property = edocProperty;
 	}
 
 	

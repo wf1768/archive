@@ -47,14 +47,16 @@ public class DynamicService implements IDynamicService {
                 value.append(" (");
                 for (SysTempletfield field : fieldList) {
                     sb.append(field.getEnglishname()).append(",");
-                    String col_value = row.get(field.getEnglishname().toLowerCase());
+                    Object col_value = row.get(field.getEnglishname().toLowerCase());
+                   
                     if (field.getFieldtype().contains("VARCHAR")) {
 
-                        if (col_value == null || col_value.length() == 0) {
+                        if (col_value == null) {
                             value.append("'',");
                         }
                         else {
-                            String tmp = row.get(field.getEnglishname().toLowerCase());
+//                            Object obj = row.get(field.getEnglishname().toLowerCase());
+                            String tmp = String.valueOf(col_value);;
                             tmp = tmp.replace("\n"," ");
 //                            tmp = tmp.replaceAll("\\\\"," - ");
 //                            tmp = tmp.replace("'"," ");
@@ -70,11 +72,11 @@ public class DynamicService implements IDynamicService {
                         }
                     }
                     else {
-                        if (col_value == null || col_value.length() == 0) {
+                        if (col_value == null) {
                             value.append("'0',");
                         }
                         else {
-                            value.append(row.get(field.getEnglishname().toLowerCase())).append(",");
+                            value.append(String.valueOf(col_value)).append(",");
                         }
 
                     }
@@ -93,6 +95,7 @@ public class DynamicService implements IDynamicService {
                 value.setLength(0);
             }
         } catch (Exception e) {
+        	e.printStackTrace();
             return false;
         }
         return true;

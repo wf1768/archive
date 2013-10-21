@@ -101,7 +101,9 @@
 		<!-- 归档 -->
 		<action name="filing" class="archiveGroupAction" method="filing"></action>
 		
-    
+    	<!-- 读取OA数据 -->
+    	<action name="readOaList" class="archiveGroupAction" method="readOaList"></action>
+    	
         <!-- =============== 导入 ================== -->
         <!-- 读取导入文件 -->
         <action name="upload" class="importAction" method="upload"></action>

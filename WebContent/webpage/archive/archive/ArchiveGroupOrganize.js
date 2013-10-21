@@ -40,6 +40,17 @@ $(function(){
 				//文件级
 				resizeTimer = setTimeout("show_wj_list('02')", 100);
 			}
+			
+			if(treeid == 'C5C7E070023000018ADF1A631B578520'){
+				$('#oaData').css({"display":"block"});
+			}else if(treeid == 'C5CB7C6BDEF000013266E9F9CDE07440'){
+				$('#oaData').css({"display":"block"});
+			}else if(treeid == 'C5CB7C75B02000017EC13FC111A9EBB0'){
+				$('#oaData').css({"display":"block"});
+			}else{
+				$('#oaData').css({"display":"none"});
+			}
+			
 		}
 	});
 	
@@ -727,3 +738,36 @@ function readRuleData(fieldname,fieldvalue) {
 
 }
 
+function readOA(){
+	//C5C7E070023000018ADF1A631B578520 内请
+	//C5CB7C6BDEF000013266E9F9CDE07440 发文
+	//C5CB7C75B02000017EC13FC111A9EBB0 收文
+	var treeid = archiveCommon.selectTreeid;
+	var edoc_property = "";
+	if(treeid == 'C5C7E070023000018ADF1A631B578520'){
+		edoc_property = "3";
+	}else if(treeid == 'C5CB7C6BDEF000013266E9F9CDE07440'){
+		edoc_property = "1";
+	}else if(treeid == 'C5CB7C75B02000017EC13FC111A9EBB0'){
+		edoc_property = "2";
+	}
+	if(edoc_property != ""){
+		var par = "treeid=" + treeid + "&tableType=02&edoc_property="+edoc_property;
+		 $.ajax({
+		      async : false,
+		      url : "readOaList.action?"+par,
+		      type : 'post',
+		      dataType : 'script',
+		      success : function(data) {
+		          if (data != "error") {
+		        	  us.openalert('读取完毕！');
+		          } else {
+		              us.openalert('<span style="color:red">读取数据时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',
+		                  '系统提示',
+		                  'alertbody alert_Information'
+		              );
+		          }
+		      }
+		  });
+	}
+}
