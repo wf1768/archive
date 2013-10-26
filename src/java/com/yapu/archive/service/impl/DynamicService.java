@@ -61,6 +61,7 @@ public class DynamicService implements IDynamicService {
 //                            tmp = tmp.replaceAll("\\\\"," - ");
 //                            tmp = tmp.replace("'"," ");
                             tmp = tmp.replaceAll("\\\\","\\\\\\\\");
+                            tmp = tmp.replaceAll("[\\t\\n\\r]", "");
                             tmp = tmp.replace("'","\\\'");
 
 

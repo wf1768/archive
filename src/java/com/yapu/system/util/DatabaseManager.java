@@ -3,6 +3,8 @@ package com.yapu.system.util;
 /**
  * 数据库操作的基类
  */
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class DatabaseManager {
 	
@@ -30,9 +33,12 @@ public class DatabaseManager {
 
     String uPwd = "sa";
     
+    public final String OADB_URL = "oadb.properties";
+    
     public DatabaseManager() {
-        this.setDriver(driver);
-        this.setConnection(url, uName, uPwd);
+    	
+        this.setDriver(getOadb("DRIVERLOAD"));
+        this.setConnection(getOadb("URL"), getOadb("USER"), getOadb("PWD"));
     }
 
     public DatabaseManager(String driver, String url, String userName, String userPWD) {
@@ -477,12 +483,37 @@ public class DatabaseManager {
     		}
     	}
     }
+    
+	/**
+	 * 读取oadb.properties
+	 * */
+	public String getOadb(String key){
+		String result = getValue(key, OADB_URL);
+		return result;
+	}
+	/**
+	 * 通过key获取.properties中的value
+	 * @param key
+	 * @return value
+	 * */
+	public String getValue(String key,String properties_file){
+		String value="";
+        try {
+        	InputStream in = this.getClass().getClassLoader().getResourceAsStream(properties_file);
+            Properties properties = new Properties();
+			properties.load(in);
+			value = properties.getProperty(key);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return value;
+	}
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		DatabaseManager manager = new DatabaseManager();
-		System.out.println(manager.getSetMethodName("shipName"));
+//		System.out.println(manager.getSetMethodName("shipName"));
 	}
 
 }

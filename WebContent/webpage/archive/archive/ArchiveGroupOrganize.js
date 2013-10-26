@@ -290,7 +290,11 @@ function wjdelete() {
         			//纯文件级
         			tableType = "tableType=01";
         		}
-        		var par = "par=" + JSON.stringify(deleteRows) + "&"+tableType;//"&tableType=02";
+        		var jsonString = JSON.stringify(deleteRows);
+        		jsonString = jsonString.replace(/%/g,"%25");
+        		jsonString = jsonString.replace(/\&/g,"%26");
+        		jsonString = jsonString.replace(/\+/g,"%2B");
+        		var par = "par=" + jsonString + "&"+tableType;//"&tableType=02";
         		$.post("deleteArchive.action",par,function(data){
     				if (data == "SUCCESS") {
     					for ( var i = 0; i < selectRows.length; i++) {
@@ -742,6 +746,8 @@ function readOA(){
 	//C5C7E070023000018ADF1A631B578520 内请
 	//C5CB7C6BDEF000013266E9F9CDE07440 发文
 	//C5CB7C75B02000017EC13FC111A9EBB0 收文
+	$("#oAloading").modal("show");
+	
 	var treeid = archiveCommon.selectTreeid;
 	var edoc_property = "";
 	if(treeid == 'C5C7E070023000018ADF1A631B578520'){
@@ -760,6 +766,8 @@ function readOA(){
 		      dataType : 'script',
 		      success : function(data) {
 		          if (data != "error") {
+		        	  $('#zlwj').click();
+		        	  $("#oAloading").modal('hide');
 		        	  us.openalert('读取完毕！');
 		          } else {
 		              us.openalert('<span style="color:red">读取数据时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',

@@ -59,6 +59,7 @@ public class DynamicDAOImpl extends SqlMapClientDaoSupport implements DynamicDAO
             return true;
         }
         catch (Exception e){
+        	e.printStackTrace();
             return false;
         }
 	}
