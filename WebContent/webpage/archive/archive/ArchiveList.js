@@ -375,7 +375,13 @@ function del() {
     	}
         bootbox.confirm(str, function(result) {
             if(result){
-                var par = "par=" + JSON.stringify(deleteRows) + "&tableType=01";
+            	
+            	var jsonString = JSON.stringify(deleteRows);
+        		jsonString = jsonString.replace(/%/g,"%25");
+        		jsonString = jsonString.replace(/\&/g,"%26");
+        		jsonString = jsonString.replace(/\+/g,"%2B");
+        		
+                var par = "par=" + jsonString + "&tableType=01";
 
                 $.post("deleteArchive.action",par,function(data){
                         if (data == "SUCCESS") {
