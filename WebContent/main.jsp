@@ -185,6 +185,7 @@
                             }
                         }
                     }
+                    funStr += "<li><a href=\"#\" onclick=\"javascript:$(window.parent.document).find('#content').attr('src','help/index.html')\">帮助</a></li>";
                     funStr += "<li class=\"divider-vertical\"></li><li class=\"dropdown\">";
                     funStr += "<a href=\"account.html#\" class=\"dropdown-toggle \" data-toggle=\"dropdown\">";
                     funStr += account+" <b class=\"caret\"></b></a>";

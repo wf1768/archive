@@ -259,6 +259,7 @@ public class TempletService implements ITempletService {
 			if (null != templetfieldList && templetfieldList.size() > 0) {
 				String sql = createSql(templetfieldList);
 				sql = "create table " + newTable.getTablename() + " (" + sql + ")";
+				System.out.println("=====  "+sql+ " ===========");
 				dynamicDao.update(sql.toString());
 				
 				//将模板字段，作为新表的字段插入字段管理表
@@ -303,7 +304,7 @@ public class TempletService implements ITempletService {
 			int ispk = templetfield.getIspk();
 			int isrequire = templetfield.getIsrequire();
 			
-			
+			String value = templetfield.getDefaultvalue();
 			
 			sql.append(enname).append(" ");
 			sql.append(type).append("(").append(size).append(")");
@@ -314,6 +315,10 @@ public class TempletService implements ITempletService {
 			
 			if (1 == ispk) {
 				sql.append(",primary key (").append(enname).append(")");
+			}
+			
+			if (value.trim() != null && !value.trim().equals("")) {
+				sql.append(" DEFAULT ").append(value);
 			}
 			sql.append(",");
 		}

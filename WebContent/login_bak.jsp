@@ -14,7 +14,7 @@
 <link href="webpage/js/bootstrap/css/adminia-responsive.css" rel="stylesheet"> 
 <link href="webpage/js/bootstrap/css/pages/login.css" rel="stylesheet"> 
 
-    <title>XXX案管理系统</title>
+    <title>中纺档案管理系统</title>
 </head>
 <body style="background:url(webpage/css/images/index.jpg) no-repeat center; no-repeat;)">
 	<div class="navbar navbar-fixed-top">
@@ -29,7 +29,7 @@
 				<span class="icon-bar"></span> 				
 			</a>
 			
-			<a class="brand" href="#">xxx档案管理系统</a>
+			<a class="brand" href="#">中纺档案管理系统</a>
 			<!-- 
 			<div class="nav-collapse">
 			
@@ -60,13 +60,13 @@
 				<div class="control-group">
 					<label class="control-label" for="username">用户名</label>
 					<div class="controls">
-						<input type="text" id="accountcode" name="accountcode" value="wangf">
+						<input type="text" id="accountcode" name="accountcode" value="">
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label" for="password">密 码</label>
 					<div class="controls">
-						<input type="password" id="password" name="password" value="password">
+						<input type="password" id="password" name="password" value="">
 					</div>
 				</div>
 			</fieldset>
