@@ -114,7 +114,11 @@ us.batchUpdate = function(grid,dataView,isSave,tabletype) {
 	}
     //如果是保存到数据库
 	if (isSave) {
-		var par = "importData=" + JSON.stringify(batchUpdateItems) + "&tableType=" + tabletype;
+		var jsonString = JSON.stringify(batchUpdateItems);
+		jsonString = jsonString.replace(/%/g,"%25");
+		jsonString = jsonString.replace(/\&/g,"%26");
+		jsonString = jsonString.replace(/\+/g,"%2B");
+		var par = "importData=" + jsonString + "&tableType=" + tabletype;
         $.post("updateImportArchive.action",par,function(data){
                 if (data != "保存完毕。") {
                 	us.openalert(data,'系统提示','alertbody alert_Information');

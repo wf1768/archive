@@ -230,7 +230,11 @@ us.archive.ui.Gridconfig = function() {
         if (this.is_cellchange) {
             this.grid.onCellChange.subscribe(function(e, args) {
                 var item = args.item;
-                var par = "importData=[" + JSON.stringify(item) + "]&tableType=" + gridObject.tabletype;
+                var jsonString = JSON.stringify(item);
+        		jsonString = jsonString.replace(/%/g,"%25");
+        		jsonString = jsonString.replace(/\&/g,"%26");
+        		jsonString = jsonString.replace(/\+/g,"%2B");
+                var par = "importData=[" + jsonString + "]&tableType=" + gridObject.tabletype;
                 $.post("updateImportArchive.action",par,function(data){
                         if (data != "保存完毕。") {
                             us.openalert(data,
