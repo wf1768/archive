@@ -254,6 +254,7 @@
         <property name="templetfieldService" ref="templetfieldService" />
         <property name="accountService" ref="publicAccountService" />
         <property name="orgService" ref="publicOrgService" />
+        <property name="docService" ref="docService" />
     </bean>
     
     <bean id="archiveGroupAction" class="com.yapu.archive.action.ArchiveGroupAction">

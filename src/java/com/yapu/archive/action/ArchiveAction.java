@@ -3,6 +3,7 @@ package com.yapu.archive.action;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yapu.archive.entity.*;
+import com.yapu.archive.service.itf.IDocService;
 import com.yapu.archive.service.itf.IDynamicService;
 import com.yapu.archive.service.itf.ITempletfieldService;
 import com.yapu.archive.service.itf.ITreeService;
@@ -28,6 +29,7 @@ public class ArchiveAction extends BaseAction {
 	private ITempletfieldService templetfieldService;
 	private IAccountService accountService;
 	private IOrgService orgService;
+	 private IDocService docService;
 	private String treeid;
 	private String parentid;
 	private String tableType;
@@ -404,10 +406,12 @@ public class ArchiveAction extends BaseAction {
 		}
 		sb.append("delete from ").append(tableName).append(" where id in (");
 		StringBuffer sbSql = new StringBuffer();
+		List<String> idList = new ArrayList<String>(); //档案Id集合
 		for (int z=0;z<archiveList.size();z++) {
 			//得到id集合
 			HashMap<String,String> row = (HashMap<String,String>) archiveList.get(z);
 			sbSql.append("'").append(row.get("id").toString()).append("',");
+			idList.add(row.get("id").toString());
 //			sb.append("'").append(row.get("id").toString()).append("',");
 		}
 		sb.append(sbSql.deleteCharAt(sbSql.length() - 1)).append(")");
@@ -425,6 +429,15 @@ public class ArchiveAction extends BaseAction {
 			}
 
 			//TODO 要删除挂接的物理文件
+	        for(String id:idList){
+	        	SysDocExample example = new SysDocExample();
+		        SysDocExample.Criteria criteria = example.createCriteria();
+		        criteria.andFileidEqualTo(id);
+		     	List<SysDoc> docList = docService.selectByWhereNotPage(example);
+		     	for(SysDoc doc:docList){
+		     		docService.deleteDoc(doc.getDocid());
+		     	}
+	        }
 		}
 
 		out.write(result);
@@ -559,6 +572,14 @@ public class ArchiveAction extends BaseAction {
 
 	public void setOrgService(IOrgService orgService) {
 		this.orgService = orgService;
+	}
+
+	public IDocService getDocService() {
+		return docService;
+	}
+
+	public void setDocService(IDocService docService) {
+		this.docService = docService;
 	}
 
 
