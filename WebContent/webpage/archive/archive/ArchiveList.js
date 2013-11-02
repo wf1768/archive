@@ -7,6 +7,10 @@ $(function() {
     ajGridconfig.tabletype = '01';
     ajGridconfig.init_grid(ajGridconfig,"#archivediv","pager_aj","inlineFilterPanel_aj");
     
+    loader.onDataLoading.subscribe(function () {
+    	loading_aj.show("archivediv");
+    });
+    
 
     // 创建checkbox列
 //    var checkboxSelector = new Slick.CheckboxSelectColumn({
@@ -198,14 +202,12 @@ $(function() {
 function readData() {
 
 //	var loading = new us.archive.ui.loading();
-	loading_aj.show("archivediv");
 	
     //同步读取数据
     var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=01&status=0";
     //分页查询
     var url = "listArchiveP.action?"+par;
-    ajGridconfig.pageList(url,ajGridconfig,loader,"txtSearch_aj","selectfield_aj");
-    loading_aj.remove();
+    ajGridconfig.pageList(url,ajGridconfig,loader,"txtSearch_aj","selectfield_aj",loading_aj);
 //    $.ajax({
 //        async : false,
 //        url : "listArchive.action?" + par,
@@ -373,7 +375,13 @@ function del() {
     	}
         bootbox.confirm(str, function(result) {
             if(result){
-                var par = "par=" + JSON.stringify(deleteRows) + "&tableType=01";
+            	
+            	var jsonString = JSON.stringify(deleteRows);
+        		jsonString = jsonString.replace(/%/g,"%25");
+        		jsonString = jsonString.replace(/\&/g,"%26");
+        		jsonString = jsonString.replace(/\+/g,"%2B");
+        		
+                var par = "par=" + jsonString + "&tableType=01";
 
                 $.post("deleteArchive.action",par,function(data){
                         if (data == "SUCCESS") {

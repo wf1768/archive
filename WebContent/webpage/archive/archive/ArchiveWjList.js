@@ -34,7 +34,12 @@ function wjdelete() {
         bootbox.confirm("确定要删除选中的 <span style='color:red'>"+deleteRows.length+"</span> 条文件记录吗?<br> <font color='red'>" +
             "注意：删除文件记录，将同时删除文件数据、电子全文，请谨慎操作！</font> ", function(result) {
             if(result){
-                var par = "par=" + JSON.stringify(deleteRows) + "&tableType=02";
+            	var jsonString = JSON.stringify(deleteRows);
+        		jsonString = jsonString.replace(/%/g,"%25");
+        		jsonString = jsonString.replace(/\&/g,"%26");
+        		jsonString = jsonString.replace(/\+/g,"%2B");
+        		
+                var par = "par=" + jsonString + "&tableType=02";
                 $.post("deleteArchive.action",par,function(data){
                         if (data == "SUCCESS") {
                             readwjdata();
