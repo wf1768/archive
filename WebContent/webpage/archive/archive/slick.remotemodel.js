@@ -92,10 +92,13 @@
         onDataLoading.notify({from: from, to: to});
         
         //var par = "treeid=C51C96B7E9700001C87C96B019301F54&tableType=02&isAllWj=false"+"&status=2"+"&index="+fromPage*PAGESIZE+"&size="+PAGESIZE;// + archiveCommon.isAllWj ;//+"&selectAid=" + archiveCommon.selectAid;
+        var par = {"fieldname":fieldname,"fieldvalue":fieldvalue,"index":fromPage*PAGESIZE,"size":PAGESIZE};
         $.ajax({
             async : false,
             //url : "listArchiveP.action?" + par,
-            url : url+"&fieldname="+fieldname+"&fieldvalue="+fieldvalue+"&index="+fromPage*PAGESIZE+"&size="+PAGESIZE,
+//            url : url+"&fieldname="+fieldname+"&fieldvalue="+fieldvalue+"&index="+fromPage*PAGESIZE+"&size="+PAGESIZE,
+            url:url,
+            data:par,
             type : 'post',
             dataType : 'script',
             success : function(data) {

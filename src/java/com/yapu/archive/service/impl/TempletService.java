@@ -307,7 +307,13 @@ public class TempletService implements ITempletService {
 			String value = templetfield.getDefaultvalue();
 			
 			sql.append(enname).append(" ");
-			sql.append(type).append("(").append(size).append(")");
+			if (type.equals("timestamp")) {
+				sql.append(type);
+			}
+			else {
+				sql.append(type).append("(").append(size).append(")");
+			}
+			
 			
 			if (1 == isrequire) {
 				sql.append(" not null");

@@ -56,7 +56,8 @@ public class ArchiveGroupAction extends BaseAction {
 	//文档类型，1.发文，2.收文，3.内请
 	private String edoc_property;
 
-	private DatabaseManager manager = new DatabaseManager();
+//	private DatabaseManager manager = new DatabaseManager();
+	private DatabaseManager manager = null;
 	
 	public String showArchive() {
 		return SUCCESS;
@@ -897,6 +898,7 @@ public class ArchiveGroupAction extends BaseAction {
     	//文档类型EDOC_Property，1.发文，2.收文，3.内请
     	String sql = "SELECT Archive_ID AS id,DocNO AS wjh,Title AS tm,SubmitUnit AS cbdw,SubmitUser AS jbr,SubmitDate AS wjrq,CenterName AS zxmc,signuser AS cbswqbr,signcomment AS cbswqbyj,checkuser AS cbswhgr,checkcomment AS cbswhgyj,meetcomment AS hq,leadercomment AS ldps,doccomeunit AS lwdw,sender AS cs, '"+
     	treeid+"' as treeid,2 as status FROM EDoc_Archive where isend=? and EDOC_Property=?";
+    	System.out.println("====="+sql+"======");
     	Object[] param = new Object[2];
     	param[0] = 1;
     	param[1] = edoc_property;
