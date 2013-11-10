@@ -233,6 +233,8 @@ public class ArchiveAction extends BaseAction {
         else if ("01".equals(tableType)){
             criteria.andLessThan("status",Long.parseLong("2"));
         }
+        
+        de.setOrderByClause("order by createtime desc");
 
 		for (int i=0;i<tableList.size();i++) {
 			if (tableList.get(i).getTabletype().equals(tableType)) {
@@ -271,6 +273,7 @@ public class ArchiveAction extends BaseAction {
                             String value = tempMap.get(sysTempletfield.getEnglishname()).toString().replaceAll("\\\\","\\\\\\\\");
                             value = value.replace("'","\\\'");
                             value = value.replace("\"","\\\"");
+                            value = value.replaceAll("[\\t\\n\\r]", "");
 //							sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\""+tempMap.get(sysTempletfield.getEnglishname())+"\",");
                             sb.append("\""+sysTempletfield.getEnglishname().toLowerCase()+"\":\""+value+"\",");
 						}

@@ -6,12 +6,10 @@ var loading_wj = new us.archive.ui.loading();
 
 //wj insert a new row
 function wjadd() {
-	wjGridconfig.addItem(wjGridconfig);
-	readwjdata();
-//	wjGridconfig.grid.setOptions({
-//		autoEdit : true
-//	});
-//	wjGridconfig.grid.gotoCell(wjGridconfig.dataView.getLength(),3,true);
+	wjGridconfig.grid.setOptions({
+		autoEdit : true
+	});
+	wjGridconfig.grid.gotoCell(wjGridconfig.dataView.getLength(),3,true);
 }
 //wj data delete
 function wjdelete() {
@@ -34,12 +32,7 @@ function wjdelete() {
         bootbox.confirm("确定要删除选中的 <span style='color:red'>"+deleteRows.length+"</span> 条文件记录吗?<br> <font color='red'>" +
             "注意：删除文件记录，将同时删除文件数据、电子全文，请谨慎操作！</font> ", function(result) {
             if(result){
-            	var jsonString = JSON.stringify(deleteRows);
-        		jsonString = jsonString.replace(/%/g,"%25");
-        		jsonString = jsonString.replace(/\&/g,"%26");
-        		jsonString = jsonString.replace(/\+/g,"%2B");
-        		
-                var par = "par=" + jsonString + "&tableType=02";
+                var par = "par=" + JSON.stringify(deleteRows) + "&tableType=02";
                 $.post("deleteArchive.action",par,function(data){
                         if (data == "SUCCESS") {
                             readwjdata();
@@ -141,37 +134,31 @@ function wjbatchatt() {
 }
 //refresh wjdata
 function wjrefresh() {
-//	var data = [];
+	var data = [];
 	readwjdata();
-//	wjGridconfig.dataView.setItems(data);
-//	wjGridconfig.dataView.setItems(wjGridconfig.rows);
+	wjGridconfig.dataView.setItems(data);
+	wjGridconfig.dataView.setItems(wjGridconfig.rows);
 }
 
 //read wj Archive data
 function readwjdata() {
 	
-//	var loading = new us.archive.ui.loading();
-	loading_wj.show("wjdiv");
+	var loading = new us.archive.ui.loading();
+	loading.show("wjdiv");
 	
     wjGridconfig.dataView.setItems([]);
-    
 	//同步读取数据
 	var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=02&isAllWj=" + archiveCommon.isAllWj +"&selectAid=" + archiveCommon.selectAid;
-	var url = "listArchiveP.action?"+par;
-    wjGridconfig.pageList(url,wjGridconfig,loader_wj,"txtSearch_wj","selectfield_wj");
-    loading_wj.remove();
-    
-    
-//	$.ajax({
-//		async : false,
-//		url : "listArchive.action?" + par,
-//		type : 'post',
-//		dataType : 'script',
-//		success : function(data) {
-//			if (data != "error") {
-//				wjGridconfig.rows = rowList;
-//
-//                wjGridconfig.dataView.setItems(wjGridconfig.rows);
+	$.ajax({
+		async : false,
+		url : "listArchive.action?" + par,
+		type : 'post',
+		dataType : 'script',
+		success : function(data) {
+			if (data != "error") {
+				wjGridconfig.rows = rowList;
+
+                wjGridconfig.dataView.setItems(wjGridconfig.rows);
 
                 // 创建checkbox列
                 var checkboxSelector_wj = new Slick.CheckboxSelectColumn({
@@ -215,21 +202,21 @@ function readwjdata() {
                 wjGridconfig.newItemTemplate = {
                     isdoc	: "0",
                     parentid : archiveCommon.selectAid,
-                    status	: "0"
+                    status	: "1"
                 };
                 wjGridconfig.newItemTemplate = $.extend({},wjGridconfig.newItemTemplate,wjGridconfig.fieldsDefaultValue);
 
                 wjGridconfig.grid.invalidate();
-//                loading.remove();
-//
-//			} else {
-//				us.openalert('<span style="color:red">读取数据时出错!<span></br>请尝试重新操作或与管理员联系。',
-//						'系统提示',
-//						'alertbody alert_Information'
-//				);
-//			}
-//		}
-//	});
+                loading.remove();
+
+			} else {
+				us.openalert('<span style="color:red">读取数据时出错!<span></br>请尝试重新操作或与管理员联系。',
+						'系统提示',
+						'alertbody alert_Information'
+				);
+			}
+		}
+	});
 }
 
 function show_wj_archive_list() {
@@ -266,16 +253,16 @@ $(function(){
     wjGridconfig.tabletype = '02';
     wjGridconfig.init_grid(wjGridconfig,"#wjdiv","pager_wj","inlineFilterPanel_wj");
 	
-//	$("#txtSearch_wj").keyup(function(e) {
-//		Slick.GlobalEditorLock.cancelCurrentEdit();
-//		// clear on Esc
-//		if (e.which == 27) {
-//			this.value = "";
-//		}
-//		archiveCommon.clName = $("#selectfield_wj").val();
-//		archiveCommon.searchString = this.value;
-//		us.updateFilter(wjGridconfig.dataView);
-//	});
+	$("#txtSearch_wj").keyup(function(e) {
+		Slick.GlobalEditorLock.cancelCurrentEdit();
+		// clear on Esc
+		if (e.which == 27) {
+			this.value = "";
+		}
+		archiveCommon.clName = $("#selectfield_wj").val();
+		archiveCommon.searchString = this.value;
+		us.updateFilter(wjGridconfig.dataView);
+	});
 
 	//如果是显示全部文件。屏蔽导入按钮
 	if (archiveCommon.isAllWj == '1') {
