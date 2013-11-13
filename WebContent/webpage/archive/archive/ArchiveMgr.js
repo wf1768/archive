@@ -3,6 +3,14 @@ var archiveCommon = new us.archive.Archive();
 
 
 $(function() {
+	
+	//计算浏览器高度，设置档案grid高
+//	alert($(document.body).height());
+	var h = $(document.body).height();
+	$("#archivediv").height(h-300);
+	$("#wjdiv").height(h-300);
+	
+	
 	//生成档案tree
 	var tree = $("#archivetree").jstree({ 
 		//生成的jstree包含哪些插件功能

@@ -56,8 +56,8 @@ public class ArchiveGroupAction extends BaseAction {
 	//文档类型，1.发文，2.收文，3.内请
 	private String edoc_property;
 
-//	private DatabaseManager manager = new DatabaseManager();
-	private DatabaseManager manager = null;
+	private DatabaseManager manager = new DatabaseManager();
+//	private DatabaseManager manager = null;
 	
 	public String showArchive() {
 		return SUCCESS;

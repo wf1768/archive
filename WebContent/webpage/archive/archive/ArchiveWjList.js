@@ -202,7 +202,7 @@ function readwjdata() {
                 wjGridconfig.newItemTemplate = {
                     isdoc	: "0",
                     parentid : archiveCommon.selectAid,
-                    status	: "1"
+                    status	: "0"
                 };
                 wjGridconfig.newItemTemplate = $.extend({},wjGridconfig.newItemTemplate,wjGridconfig.fieldsDefaultValue);
 

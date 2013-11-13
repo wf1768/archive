@@ -143,7 +143,7 @@
                                 <div id="grid_header_aj" class="widget-header">
                                     <h3>案卷管理</h3>
                                 </div>
-                                <div id="ajGrid" style="width: 100%;height: 700px;">
+                                <div id="ajGrid" style="width: 100%;">
                                     <!--<div id="grid_header_aj" class="grid-header" style="width: 100%;height:20px">案卷</div>-->
                                     <div style="width:100%; height:35px" class="grid-menu">
                                         <ul class="nav nav-pills" style="background-color: #F5F5F5; border: 1px solid #D3D3D3">
@@ -164,7 +164,7 @@
                                                     <li><a href="javascript:void(0);" onClick="importdata()">导入</a></li>
                                                     <li><a href="javascript:void(0);" onClick="">导出</a></li>
                                                     <li class="divider"></li>
-                                                    <li><a href="javascript:void(0);" onClick="filter()">过滤</a></li>
+                                                    <li><a href="javascript:void(0);" onClick="filter()">查询</a></li>
                                                 </ul>
                                             </li>
                                             <li><a href="javascript:void(0);" id="allwj" onClick="allwj()">全文件</a></li>
@@ -185,7 +185,7 @@
                                     <div id="inlineFilterPanel_aj"
                                          style="display: none; background: #dddddd; padding: 1px; color: black; font-size: 9pt">
                                         <form class="form-inline">
-                                            请选择过滤字段：<select id="selectfield_aj"></select> 过滤值：<input type="text"
+                                            请选择查询字段：<select id="selectfield_aj"></select> 查询值：<input type="text"
                                                                                                      id="txtSearch_aj">
                                             <a href="javascript:void(0);" class="btn btn-info btn-small" style="color: #FFFFFF"
                                                onClick="filter()">关闭</a>
@@ -204,7 +204,7 @@
                                 <div id="grid_header_wj" class="widget-header">
                                     <h3>文件管理</h3>
                                 </div>
-                                <div id="wjGrid" style="width: 100%;height: 700px;">
+                                <div id="wjGrid" style="width: 100%;">
                                     <div style="width:100%;height:35px" class="grid-menu">
                                         <ul class="nav nav-pills" style="background-color: #F5F5F5; border: 1px solid #D3D3D3">
                                             <li><a href="javascript:void(0);" onClick="wjadd()">添加</a></li>
@@ -224,7 +224,7 @@
                                                     <li><a href="javascript:void(0);" onClick="wjimport()">导入</a></li>
                                                     <li><a href="javascript:void(0);" onClick="">导出</a></li>
                                                     <li class="divider"></li>
-                                                    <li><a href="javascript:void(0);" onClick="wjfilter()">过滤</a></li>
+                                                    <li><a href="javascript:void(0);" onClick="wjfilter()">查询</a></li>
                                                 </ul>
                                             </li>
                                             <li class="dropdown"><a href="#" data-toggle="dropdown"
@@ -244,7 +244,7 @@
                                 <div id="inlineFilterPanel_wj"
                                      style="display: none; background: #dddddd; padding: 1px; color: black; font-size: 9pt">
                                     <form class="form-inline">
-                                        请选择过滤字段：<select id="selectfield_wj"></select> 过滤值：<input type="text"
+                                        请选择查询字段：<select id="selectfield_wj"></select> 查询值：<input type="text"
                                                                                                  id="txtSearch_wj">
                                         <a href="javascript:void(0);" class="btn btn-info btn-small" style="color: #FFFFFF" onClick="wjfilter()">关闭</a>
                                     </form>
