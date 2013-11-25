@@ -1,6 +1,7 @@
 package com.yapu.archive.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -64,16 +65,19 @@ public class DynamicService implements IDynamicService {
                             tmp = tmp.replaceAll("[\\t\\n\\r]", "");
                             tmp = tmp.replace("'","\\\'");
 
-
-
 //                            String tmp = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
 //                            tmp = tmp.replace("'","\\\'");
 //                            value.append("'").append(row.get(field.getEnglishname().toLowerCase())).append("',");
                             value.append("'").append(tmp).append("',");
                         }
                     }
+                    else if (field.getFieldtype().contains("timestamp")) {
+                        java.text.DateFormat format1 = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String s = format1.format(new Date());
+                        value.append("'").append(s).append("',");
+                    }
                     else {
-                        if (col_value == null) {
+                        if (col_value == null || col_value.equals("")) {
                             value.append("'0',");
                         }
                         else {
@@ -116,7 +120,7 @@ public class DynamicService implements IDynamicService {
 
                 for (SysTempletfield field : fieldList) {
 //                    if (field.getSort() != -1) { 
-                        if (!"id".equals(field.getEnglishname().toLowerCase())) {
+                        if (!"id".equals(field.getEnglishname().toLowerCase()) && !"createtime".equals(field.getEnglishname().toLowerCase())) {
                             sb.append(field.getEnglishname().toLowerCase()).append("=");
                             String value = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
                             value = value.replace("'","\\\'");

@@ -31,6 +31,7 @@ import org.springframework.dao.support.DaoSupport;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -237,8 +238,9 @@ public class DocAction extends BaseAction{
     	out.write(gson.toJson(docList));
     	return null;
     }
-    public String upload() throws Exception {
+    public String upload(){
         //得到当前登录帐户
+    	System.out.println("上传Start：----------------------------");
         SysAccount sessionAccount = (SysAccount) this.getHttpSession().getAttribute(Constants.user_in_session);
         if (null == sessionAccount) {
             return null;
@@ -311,15 +313,19 @@ public class DocAction extends BaseAction{
             //TODO 这里要跟阿佘对一下doc的上传字段怎么写。
             
             if ("FTP".equals(docserver.getServertype())) {
-                FtpUtil util = new FtpUtil();
-                util.connect(docserver.getServerip(),
-                        docserver.getServerport(),
-                        docserver.getFtpuser(),
-                        docserver.getFtppassword(),
-                        docserver.getServerpath());
-                FileInputStream s = new FileInputStream(newFile);
-                util.uploadFile(s, newName);
-                util.closeServer();
+                try {
+					FtpUtil util = new FtpUtil();
+					util.connect(docserver.getServerip(),
+					        docserver.getServerport(),
+					        docserver.getFtpuser(),
+					        docserver.getFtppassword(),
+					        docserver.getServerpath());
+					FileInputStream s = new FileInputStream(newFile);
+					util.uploadFile(s, newName);
+					util.closeServer();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
                 //ftp上传完成，删除临时文件
                 deleteFile(newFile.getPath());
             } else if ("LOCAL".equals(docserver.getServertype())){
@@ -333,7 +339,9 @@ public class DocAction extends BaseAction{
                         savePath += "/";
                     }
                 }
+                System.out.println("上传文件路径+Name=："+savePath+newName);
                 newFile.renameTo(new File(savePath + newName));
+                System.out.println("上传文件路径+Name=："+savePath+newName+"上传文件结束，upload file over");
                 //删除临时文件.renameTO 的同时，已经删除了，这里再删除一次，避免
                 deleteFile(newFile.getPath());
             }
@@ -350,6 +358,7 @@ public class DocAction extends BaseAction{
             	dynamicService.update(sqlList);
             }
         }
+        System.out.println("END:---------------------------------");
         return null;
     }
     /**

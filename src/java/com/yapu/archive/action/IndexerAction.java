@@ -4,11 +4,15 @@ package com.yapu.archive.action;
 /**
  * 索引操作类
  */
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.xmlbeans.XmlException;
 
 import com.google.gson.Gson;
 import com.yapu.archive.entity.DynamicExample;
@@ -96,7 +100,7 @@ public class IndexerAction extends BaseAction {
 	 * @return
 	 * @throws Exception 
 	 */
-	public String createFilesIndexer() throws Exception {
+	public String createFilesIndexer(){
 		
 //		PrintWriter out = this.getPrintWriter();
 		
@@ -134,42 +138,49 @@ public class IndexerAction extends BaseAction {
             		serverPath += "/";
                 }
         		String path = serverPath + doc.getDocpath();
-        		
-        		//处理doc文档
-        		if ("DOC".equals(ext)) {
-        			content = read.readWord(path);
-        			list.add(doc);
-        		}//处理doc2007格式
-        		else if ("DOCX".equals(ext)) {
-        			content = read.readWord2007(path);
-        			list.add(doc);
-        		}//处理xls格式
-        		else if("XLS".equals(ext)) {
-        			content = read.ReadExcel(path);
-        			list.add(doc);
-        		}//处理xlsx格式  2007格式
-        		else if("XLSX".equals(ext)) {
-        			content = read.readExcel2007(path);
-        			list.add(doc);
-        		}//处理txt格式
-        		else if("TXT".equals(ext)) {
-        			content = read.readTxt(path);
-        			list.add(doc);
-        		}
-        		else if("PDF".equals(ext)) {
-        			content = read.readPdf(path);
-        			list.add(doc);
-        		}
-        		else if("PPT".equals(ext)) {
-        			content = read.readPowerPoint(path);
-        			list.add(doc);
-        		}
-        		else {
-        			content = "";
-        		}
-        		
-        		if (!"".equals(content)) {
-        			map.put(doc.getDocid(), content);
+        		//判断文件目录是否存在    up:2013-11-23
+        		File filePath = new File(path);
+        		if(filePath.exists()){
+	        		try {
+						//处理doc文档
+						if ("DOC".equals(ext)) {
+							content = read.readWord(path);
+							list.add(doc);
+						}//处理doc2007格式
+						else if ("DOCX".equals(ext)) {
+							content = read.readWord2007(path);
+							list.add(doc);
+						}//处理xls格式
+						else if("XLS".equals(ext)) {
+							content = read.ReadExcel(path);
+							list.add(doc);
+						}//处理xlsx格式  2007格式
+						else if("XLSX".equals(ext)) {
+							content = read.readExcel2007(path);
+							list.add(doc);
+						}//处理txt格式
+						else if("TXT".equals(ext)) {
+							content = read.readTxt(path);
+							list.add(doc);
+						}
+						else if("PDF".equals(ext)) {
+							content = read.readPdf(path);
+							list.add(doc);
+						}
+						else if("PPT".equals(ext)) {
+							content = read.readPowerPoint(path);
+							list.add(doc);
+						}
+						else {
+							content = "";
+						}
+						
+						if (!"".equals(content)) {
+							map.put(doc.getDocid(), content);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
         		}
         	}
     	}
@@ -179,8 +190,9 @@ public class IndexerAction extends BaseAction {
     	
     	
     	if (!map.isEmpty()) {
-    		String result = indexerService.createIndex(docserver.getDocserverid(), list, map, "CREATE");
-    		Gson gson = new Gson();
+//    		String result = indexerService.createIndex(docserver.getDocserverid(), list, map, "CREATE");
+    		indexerService.createIndex(docserver.getDocserverid(), list, map, "CREATE");
+//    		Gson gson = new Gson();
 //    		out.write(gson.toJson(result));
     		return null;
     	}
