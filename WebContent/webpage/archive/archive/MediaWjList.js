@@ -264,6 +264,7 @@ function updateMediaWj() {
     item.isdoc = 0;
     item.treeid = editRow.TREEID;
     item.slt = editRow.SLT;
+    item.status = 0;
     item.parentid = editRow.PARENTID;
     item.IMAGEPATH = "";
     for (var i=0;i<tableMediaWjField.length;i++) {

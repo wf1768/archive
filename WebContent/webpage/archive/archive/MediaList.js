@@ -148,6 +148,7 @@ function save(id) {
     item.isdoc = 0;
     item.treeid = archiveCommon.selectTreeid;
     item.slt = '';//no_photo_135.png
+    item.status = 0;
     for (var i = 0; i < tableField.length; i++) {
         var field = tableField[i];
         if (field.isgridshow == 1) {

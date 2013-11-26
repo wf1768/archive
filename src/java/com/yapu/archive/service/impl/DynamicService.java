@@ -120,16 +120,19 @@ public class DynamicService implements IDynamicService {
 
                 for (SysTempletfield field : fieldList) {
 //                    if (field.getSort() != -1) { 
-                        if (!"id".equals(field.getEnglishname().toLowerCase()) && !"createtime".equals(field.getEnglishname().toLowerCase())) {
-                            sb.append(field.getEnglishname().toLowerCase()).append("=");
-                            String value = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
-                            value = value.replace("'","\\\'");
-                            if (field.getFieldtype().contains("VARCHAR")) {
-                                sb.append("'").append(value).append("',");
-                            }
-                            else {
-                                sb.append(value).append(",");
-                            }
+                        if (!"id".equals(field.getEnglishname().toLowerCase()) && !"createtime".equals(field.getEnglishname().toLowerCase()) && !"slt".equals(field.getEnglishname().toLowerCase())) {
+                        	String value = row.get(field.getEnglishname().toLowerCase());
+                        	if (value != null) {
+                        		sb.append(field.getEnglishname().toLowerCase()).append("=");
+                        		value = row.get(field.getEnglishname().toLowerCase()).replaceAll("\\\\","\\\\\\\\");
+                                value = value.replace("'","\\\'");
+                                if (field.getFieldtype().contains("VARCHAR")) {
+                                    sb.append("'").append(value).append("',");
+                                }
+                                else {
+                                    sb.append(value).append(",");
+                                }
+                        	}
                         }
 //                    }
                 }
