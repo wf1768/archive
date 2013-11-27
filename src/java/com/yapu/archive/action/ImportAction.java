@@ -36,6 +36,8 @@ public class ImportAction extends BaseAction {
 	private ITreeService treeService;
 	private IDynamicService dynamicService;
 	
+	private String status;
+	
 	/*
 	 * 接收上传文件，读取文件，返回数据
 	 */
@@ -110,12 +112,25 @@ public class ImportAction extends BaseAction {
             String tmpid = UUID.randomUUID().toString();
 			sb.append("{").append("\"id\":\"").append(tmpid).append("\",\"treeid\":\"");
 			sb.append(treeid).append("\",\"isdoc\":\"0\",\"rownum\":\"").append(i).append("\",");
-            sb.append("\"status\":\"1\",");
+			//解决status标示
+			if (status != null && status.equals("0")) {
+				sb.append("\"status\":\"0\",");
+			}
+			else {
+				sb.append("\"status\":\"2\",");
+			}
+//            sb.append("\"status\":\"1\",");
 
             archiveMap.put("id",tmpid);
             archiveMap.put("treeid",treeid);
             archiveMap.put("isdoc","0");
-            archiveMap.put("status","1");
+            if (status != null && status.equals("0")) {
+            	archiveMap.put("status","0");
+			}
+			else {
+				archiveMap.put("status","2");
+			}
+//            archiveMap.put("status","1");
             //生成list
 
 			if (tableType.equals("02")) {
@@ -560,6 +575,14 @@ public class ImportAction extends BaseAction {
 
 	public void setSltPic(String sltPic) {
 		this.sltPic = sltPic;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 }

@@ -64,7 +64,11 @@ function selectfile() {
     $('#selectfilewindows').modal('show');
 }
 
-function importArchive() {
+function importArchive(status) {
+	if (status == "") {
+		status = 2;
+	}
+	alert(status);
     var importArchiveForm = $('#importArchiveForm');
 
     var filePath = $('#selectfile').val();
@@ -77,10 +81,10 @@ function importArchive() {
     if (a) {
         var url = 'upload.action?treeid=' + archiveCommon.selectTreeid;
         if (archiveCommon.tableType == "01") {
-            url += '&tableType=01';
+            url += '&tableType=01&status='+status;
         }
         else {
-            url += '&tableType=02&selectAid=' + archiveCommon.selectAid;
+            url += '&tableType=02&status='+status+'&selectAid=' + archiveCommon.selectAid;
         }
         importArchiveForm.attr('action',url);
         importArchiveForm.submit();
