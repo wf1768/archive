@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- 档案涉及的操作都在这里 -->
+	<package name="archive" extends="struts-archive" >
+		<!-- ========== ftp =========================== -->
+		<!-- ftp显示列表 -->
+		<action name="testFtp" class="ftpAction" method="testFtp"></action>
+		
+		<!-- ========== docserver =========================== -->
+		<!-- 显示列表 -->
+		<action name="listDocserver" class="docserverAction" method="list"></action>
+		<!-- 保存-->
+		<action name="saveDocserver" class="docserverAction" method="save"></action>
+		<!-- 根据id查找-->
+		<action name="getDocserver" class="docserverAction" method="getSysDocserver"></action>
+		<!-- 修改 -->
+		<action name="updDocserver" class="docserverAction" method="updateDocserver"></action>
+		<!-- 删除 -->
+		<action name="delDocserver" class="docserverAction" method="delete"></action>
+		
+		
+		<!-- 更改服务器状态 -->
+		<action name="setDocserverState" class="docserverAction" method="setDocserverState"></action>
+		
+		
+		<!-- ========== templet =========================== -->
+		<!-- 显示模板树 -->
+		<action name="loadTempletTreeData" class="templetAction" method="loadTempletTreeData"></action>
+		<!-- 保存新建-->
+		<action name="addTemplet" class="templetAction" method="insert"></action>
+		<!-- 删除模板 -->
+		<action name="delTemplet" class="templetAction" method="delete"></action>
+		
+		<!-- ========== templetfield =========================== -->
+		<action name="showListTempletfield" class="templetfieldAction" method="showListTempletfield">
+			<result name="success">/webpage/archive/templet/TempletfieldList.html</result>
+		</action>
+		<!-- 显示字段列表-->
+		<action name="listTempletfield" class="templetfieldAction" method="list"></action>
+		<!-- 保存新建字段-->
+		<action name="addTempletfield" class="templetfieldAction" method="add"></action>
+		<!-- 保存字段-->
+		<action name="saveTempletfield" class="templetfieldAction" method="save"></action>
+		
+		<!-- ========== code =========================== -->
+		<!-- 显示字段代码列表-->
+		<action name="listCode" class="codeAction" method="list"></action>
+		<!-- 保存代码-->
+		<action name="saveCode" class="codeAction" method="save"></action>
+        <!-- 根据fieldid，查找代码-->
+        <action name="getFieldCode" class="codeAction" method="getFieldCode"></action>
+		
+		<!-- ========== tree =========================== -->
+		<!-- 显示树-->
+		<action name="loadTreeData" class="treeAction" method="loadTreeData"></action>
+		<action name="getTree" class="treeAction" method="getTree">
+		</action>
+		<!-- 保存新建树-->
+		<action name="addTree" class="treeAction" method="add"></action>
+		<!-- 删除 -->
+		<action name="delTree" class="treeAction" method="delete"></action>
+		<!-- 更新 -->
+		<action name="updateTree" class="treeAction" method="update"></action>
+		
+		<!-- ========== archive =========================== -->
+		<action name="showArchiveList" class="archiveAction" method="showArchive">
+			<result name="success">/webpage/archive/archive/ArchiveList.html</result>
+		</action>
+        <!-- 打开文件级页签 -->
+        <action name="showArchiveWjList" class="archiveAction" method="showWjArchive">
+			<result name="success">/webpage/archive/archive/ArchiveWjList.html</result>
+		</action>
+        <!-- 检查树节点背后的档案模块类型。是A \F\P -->
+        <action name="getTempletType" class="archiveAction" method="getArchiveType"></action>
+		<!-- 读取grid字段-->
+		<action name="getField" class="archiveAction" method="getField"></action>
+		<!-- 显示列表-->
+		<action name="listArchive" class="archiveAction" method="list"></action>
+
+		<!-- 删除档案-->
+		<action name="deleteArchive" class="archiveAction" method="delete"></action>
+
+    	<!-- ========== archive组卷 =========================== -->
+        <!-- 打开文件级页签 -->
+        <action name="showArchiveWjListGroup" class="archiveGroupAction" method="showWjArchive">
+			<result name="success">/webpage/archive/archive/ArchiveWjListGroup.html</result>
+		</action>
+		<!-- 显示文件列表-->
+		<action name="listArchiveF" class="archiveGroupAction" method="list"></action>
+		<!-- 显示文件列表分页-->
+		<action name="listArchiveP" class="archiveGroupAction" method="pageList"></action>
+		<!-- 条件列表-->
+		<action name="listArchiveT" class="archiveGroupAction" method="getList"></action>
+		<!-- 归档组卷-->
+		<action name="archiveGroup" class="archiveGroupAction" method="archiveGroup"></action>
+		<!-- 拆卷 -->
+		<action name="hitchBacks" class="archiveGroupAction" method="hitchBacks"></action>
+		<!-- 归档 -->
+		<action name="filing" class="archiveGroupAction" method="filing"></action>
+		
+    	<!-- 读取OA数据 -->
+    	<action name="readOaList" class="archiveGroupAction" method="readOaList"></action>
+    	
+        <!-- =============== 导入 ================== -->
+        <!-- 读取导入文件 -->
+        <action name="upload" class="importAction" method="upload"></action>
+        <!-- 保存-->
+		<action name="saveImportArchive" class="importAction" method="insertImport"></action>
+		<!-- 删除 案卷（文件）-->
+		<action name="deleteImportArchive" class="importAction" method="deleteImport"></action>
+		<!-- 删除 文件 -->
+		<action name="deleteImportArchiveF" class="importAction" method="deleteFile"></action>
+		
+		<!-- 查找-->
+		<action name="getImportArchive" class="importAction" method="getImport"></action>
+		<!-- 更新-->
+		<action name="updateImportArchive" class="importAction" method="updateImport"></action>
+		<!-- 设置封页图片-->
+		<action name="setCoverPic" class="importAction" method="setCoverPic"></action>
+		
+		
+		<!-- 保存批量挂接-->
+		<action name="saveBatchAttArchive" class="attachmentAction" method="insertBatchAttachmentArchive"></action>
+        
+        <action name = "connector" class = "connectorAction" method="run"/>
+
+        <action name="connectorDownload" class="connectorAction" method="downDoc">
+            <result type="stream">
+                <param name="contentType">${contentType}</param>
+                <param name="inputName">inputStream</param>
+                <param name="contentDisposition">attachment;filename="${docName}"</param>
+                <param name="bufferSize">4096</param>
+            </result>
+        </action>
+        
+        <!-- 统计 -->
+        <action name="getCountField" class="countAction" method="getCountField" />
+        <action name="archiveCount" class="countAction" method="archiveCount" />
+        <action name="queryGroup" class="countAction" method="getQueryGroups" />
+    </package>
+</struts>

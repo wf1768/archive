@@ -422,7 +422,7 @@ function showDocwindow(id, tableid) {
     archiveCommon.selectTableid = tableid;
 
     showdoc();
-    $('#upload-doc-dialog').modal('show');
+//    $('#upload-doc-dialog').modal('show');
 }
 //显示当前数据的电子文件
 function showdoc() {
@@ -435,18 +435,58 @@ function showdoc() {
         type : 'post',
         dataType : 'script',
         success : function(data) {
-            if (data != "error") {
-                rowList = eval(docList);
-                $("#doclist").html("");
+        	var isAuth = isNotAuth;
 
-                for (var i=0;i<rowList.length;i++) {
-                    $("#doclist").append(getDoclist(rowList[i]));
-                }
-            } else {
-                us.openalert('读取数据时出错，请尝试重新操作或与管理员联系! ','系统提示','alertbody alert_Information');
-            }
+        	if (isAuth == 1) {
+//        		rowList = eval(docList);
+                $("#doclist").html(getDocTable(docList));
+                $('#upload-doc-dialog').modal('show');
+        	}
+        	else {
+        		us.openalert('没有浏览电子全文权限，或读取数据时出错，请尝试重新操作或与管理员联系! ','系统提示','alertbody alert_Information');
+        	}
+//            if (data != "error") {
+//                rowList = eval(docList);
+//                $("#doclist").html("");
+//
+//                for (var i=0;i<rowList.length;i++) {
+//                    $("#doclist").append(getDoclist(rowList[i]));
+//                }
+//            } else {
+//                us.openalert('读取数据时出错，请尝试重新操作或与管理员联系! ','系统提示','alertbody alert_Information');
+//            }
         }
     });
+}
+
+function getDocTable(list) {
+	var content = "";
+	content += "<table class=\"table table-bordered table-condensed\" width=\"100%\">";
+	content += "<thead>";
+	content += "<tr>";
+	content += "<th>序号</th>";
+	content += "<th>文件名</th>";
+	content += "<th>类型</th>";
+	content += "<th>大小</th>";
+	content += "<th>操作</th>";
+	content += "</tr>";
+	content += "</thead>";
+	content += "<tbody>";
+	
+	for (var i=0;i<list.length;i++) {
+		var doc = list[i];
+		var num = i+1;
+		content += "<tr>";
+		content += "<td>"+num+"</td>";
+		content += "<td>"+doc.docoldname+"</td>";
+		content += "<td>"+doc.docext+"</td>";
+		content += "<td>"+doc.doclength+"</td>";
+		content += "<td><button type='button' class='btn btn-primary' onclick=\"fileDown('"+doc.docid+"','"+archiveCommon.selectTreeid+"')\">下载</button><button type='button' class='btn btn-danger' style='margin-left: 10px;' onclick=\"delectDoc('"+doc.docid+"')\">删除</button></td>";
+		content += "</tr>";
+	}
+	content += "</tbody>";
+	content += "</table>";
+	return content;
 }
 
 /*

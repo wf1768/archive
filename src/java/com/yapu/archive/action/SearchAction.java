@@ -358,7 +358,7 @@ private static final long serialVersionUID = 5004188718476484590L;
 		}
 		//判断模板类型
 		List<SysTempletfield> fieldsList = new ArrayList<SysTempletfield>();
-		if ("A".equals(templet.getTemplettype())) {
+		if ("A".equals(templet.getTemplettype()) || "P".equals(templet.getTemplettype())) {
 			fieldsList = treeService.getTreeOfTempletfield(tree.getTreeid(), "01");
 			if ("".equals(tableType)) {
 				if ("0".equals(tree.getParentid())) {

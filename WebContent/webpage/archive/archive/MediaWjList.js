@@ -69,26 +69,41 @@ function showMediaWjData(data) {
 	var html = "";
 	for (var i = 0; i < data.length; i++) {
 	 	var imgsrc = "";
+	 	var dd = "";
 	    if (data[i].SLT == "") {
 	        imgsrc = "../../media/no_photo_135.png";
 	    }else {
 	        imgsrc = "../../media/" + data[i].SLT;
+	        dd = "/archive/webpage/media/" + data[i].SLT;
 	    }
      	html +='<li class="span3">';
 		html +='	<div class="thumbnail">';
-		html +='		<a class="thumbnail" href="javascript:;" >';
-		html +='			<img class="imgSize" src="'+imgsrc+'">';
+		html +='		<a class="thumbnail" href="'+dd+'" >';
+		html +='			<img class="imgSize" src="'+imgsrc+'" title="'+data[i].TM+'">';
 		html +='		</a>';
 		html +='		<div class="actions">';
 		html +='			<a href="javascript:;" onclick="setCoverImg(\''+data[i].SLT+'\')" title="设为封面"><i class="icon-eye-open icon-white"></i></a>';
 		html +='			<a href="javascript:;" onclick="createWjInfo(\''+data[i].ID+'\')" title="修改"><i class="icon-pencil icon-white"></i></a>';
 		html +='			<a href="javascript:;" onclick="deleteMediaWj(\''+data[i].ID+'\',\''+data[i].SLT+'\')" title="删除"><i class="icon-remove icon-white"></i></a>';
+		html +='			<a href="javascript:;" onclick="saveImageAs(\''+imgsrc+'\')" title="下载"><i class="icon-download icon-white"></i></a>';
 		html +='		</div>';
-		html +='		<div limit="18" class="titleN">题名：'+data[i].TM+'</div>';
+		html +='		<div limit="18" class="titleN">事由：'+data[i].TM+'</div>';
 		html +='	</div>';
 		html +='</li>';
 	}
 	$('#meidawjdiv').html(html);
+	$(".yoxview").yoxview({
+		lang : 'zh-cn',
+		langFolder : '../../js/jquery.yoxview/'
+	});
+	
+}
+
+function saveImageAs(imgOrURL) {
+    if (typeof imgOrURL == 'object')
+        imgOrURL = imgOrURL.src;
+    window.win = open (imgOrURL);
+    setTimeout('win.document.execCommand("SaveAs")', 500);
 }
 
 //声明上传控件。#uploadFile，作为公共的资源，在archiveMgr.js里

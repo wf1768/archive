@@ -355,6 +355,8 @@ function tabinfo(tabType,selectid) {
 			}
 		});
 		
+		var imagepath = "";
+		
 		var content = "";
 		content += "<table class=\"table table-bordered table-condensed\" width=\"100%\">";
 		for (var i=0;i<fields.length;i++) {
@@ -364,6 +366,11 @@ function tabinfo(tabType,selectid) {
 			if (value == null) {
 				value = "";
 			}
+			
+			if (field.englishname =='SLT') {
+				imagepath = value;
+			}
+			
 			if (field.isgridshow == 1) {
 //				content += "<div class=\"control-group\">";
 //				content += "<label for=\""+field.englishname+"\" class=\"control-label\">"+field.chinesename+"</label>";
@@ -377,6 +384,9 @@ function tabinfo(tabType,selectid) {
 				content += "<tr><td width=\"170px\">"+field.chinesename+"</td><td>"+value+"</td></tr>";
 				
 			}
+		}
+		if (imagepath != "") {
+			content += "<tr><td width=\"170px\">图片</td><td><img src='/archive/webpage/media/"+imagepath+"'></td></tr>";
 		}
 		content += "</table>";
 		$("#data").html(content);
