@@ -2,7 +2,6 @@ package com.yapu.archive.action;
 
 import DBstep.iMsgServer2000;
 import com.google.gson.Gson;
-import com.yapu.archive.entity.DynamicExample;
 import com.yapu.archive.entity.SysAccountTree;
 import com.yapu.archive.entity.SysDoc;
 import com.yapu.archive.entity.SysDocExample;
@@ -14,21 +13,21 @@ import com.yapu.archive.service.itf.IDocService;
 import com.yapu.archive.service.itf.IDocserverService;
 import com.yapu.archive.service.itf.IDynamicService;
 import com.yapu.archive.service.itf.ITableService;
-import com.yapu.archive.service.itf.ITreeService;
 import com.yapu.archive.vo.UploadVo;
 import com.yapu.system.common.BaseAction;
 import com.yapu.system.entity.SysAccount;
 import com.yapu.system.entity.SysOrg;
-import com.yapu.system.entity.SysRole;
 import com.yapu.system.service.itf.IAccountService;
 import com.yapu.system.service.itf.IOrgService;
 import com.yapu.system.util.CommonUtils;
 import com.yapu.system.util.Constants;
 import com.yapu.system.util.Coverter;
+import com.yapu.system.util.DocConverter;
 import com.yapu.system.util.FtpUtil;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.dao.support.DaoSupport;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.SocketException;
@@ -78,8 +77,6 @@ public class DocAction extends BaseAction{
     //fileid treeid 为单个档案挂接上传文件时用到
     private String fileid;
     private String treeid;
-
-
 
     //未挂接的电子全文，删除用
     private String nodocid;
@@ -617,6 +614,43 @@ public class DocAction extends BaseAction{
     	return null;
     }
 
+    public String showSwfFile() throws IOException{
+    	PrintWriter out = this.getPrintWriter();
+    	if(isFieldscan()){
+    		DocConverter docConverter = new DocConverter();
+        	SysDoc doc = docService.selectByPrimaryKey(this.getDocId());
+        	//判断文件所属服务器
+        	String serverid = doc.getDocserverid();
+        	//得到所属服务器的信息
+        	docServer = docserverService.selectByPrimaryKey(serverid);
+        	//判断服务器类型。根据不同类型，执行不同的操作
+        	String serverType = docServer.getServertype();
+        	if ("LOCAL".equals(serverType)) {
+        		savePath = docServer.getServerpath();
+        	}else if ("FTP".equals(serverType)) {
+        		savePath = docServer.getServerpath();
+        	}
+        	String fileName = savePath + "\\" + doc.getDocpath();
+        	docConverter.setFile(fileName);
+        	String temp = "/SWFFILE";
+			String tableIndexDir = ServletActionContext.getServletContext().getRealPath(temp)+ File.separator;
+			File file =new File(tableIndexDir);    
+			//如果文件夹不存在则创建    
+			if(!file .exists()  && !file .isDirectory()){       
+			    file .mkdir();    
+			}
+        	docConverter.setOutputPath(tableIndexDir + doc.getDocid());
+        	docConverter.conver();
+//        	String swfFile = savePath + "\\" +doc.getDocid() + ".swf";
+        	HttpServletRequest request = getRequest();
+        	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath();
+        	path = path+temp+"/"+doc.getDocid()+".swf";
+        	out.write(path);
+    	}else{
+    		out.write("0");
+    	}
+    	return null;
+    }
     /**
      * 全文检索，文件下载
      * @throws IOException 
@@ -750,7 +784,40 @@ public class DocAction extends BaseAction{
     	return "";
     }
 
-
+    //////////////////////////////////////////////////////////////////////
+    //						 电子全文预览								    //
+    //////////////////////////////////////////////////////////////////////
+//    public String filePreview(){
+//    	System.out.println("ssssssss");
+//    	try {
+//			PrintWriter out = this.getPrintWriter();
+//			if(isFieldscan()){
+//		        SysDoc doc = docService.selectByPrimaryKey(this.getDocId());
+//		      //判断文件所属服务器
+//		    	String serverid = doc.getDocserverid();
+//		    	//得到所属服务器的信息
+//		    	docServer = docserverService.selectByPrimaryKey(serverid);
+//		    	//判断服务器类型。根据不同类型，执行不同的操作
+//		    	String serverType = docServer.getServertype();
+//		    	if ("LOCAL".equals(serverType)) {
+//		    		savePath = docServer.getServerpath();
+//		    	}else if ("FTP".equals(serverType)) {
+//		    		savePath = docServer.getServerpath();
+//	            }
+//		    	String fileName = savePath + "\\" + doc.getDocpath();
+////		    	docConverter.setFile(fileName);
+////		    	docConverter.conver();
+//		    	String swfFile = savePath + "\\" +doc.getDocid() + ".swf";
+//				out.write(swfFile); //有权限
+//			}else{
+//				out.write("0"); //没权限
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//    	return null;
+//    }
+    
     public File getArchive() {
         return archive;
     }

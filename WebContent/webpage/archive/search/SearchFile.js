@@ -176,26 +176,16 @@ function openContentDialog(selectid,treeid) {
 		url : "filePreview.action",
 		type : 'post',
 		dataType : 'text',
-		data:"treeid="+treeid,
+		data:"treeid="+treeid+"&docId="+selectid,
 		success : function(data) {
-			if (data == "1") {
-				var datas = searchCommon.data;
-				var data ;
-			//	//找到显示的数据
-				for (var i=0;i<datas.length;i++) {
-					if (datas[i].docid == selectid) {
-						data = datas[i];
-					}
-				}
-				$("#title").html(data.docoldname);
-				$("#content").html(data.content);
-				$('#contentdialog').modal({
-			        backdrop:true,
-			        keyboard:true,
-			        show:true
-			    });
-			} else {
+			if (data == "0") {
 				openalert("对不起，您没有权限预览此文件！");
+			} else {
+				var a=document.createElement("a");  
+				a.target="_blank"; 
+				a.href="../../../readFile.html?selectid="+selectid+"&treeid="+treeid;
+				document.body.appendChild(a);  
+				a.click()
 			}
 		}
 	});
