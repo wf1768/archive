@@ -16,8 +16,9 @@
         <action name="listDoc" class="docAction" method="list"></action>
         <!-- 预览 -->
         <action name="filePreview" class="docAction" method="filePreview"></action>
-        <action name="showSwfAction" class="docAction" method="showSwfFile">
-        </action>
+        <action name="showSwfAction" class="docAction" method="showSwfFile"></action>
+        <!-- 打印 -->
+        <action name="filePrintAction" class="docAction" method="filePrint"></action>
         <!-- 下载测试  application/octet-stream-->
         <action name="isDownDoc" class="docAction" method="isDownDoc"></action>
         <action name="downDoc" class="docAction" method="downDoc">

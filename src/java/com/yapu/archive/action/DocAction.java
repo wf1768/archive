@@ -640,17 +640,35 @@ public class DocAction extends BaseAction{
 			    file .mkdir();    
 			}
         	docConverter.setOutputPath(tableIndexDir + doc.getDocid());
-        	docConverter.conver();
-//        	String swfFile = savePath + "\\" +doc.getDocid() + ".swf";
-        	HttpServletRequest request = getRequest();
-        	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath();
-        	path = path+temp+"/"+doc.getDocid()+".swf";
-        	out.write(path);
+        	boolean flag = docConverter.conver();
+        	if(flag){
+	        	HttpServletRequest request = getRequest();
+	        	String path = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath();
+	        	path = path+temp+"/"+doc.getDocid()+".swf";
+	        	out.write(path);
+        	}else{
+        		out.write("1");
+        	}
     	}else{
     		out.write("0");
     	}
     	return null;
     }
+    
+    /**
+     * 全文检索-打印
+     * @throws IOException 
+     * */
+    public String filePrint() throws IOException{
+    	PrintWriter out = this.getPrintWriter();
+    	if(isFieldprint()){
+    		out.write("1");
+    	}else{
+    		out.write("0");
+    	}
+    	return null;
+    }
+    
     /**
      * 全文检索，文件下载
      * @throws IOException 

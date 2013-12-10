@@ -13,7 +13,8 @@
 			#flashContent { display:none; }
      </style> 
      <script type="text/javascript" src="webpage/js/jquery-1.7.1.js"></script>
-	<script type="text/javascript" src="flexpaper/js/flexpaper_flash.js"></script>
+     <script type="text/javascript" src="flexpaper1/js/swfobject.js"></script> 
+	<script type="text/javascript" src="flexpaper1/js/flexpaper_flash.js"></script>
   </head>
   
   <body>
@@ -45,44 +46,78 @@
 	        			data:"treeid="+treeid+"&docId="+selectid,
 	        			success : function(data) {
 	        				if (data == "0") {
-	        					openalert("对不起，没有此文件！");
-	        				} else {
-	        					readFile(data);
+	        					alert("对不起，没有此文件！");
+	        				}else if(data == "1"){
+	        					alert("对不起，此文件不可在线浏览，可进行下载查看。");
+			        		} else {
+				        		var fileUrl = data;
+			        			$.ajax({
+				        			async : false,
+				        			url : "filePrintAction.action",
+				        			type : 'post',
+				        			dataType : 'text',
+				        			data:"treeid="+treeid+"&docId="+selectid,
+				        			success : function(data) {
+				        				readFile(fileUrl,data);
+				        			}
+				        		});
 	        				}
 	        			}
 	        		});
 	        	});
 		        
-        		function readFile(url){
-        			//var url = 'http://localhost:8088/archive3/dfa7be61-cefd-4b2f-9562-8e9c4a9c0a3b.swf';
-    	     		var fp = new FlexPaperViewer(	
-    						 'flexpaper/FlexPaperViewer',
-    						 'viewerPlaceHolder', { config : {
-    						 SwfFile : url,
-    						 Scale : 0.6, 
-    						 ZoomTransition : 'easeOut',
-    						 ZoomTime : 0.5,
-    						 ZoomInterval : 0.2,
-    						 FitPageOnLoad : true,
-    						 FitWidthOnLoad : false,
-    						 PrintEnabled : false,
-    						 FullScreenAsMaxWindow : false,
-    						 ProgressiveLoading : true,
-    						 MinZoomSize : 0.2,
-    						 MaxZoomSize : 5,
-    						 SearchMatchAll : false,
-    						 InitViewMode : 'Portrait',
-    						 
-    						 ViewModeToolsVisible : true,
-    						 ZoomToolsVisible : true,
-    						 NavToolsVisible : true,
-    						 CursorToolsVisible : true,
-    						 SearchToolsVisible : true,
-      						
-      						 localeChain: 'zh_CN'
-   						 	}});
+        		function readFile(url,isPrint){
+            		var printFlag = false;
+            		if(isPrint == "1")
+                		printFlag = true;
+            		else
+            			printFlag = false;
+    	     		 var swfVersionStr = "10.0.0";   
+    	             var xiSwfUrlStr = "playerProductInstall.swf";   
+    	             var flashvars = {   
+    	                 SwfFile : url,   
+			    	     Scale : 0.6,   
+			    	     ZoomTransition : "easeOut",   
+			    	     ZoomTime : 0.5,   
+		    	         ZoomInterval : 0.1,   
+		    	         FitPageOnLoad : false,   
+		    	         FitWidthOnLoad : true,   
+		    	         PrintEnabled : printFlag,   
+		    	         FullScreenAsMaxWindow : false,   
+		    	         ProgressiveLoading : true,   
+		    	         PrintToolsVisible : true,   
+		    	         ViewModeToolsVisible : true,   
+		    	         ZoomToolsVisible : true,   
+		    	         FullScreenVisible : true,   
+		    	         NavToolsVisible : true,   
+		    	         CursorToolsVisible : true,   
+			    	     SearchToolsVisible : true,   
+			    	     localeChain: "zh_CN"  
+			    	};   
+
+    	             var params = {}   
+        	         params.quality = "high";   
+         	         params.bgcolor = "#ffffff";   
+         	         params.allowscriptaccess = "sameDomain";   
+         	         params.allowfullscreen = "true";   
+         	         var attributes = {};   
+         	         attributes.id = "FlexPaperViewer";   
+         	         attributes.name = "FlexPaperViewer";
+         	         var news_height = $(window).height();
+         	   		 var news_width = $(window).width()-400; 
+         	         swfobject.embedSWF(   
+         	             "flexpaper1/FlexPaperViewer.swf", "flashContent",   
+         	            news_width, news_height,   
+         	             swfVersionStr, xiSwfUrlStr,   
+         	             flashvars, params, attributes);   
+            		swfobject.createCSS("#flashContent", "display:block;text-align:left;");  
             	}
+        		 
 	        </script>
+	        <div style="position:absolute;left:10px;top:10px;">   
+		      <div id="flashContent">   
+		      </div>   
+    		 </div> 
         </div>
   </body>
 </html>
