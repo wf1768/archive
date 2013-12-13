@@ -64,7 +64,7 @@ public class TreeAction extends BaseAction {
 				SysOrg org = accountService.getAccountOfOrg(sessionAccount);
 				authorityTree = orgService.getTree(org.getOrgid());
 				if (null == authorityTree ) {
-					resultStr.append("[{\"id\":\"0\",\"text\":\"中粮档案库\",\"iconCls\":\"\",\"state\":\"open\",\"children\":[");
+					resultStr.append("[{\"id\":\"0\",\"text\":\"档案库\",\"iconCls\":\"\",\"state\":\"open\",\"children\":[");
 					resultStr.append("]}]");
 					out.write(resultStr.toString());
 					return null;
@@ -91,7 +91,7 @@ public class TreeAction extends BaseAction {
 		List<SysTree> treeList = treeService.selectByWhereNotPage(example);
 		
 		if ("root".equals(parentid)) {
-			resultStr.append("[{\"id\":\"0\",\"text\":\"中粮档案库\",\"iconCls\":\"\",\"state\":\"open\",\"children\":[");
+			resultStr.append("[{\"id\":\"0\",\"text\":\"档案库\",\"iconCls\":\"\",\"state\":\"open\",\"children\":[");
 			
 		}
 		else {
@@ -151,7 +151,7 @@ public class TreeAction extends BaseAction {
 		attrMap.put("id", "0");
 		attrMap.put("rel", "root");
 		map.put("attr", attrMap);
-		map.put("data", "中粮档案库");
+		map.put("data", "档案库");
 		
 		List<String> treeidList = new ArrayList<String>();
 		
