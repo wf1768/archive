@@ -22,6 +22,8 @@ public class DocConverter {
     private static File swfFile;  
     private static File docFile;  
   
+    private static String psd2swfPath;		//pdf2swf.exe文件的路径
+    
 //    public DocConverter(String fileString) {  
 //        ini(fileString);  
 //    }  
@@ -35,6 +37,12 @@ public class DocConverter {
         ini(fileString);  
     }  
   
+    /**
+     * 设置pdf2swf.exe 的路径
+     * */
+    public static void setPdf2swfPath(String path){
+    	psd2swfPath = path;
+    }
     /** 
      * 初始化 
      *  
@@ -60,6 +68,7 @@ public class DocConverter {
         		pdfFile = docFile;
         	}
             if (!pdfFile.exists()) {  
+            	DistorySoffice dis = new DistorySoffice();
                 OpenOfficeConnection connection = new SocketOpenOfficeConnection(8100);  
                 try {  
                     connection.connect();  
@@ -98,7 +107,8 @@ public class DocConverter {
             if (pdfFile.exists()) {  
                 if (environment == 1) {// windows环境处理  
                     try {  
-                        Process p = r.exec("D:/soft/swftools/pdf2swf.exe "+ pdfFile.getPath() + " -o "+ swfFile.getPath() + " -T 9");  
+//                        Process p = r.exec("D:/soft/swftools/pdf2swf.exe "+ pdfFile.getPath() + " -o "+ swfFile.getPath() + " -T 9");  
+                    	Process p = r.exec(psd2swfPath + pdfFile.getPath() + " -o "+ swfFile.getPath() + " -T 9");
                         System.out.print(loadStream(p.getInputStream()));  
                         System.err.print(loadStream(p.getErrorStream()));  
                         System.out.print(loadStream(p.getInputStream()));  
@@ -233,8 +243,10 @@ public class DocConverter {
         out.close();
     }
     
-//    public static void main(String s[]) {  
+    public static void main(String s[]) {  
 //        DocConverter d = new DocConverter("D:/File/Word文件1.doc");  
-//        d.conver();  
-//    } 
+//        d.conver();
+//    	CallOpenoffice callOpenoffice = new CallOpenoffice();
+//    	DistorySoffice dis = new DistorySoffice();
+    } 
 }

@@ -630,6 +630,8 @@ public class DocAction extends BaseAction{
         	}else if ("FTP".equals(serverType)) {
         		savePath = docServer.getServerpath();
         	}
+        	String pdf2swfPath = ServletActionContext.getServletContext().getRealPath("/WEB-INF/tools/swftools/pdf2swf.exe ");
+        	docConverter.setPdf2swfPath(pdf2swfPath);
         	String fileName = savePath + "\\" + doc.getDocpath();
         	docConverter.setFile(fileName);
         	String temp = "/SWFFILE";
