@@ -21,7 +21,7 @@ public class CallOpenoffice {
 				writer.write("C:");
 				writer.write("\r\n ");
 				// D:\\Program Files\\OpenOffice 4\\program： openoffice的安装路径路径
-				writer.write("cd C:\\Program Files (x86)\\OpenOffice 4\\program");
+				writer.write("cd C:\\Program Files\\OpenOffice 4\\program");
 				writer.write("\r\n ");
 //				writer.write("soffice -headless -accept="
 //						+ "socket,host=127.0.0.1,port=8100;urp;"

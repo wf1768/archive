@@ -243,10 +243,10 @@ public class DocConverter {
         out.close();
     }
     
-    public static void main(String s[]) {  
+//    public static void main(String s[]) {  
 //        DocConverter d = new DocConverter("D:/File/Word文件1.doc");  
 //        d.conver();
 //    	CallOpenoffice callOpenoffice = new CallOpenoffice();
 //    	DistorySoffice dis = new DistorySoffice();
-    } 
+//    } 
 }
