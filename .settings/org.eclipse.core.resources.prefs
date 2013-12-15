@@ -1,14 +1,5 @@
-#Sun Dec 01 22:53:43 CST 2013
+#Sat Dec 14 23:54:35 CST 2013
 eclipse.preferences.version=1
-encoding//WebContent/webpage/archive/archive/ArchiveBatchAttachment.html=UTF-8
-encoding//WebContent/webpage/archive/archive/ArchiveGroupBatchAttachment.html=UTF-8
-encoding//WebContent/webpage/archive/archive/ArchiveGroupFiling.html=UTF-8
-encoding//WebContent/webpage/archive/archive/ArchiveGroupOrganize.html=UTF-8
-encoding//WebContent/webpage/archive/archive/ArchiveGroupOrganize_new.html=UTF-8
-encoding//WebContent/webpage/archive/archive/ArchiveGroupPre.html=UTF-8
-encoding//WebContent/webpage/archive/archive/ArchiveGroupVolume.html=UTF-8
-encoding//WebContent/webpage/archive/archive/ArchiveList.html=UTF-8
-encoding//WebContent/webpage/archive/archive/example6-ajax-loading.html=UTF-8
-encoding//WebContent/webpage/system/config/SetSystem_1.html=UTF-8
-encoding//src/java/com/yapu/system/util/DocConverter.java=UTF-8
+encoding//src/org/gdh/demo/BackUpTableTask.java=UTF-8
+encoding//src/org/gdh/demo/TaskManager.java=UTF-8
 encoding/<project>=UTF-8
