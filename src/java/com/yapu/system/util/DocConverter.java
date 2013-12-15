@@ -69,6 +69,7 @@ public class DocConverter {
         	}
             if (!pdfFile.exists()) {  
             	DistorySoffice dis = new DistorySoffice();
+            	Thread.sleep(5000);
                 OpenOfficeConnection connection = new SocketOpenOfficeConnection(8100);  
                 try {  
                     connection.connect();  

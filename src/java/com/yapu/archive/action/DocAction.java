@@ -25,12 +25,10 @@ import com.yapu.system.util.Coverter;
 import com.yapu.system.util.DocConverter;
 import com.yapu.system.util.FtpUtil;
 import org.apache.struts2.ServletActionContext;
-import org.springframework.dao.support.DaoSupport;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
