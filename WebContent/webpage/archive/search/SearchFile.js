@@ -203,7 +203,7 @@ function fileDown(docId,treeid){
 			if (data == "1") {
 				window.location.href="downDoc.action?docId="+docId+"&treeid="+treeid;
 			} else {
-				openalert("对不起，您没有权限预览此文件！");
+				openalert("对不起，您没有权限下载此文件！");
 			}
 		}
 	});

@@ -235,6 +235,7 @@ function doSearch(){
 	     data: {groupitem: item ,tableType:tableType,intPage:0},
 	     success: function (data) {
 	     	list = eval(dynamicList);
+	     	searchCommon.tablename = tableName;
 	     	if(list.length>0){
 	     		var doc = showResultList(list);
 	     		$("#countResult").html(doc);
@@ -283,6 +284,52 @@ function showResultList(list) {
 		doc += "</table>";
 	}
 	return doc;
+}
+
+function tabinfo(tabType,selectid) {
+	
+	if (selectid != "") {
+		var fields = searchCommon.fields;
+		var data ;
+		//读取数据库。找到选择的记录
+		$.ajax({
+			async : false,
+			url : "getSelectData.action",
+			type : 'post',
+			dataType : 'script',
+			data:"selectid=" + selectid + "&tablename=" + searchCommon.tablename,
+			success : function(d) {
+				if (d != "error") {
+					data = eval(d);
+				} else {
+					us.openalert('<span style="color:red">读取数据时出错.</span></br>请关闭浏览器，重新登录尝试或与管理员联系!',
+							'系统提示',
+							'alertbody alert_Information'
+					);
+				}
+			}
+		});
+		
+		var content = "";
+		content += "<table class=\"table table-bordered table-condensed\" width=\"100%\">";
+		for (var i=0;i<tableFields.length;i++) {
+			var field = tableFields[i];
+			var a = field.englishname;//toLowerCase()
+			var value = data[0][a];
+			if (value == null) {
+				value = "";
+			}
+			if (field.englishname =='SLT') {
+				imagepath = value;
+			}
+			if (field.isgridshow == 1) {
+				content += "<tr><td width=\"170px\">"+field.chinesename+"</td><td>"+value+"</td></tr>";
+			}
+		}
+		content += "</table>";
+		$("#datalist").html(content);
+		$("#showDataInfo").modal('show');
+	}
 }
 
 
@@ -383,9 +430,10 @@ function showDoc(id) {
 			rowList = eval(docList);
 			$("#doclist").html("");
 			if(rowList.length>0){
-				for (var i=0;i<rowList.length;i++) {
-					$("#doclist").append(getDoclist(rowList[i]));
-				}
+				//for (var i=0;i<rowList.length;i++) {
+					//$("#doclist").append(getDoclist(rowList[i]));
+					$("#doclist").append(getDocTable(rowList));
+				//}
 				$("#showdoc").modal('show');
 			}else{
 				openalert('该记录尚未挂接文件！');
@@ -451,3 +499,56 @@ function fileDown(docId,treeid){
 	});
 }
 
+//预览
+function openContentDialog(selectid,treeid) {
+	$.ajax({
+		async : false,
+		url : "filePreview.action",
+		type : 'post',
+		dataType : 'text',
+		data:"treeid="+treeid+"&docId="+selectid,
+		success : function(data) {
+			if (data == "0") {
+				openalert("对不起，您没有权限预览此文件！");
+			} else {
+				var a=document.createElement("a");  
+				a.target="_blank"; 
+				a.href="../../../readFile.html?selectid="+selectid+"&treeid="+treeid;
+				document.body.appendChild(a);  
+				a.click()
+			}
+		}
+	});
+	
+}
+//电子全文
+function getDocTable(list) {
+	var content = "";
+	content += "<table class=\"table table-bordered table-condensed\" width=\"100%\">";
+	content += "<thead>";
+	content += "<tr>";
+	content += "<th>序号</th>";
+	content += "<th>文件名</th>";
+	content += "<th>类型</th>";
+	content += "<th>大小</th>";
+	content += "<th>操作</th>";
+	content += "</tr>";
+	content += "</thead>";
+	content += "<tbody>";
+	
+	for (var i=0;i<list.length;i++) {
+		var doc = list[i];
+		var num = i+1;
+		content += "<tr>";
+		content += "<td>"+num+"</td>";
+		content += "<td>"+doc.docoldname+"</td>";
+		content += "<td>"+doc.docext+"</td>";
+		content += "<td>"+doc.doclength+"</td>";
+		//content += "<td><button type='button' class='btn btn-primary' onclick=\"fileDown('"+doc.docid+"','"+archiveCommon.selectTreeid+"')\">下载</button><button type='button' class='btn btn-danger' style='margin-left: 10px;' onclick=\"delectDoc('"+doc.docid+"')\">删除</button></td>";
+		content += "<td><button type='button' class='btn-info' onClick=\"openContentDialog('"+list[i].docid+"','"+list[i].treeid+"')\" >查看</button><button type='button' style='margin-left: 10px;' class='btn-info' onClick=\"fileDown('"+list[i].docid+"','"+list[i].treeid+"')\">下载</button></td>";
+		content += "</tr>";
+	}
+	content += "</tbody>";
+	content += "</table>";
+	return content;
+}

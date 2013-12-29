@@ -149,6 +149,8 @@ public class SearchAdvancedAction extends BaseAction{
     	intPageCount = this.getPageCount();
 
     	String result = "var intPageCount = '"+intPageCount+"';";
+    	result = result+ "var tableName = '"+tableName+"';";
+    	
     	
     	List dynamicList = dynamicService.selectBySql(sql.toString(), this.getStartRec(intPage), this.getIntPageSize());
     	result += "var dynamicList = "+gson.toJson(dynamicList);

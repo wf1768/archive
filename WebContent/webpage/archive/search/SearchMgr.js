@@ -413,9 +413,10 @@ function showDoc(id,treeid) {
 			rowList = eval(docList);
 			$("#doclist").html("");
 			if(rowList.length>0){
-				for (var i=0;i<rowList.length;i++) {
-					$("#doclist").append(getDoclist(rowList[i]));
-				}
+//				for (var i=0;i<rowList.length;i++) {
+//					$("#doclist").append(getDoclist(rowList[i]));
+					$("#doclist").append(getDocTable(rowList));
+//				}
 				$("#showdoc").modal('show');
 			}else{
 				openalert('该记录尚未挂接文件！');
@@ -428,7 +429,9 @@ function showDoc(id,treeid) {
  * 
  */
 function getDoclist(row) {
-	var str = "<li class=\"docli\" onMouseOut=\"showDocDelectButton(false,'"+row.docid+"')\" onMouseOver=\"showDocDelectButton(true,'"+row.docid+"')\">";
+	//up 20131222 guodh
+	//var str = "<li class=\"docli\" onMouseOut=\"showDocDelectButton(false,'"+row.docid+"')\" onMouseOver=\"showDocDelectButton(true,'"+row.docid+"')\">";
+	var str = "<li class=\"docli\">";
 	str += "<div class=\"thumbnail\"><div class=\"docdiv\"><a href=\"#\" onClick=\"fileDown('"+row.docid+"','"+searchCommon.treeid+"')\">";
 	var docType = row.docext;
 	var typeCss = "";
@@ -463,6 +466,28 @@ function getDoclist(row) {
 	str += "</li>";
 	return str;
 }
+//预览
+function openContentDialog(selectid,treeid) {
+	$.ajax({
+		async : false,
+		url : "filePreview.action",
+		type : 'post',
+		dataType : 'text',
+		data:"treeid="+treeid+"&docId="+selectid,
+		success : function(data) {
+			if (data == "0") {
+				openalert("对不起，您没有权限预览此文件！");
+			} else {
+				var a=document.createElement("a");  
+				a.target="_blank"; 
+				a.href="../../../readFile.html?selectid="+selectid+"&treeid="+treeid;
+				document.body.appendChild(a);  
+				a.click()
+			}
+		}
+	});
+	
+}
 //下载
 function fileDown(docId,treeid){
 	$.ajax({
@@ -479,4 +504,36 @@ function fileDown(docId,treeid){
 			}
 		}
 	});
+}
+
+//电子全文
+function getDocTable(list) {
+	var content = "";
+	content += "<table class=\"table table-bordered table-condensed\" width=\"100%\">";
+	content += "<thead>";
+	content += "<tr>";
+	content += "<th>序号</th>";
+	content += "<th>文件名</th>";
+	content += "<th>类型</th>";
+	content += "<th>大小</th>";
+	content += "<th>操作</th>";
+	content += "</tr>";
+	content += "</thead>";
+	content += "<tbody>";
+	
+	for (var i=0;i<list.length;i++) {
+		var doc = list[i];
+		var num = i+1;
+		content += "<tr>";
+		content += "<td>"+num+"</td>";
+		content += "<td>"+doc.docoldname+"</td>";
+		content += "<td>"+doc.docext+"</td>";
+		content += "<td>"+doc.doclength+"</td>";
+		//content += "<td><button type='button' class='btn btn-primary' onclick=\"fileDown('"+doc.docid+"','"+archiveCommon.selectTreeid+"')\">下载</button><button type='button' class='btn btn-danger' style='margin-left: 10px;' onclick=\"delectDoc('"+doc.docid+"')\">删除</button></td>";
+		content += "<td><button type='button' class='btn-info' onClick=\"openContentDialog('"+list[i].docid+"','"+list[i].treeid+"')\" >查看</button><button type='button' style='margin-left: 10px;' class='btn-info' onClick=\"fileDown('"+list[i].docid+"','"+list[i].treeid+"')\">下载</button></td>";
+		content += "</tr>";
+	}
+	content += "</tbody>";
+	content += "</table>";
+	return content;
 }

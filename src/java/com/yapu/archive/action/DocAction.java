@@ -125,7 +125,7 @@ public class DocAction extends BaseAction{
 	    	SysDocExample example = new SysDocExample();
 	        SysDocExample.Criteria criteria = example.createCriteria();
 	        criteria.andFileidEqualTo(selectRowid);
-	        criteria.andTableidEqualTo(tableid);
+//	        criteria.andTableidEqualTo(tableid);
 	     	List<SysDoc> docList = docService.selectByWhereNotPage(example);
 	     	Gson gson = new Gson();
 	     	result = "var isNotAuth = '1';";
