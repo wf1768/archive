@@ -361,6 +361,17 @@ function deleteyesfile() {
 function show_batchAtt_list() {
 
     archiveCommon.yesItems = [];
+    
+    var allItem = attYesGridConfig.dataView.getItems();
+    
+    allItem.sort(function compare(a, b) {
+		return a - b;
+	});
+    
+    var aa = allItem.length;
+    for (var i=0;i<aa;i++) {
+        attYesGridConfig.dataView.deleteItem(allItem[0].docid);
+    }	
 
     var par = "treeid=" + archiveCommon.selectTreeid + "&tableType=" + archiveCommon.tableType + "&importType=1";
     $.ajax({
@@ -459,9 +470,16 @@ function show_batchAtt_list() {
 function closs() {
     $('#batchAtttab').hide();
     $('#ajtab').click();
+    
     var allItem = attYesGridConfig.dataView.getItems();
-    for (var i=0;i<allItem.length;i++) {
-        attYesGridConfig.dataView.deleteItem(allItem[i].docid);
+    
+    allItem.sort(function compare(a, b) {
+		return a - b;
+	});
+    
+    var aa = allItem.length;
+    for (var i=0;i<aa;i++) {
+        attYesGridConfig.dataView.deleteItem(allItem[0].docid);
     }
     archiveCommon.yesItems = [];
 }

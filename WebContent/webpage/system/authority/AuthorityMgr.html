@@ -90,7 +90,49 @@
         </div>
    	</div>
    	
+   	<!-- 设置数据访问权限 -->
+	<div id="setDataAuth" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:700px">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3 id="myModalLabel">设置数据访问权限</h3>
+        </div>
+        <div class="modal-body">
+			<div id="setAuth" style="font-size: 11px;">
+			<input type="hidden" id="tableType" value=""/>
+			<input type="hidden" id="fieldname" value=""/>
+				<table class="table table-striped table-bordered">
+					<thead>
+					<tr>
+						<th>字段</th>
+						<th>关系符</th>
+						<th>值</th>
+					</tr>
+					</thead>
+					<tr>
+						<td>
+							<select id="selectField">
+							</select>
+						</td>
+						<td>
+							<select id="oper" class="input-small">
+								<option value="equal">等于</option>
+								<!-- <option value="like">包含</option> -->
+							</select>
+						</td>
+						<td>
+							<input id="dataAuthValue" value="" type="text"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+        </div>
+        <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+	        <a href="javascript:;" id="" onclick="saveDataAuth()" class="btn btn-primary">保存</a>
+	    </div>
+   	</div>
+   	
 	<script src="../../js/bootstrap/js/bootstrap.js"></script>
-	<script src="../../js/bootbox.min.js"></script>
+	<script type="text/javascript" src="../../js/bootstrap/js/bootbox.min.js"></script>
 </body>
 </html>

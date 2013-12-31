@@ -33,7 +33,7 @@
 			</div> <!-- /widget-content -->
 		</div> <!-- /widget -->
 	</div></div>
-	<h5>档案节点电子全文的帐户组权限</h5>
+	<h5>档案节点电子全文的帐户权限</h5>
 	<hr>
 	<div class="row"><div class="span8">
 		<div class="widget">
@@ -53,6 +53,71 @@
 			</div> <!-- /widget-content -->
 		</div> <!-- /widget -->
 	</div></div>
+	<div id="ajDataAuth">
+		<h5>设置帐户对档案节点数据［案卷］记录的访问权限（注意：关系符［<font color="red">equal</font>］代表［等于］。）</h5>
+		<hr>
+		<div class="row">
+			<div class="span8">
+				<div class="widget">
+					<div class="widget-header">
+						<p style="margin: 6px 12px;">
+							<button class="btn btn-small btn-primary disabled bu" type="button" disabled onclick="showSetDataAuthWindow('01')">添加</button>
+							<button class="btn btn-small btn-primary disabled bu" type="button" disabled onclick="removeDataAuth('ajAuth')">移除</button>
+						</p>
+					</div> <!-- /widget-header -->
+					<div class="widget-content">
+			            <div id="dataAuth">
+			            	<table class="table table-striped table-bordered">
+								<thead>
+								<tr>
+									<th width="5%">#</th>
+									<th>字段</th>
+									<th>关系符</th>
+									<th>值</th>
+								</tr>
+								</thead>
+								<tbody id="ajAuth">
+								
+								</tbody>
+							</table>
+			            </div>
+					</div> <!-- /widget-content -->
+				</div> <!-- /widget -->
+			</div>
+		</div>
+	</div>
+	<div id="wjDataAuth">
+		<h5>设置帐户对档案节点数据［文件］记录的访问权限（注意：关系符［<font color="red">equal</font>］代表［等于］。）</h5>
+		<hr>
+		<div class="row">
+			<div class="span8">
+				<div class="widget">
+					<div class="widget-header">
+						<p style="margin: 6px 12px;">
+							<button class="btn btn-small btn-primary disabled bu" disabled type="button" onclick="showSetDataAuthWindow('02')">添加</button>
+							<button class="btn btn-small btn-primary disabled bu" disabled type="button" onclick="removeDataAuth('wjAuth')">移除</button>
+						</p>
+					</div> <!-- /widget-header -->
+					<div class="widget-content">
+			            <div id="">
+			            	<table class="table table-striped table-bordered">
+								<thead>
+								<tr>
+									<th width="5%">#</th>
+									<th>字段</th>
+									<th>关系符</th>
+									<th>值</th>
+								</tr>
+								</thead>
+								<tbody id="wjAuth">
+								</tbody>
+							</table>
+			            </div>
+					</div> <!-- /widget-content -->
+				</div> <!-- /widget -->
+			</div>
+		</div>
+	</div>
 	<ol>
 		<li>只有赋予了档案节点访问权限，在所有档案管理、查询、检索、电子全文中才有权力浏览档案。</li>
 		<li>档案节点访问权限的范围说明

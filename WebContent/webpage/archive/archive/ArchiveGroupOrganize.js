@@ -693,7 +693,11 @@ function wj_group(){
 			var aj_item = [];
             if(selectRowsAj.length == 0){
             	//所查案卷不存在
-            	var item = $.extend({},ajGridconfig.newItemTemplate);
+            	var newItemTemplate = {
+            	        isdoc	: "0",
+            	        status	: "1"
+            	    }
+            	var item = $.extend({},newItemTemplate);
                 item.id = UUID.prototype.createUUID ();
                 item.treeid = archiveCommon.selectTreeid;
                 item.files = item.id;

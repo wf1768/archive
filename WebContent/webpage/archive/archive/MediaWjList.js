@@ -272,6 +272,7 @@ function createWjInfo(id) {
 }
 
 function updateMediaWj() {
+	$("#addMediaDialog").html("");
 	$("#updMediaDialog").html("");//把修改的内容清空，否则ID有冲突 静态的就是费劲啊
     var items = [];
     var item = {};

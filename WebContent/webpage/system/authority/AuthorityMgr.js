@@ -1,6 +1,8 @@
 var authorityCommon = new us.archive.Authority();
 var orgid = ""; //全局的，添删修，后刷新当前账户组下账户列表
 var rel = ""; //类型，文件夹(folder)Or文件(default)
+
+var templettype = "";
 $(function () {
 	$("#demo").jstree({
 	    //加载账户组树
@@ -54,6 +56,10 @@ $(function () {
 	    if (node.hasClass('jstree-open')) { return inst.close_node(node); }
 	});
 	
+	
+	$('#selectField').change(function(){ 
+		$("#fieldname").val($(this).children('option:selected').text());
+	}) 
 });
 
 //设置角色
@@ -458,15 +464,20 @@ function orgoftree(){
 		$("#fileprint").attr("disabled", true);
 		$("#filescan").attr("checked", false); 
 		$("#filedown").attr("checked", false); 
-		$("#fileprint").attr("checked", false); 
-       	if (authorityCommon.orgOfTree.length > 0) {
-       		//alert(authorityCommon.orgOfTree.length);
+		$("#fileprint").attr("checked", false);
+		$(".bu").addClass("disabled");
+		$(".bu").attr("disabled","true"); 
+       	if (authorityCommon.orgOfTree.length > 0 ) {  //&& rel != "folder"
        		for (var i=0;i<authorityCommon.orgOfTree.length;i++) {
        			if (authorityCommon.orgOfTree[i].treeid == node.attr("id") && authorityCommon.orgOfTree[i].orgid) {
        				authorityCommon.orgTreeid = authorityCommon.orgOfTree[i].orgTreeId;
+       				authorityCommon.selectTree = authorityCommon.orgOfTree[i];
+       				authorityCommon.isSetAccount = 2;
        				$("#filescan").removeAttr("disabled");
        				$("#filedown").removeAttr("disabled");
        				$("#fileprint").removeAttr("disabled");
+       				$(".bu").removeClass("disabled");
+       				$(".bu").removeAttr("disabled"); 
        				if (authorityCommon.orgOfTree[i].filescan == 1) {
        					$("#filescan").attr("checked",'true');
        				}
@@ -476,6 +487,32 @@ function orgoftree(){
        				if (authorityCommon.orgOfTree[i].fileprint == 1) {
        					$("#fileprint").attr("checked",'true');
        				}
+       				
+       				//获取选择的树节点档案类型，是A还是F／P
+       				$.ajax({
+       			        async: false,
+       			        url: "getTempletType.action",
+       			        type: 'post',
+       			        dataType: 'text',
+       			        data: {treeid: authorityCommon.selectTree.treeid},
+       			        success: function (data) {
+       			            if (data != "error") {
+       			            	templettype = data;
+       			            	if (templettype == 'F') {
+       			            		$("#ajDataAuth").hide();
+       			            	}
+       			            	else {
+       			            		$("#ajDataAuth").show();
+       			            	}
+       			            	
+       			            	showDataAuth(authorityCommon.selectTree.filter);
+       			            } else {
+       			                openalert('读取数据时出错，请尝试重新操作或与管理员联系!');
+       			            }
+       			        }
+       			    });
+       				
+//       				getOrgTreeDataAuth(authorityCommon.orgOfTree[i].filter);
        				break;
        			}
        		}
@@ -484,6 +521,224 @@ function orgoftree(){
 	    if (node.hasClass('jstree-open')) { return inst.close_node(node); }
     })
 }
+
+
+//设置数据权限范围
+function showSetDataAuthWindow(tabletype){
+//	alert(authorityCommon.selectTree);
+	
+	if (authorityCommon.selectTree == null) {
+		alert("请选中一个档案节点，再编辑权限！");
+		return;
+	}
+	
+	readField(authorityCommon.selectTree.treeid,tabletype);
+	$("#tableType").val(tabletype);
+	$("#fieldname").val("");
+	$("#fieldname").val($("#selectField").children('option:selected').text());
+	$('#setDataAuth').modal('show');
+}
+//保存数据权限范围
+function saveDataAuth() {
+	//获取权限内容
+	var dataAuthValue = $("#dataAuthValue").val();
+	var selectField = $("#selectField").val();
+	var oper = $("#oper").val();
+	var fieldname = $("#fieldname").val();
+	
+	//创建对象
+	var dataAuth = {};
+	dataAuth.dataAuthValue = dataAuthValue;
+	dataAuth.selectField = selectField;
+	dataAuth.fieldname = fieldname;
+	dataAuth.oper = oper;
+	
+	var tmpid="";
+	var url = "";
+	if (authorityCommon.isSetAccount != 1) {
+		tmpid = authorityCommon.orgTreeid;
+		url = "setDataAuth.action";
+	}
+	else {
+		tmpid = authorityCommon.accountTreeid;
+		url = "setAccountDataAuth.action";
+	}
+	var tableType = $("#tableType").val();
+	//保存到服务器
+	$.ajax({
+        async: false,
+        url: url,
+        type: 'post',
+        dataType: 'script',
+        data: {orgTreeid: tmpid, tableType: tableType,filter:JSON.stringify(dataAuth)},
+        success: function (data) {
+            if (data != "error") {
+            	//保存成功后，提示
+            	openalert("授权成功！");
+            	if (authorityCommon.isSetAccount != 1) {
+            		authorityCommon.getOrgTree(); //刷新
+            	}
+            	else {
+            		authorityCommon.getAccountTree(); //刷新
+            	}
+	   			
+            	//保存成功后，显示在页面上。
+	   			if (templettype != "F") {
+	   				if (tableType == '01') {
+	   					createDataAuthTable('ajAuth',JSON.stringify(dataAuth));
+	   				}
+	   				else if (tableType == '02') {
+	   					createDataAuthTable('wjAuth',JSON.stringify(dataAuth));
+	   				}
+	   			}
+	   			else {
+	   				createDataAuthTable('wjAuth',JSON.stringify(dataAuth));
+	   			}
+	   			
+//                field = eval(fields);
+//                talbeField(field); //字段
+            } else {
+                openalert('读取数据时出错，请尝试重新操作或与管理员联系!');
+            }
+        }
+    });
+}
+//显示数据访问权限
+function showDataAuth(filter) {
+	$("#ajAuth").html('');
+	$("#wjAuth").html('');
+	//如果当前树节点的档案类型是标准档案或图片档案
+	if (templettype != "F") {
+		//获取条件对象
+		var array = JSON.parse(filter);
+		
+		for(var i=0;i<array.length;i++) {
+			if (array[i].tableType == '01') {
+				createDataAuthTable('ajAuth',JSON.stringify(array[i]));
+			}
+			else {
+				createDataAuthTable('wjAuth',JSON.stringify(array[i]));
+			}
+		}
+		
+	}
+	else {
+		//获取条件对象
+		var array = JSON.parse(filter);
+		for(var i=0;i<array.length;i++) {
+			createDataAuthTable('wjAuth',JSON.stringify(array[i]));
+		}
+	}
+}
+//创建数据访问权限页面显示
+function createDataAuthTable(who,dataAuth) {
+	if (dataAuth == "") {
+		return;
+	}
+	var html = $("#"+who).html();
+	var auth = JSON.parse(dataAuth);
+	var tmp = '<tr id="'+auth.id+'">';
+	tmp += '<td><input name="authid" type="checkbox" value="'+auth.id+'"/></td>'
+	tmp += '<td>'+auth.fieldname+'</td>';
+	tmp += '<td>'+auth.oper+'</td>';
+	tmp += '<td>'+auth.dataAuthValue+'</td>';
+	tmp += '</tr>';
+	html += tmp;
+	$("#"+who).html(html);
+}
+
+//删除组的数据访问权限
+function removeDataAuth(who) {
+	
+	var f_str = "";
+	$("#"+who+" :checkbox:checked").each(function(){
+	   if($(this).attr("checked")=="checked"){
+	    f_str += $(this).attr("value")+",";
+	   }
+	});
+	
+	if(f_str==""){
+		openalert("请选择要删除的数据！");
+	}else{
+		bootbox.confirm("确定要删除选择的数据吗？", function(result) {
+            if(result){
+                f_str = f_str.substring(0,f_str.length-1);
+                
+                alert(authorityCommon.isSetAccount);
+        		if (authorityCommon.isSetAccount != 1) {
+        			tmpid = authorityCommon.orgTreeid;
+        			url = "removeDataAuth.action";
+        		}
+        		else {
+        			tmpid = authorityCommon.accountTreeid;
+        			url = "removeAccountDataAuth.action";
+        		}
+        		alert(url);
+        		
+                $.ajax({
+                    type:"post",
+                    url:url,
+                    data: {par:f_str,orgTreeid: tmpid},
+                    success: function(data){
+                        if (data=="succ") {
+                           	openalert("删除成功！");
+                           	if (authorityCommon.isSetAccount != 1) {
+                        		authorityCommon.getOrgTree(); //刷新
+                        	}
+                        	else {
+                        		authorityCommon.getAccountTree(); //刷新
+                        	}
+                           	
+                           	var ids = f_str.split(",");
+                           	for (var i=0;i<ids.length;i++) {
+                           		//移除
+                               	$("#"+ids[i]).remove();
+                           	}
+                           	
+                        }else {
+                            openalert("删除出错，请重新尝试或与管理员联系。");
+                        }
+                    },
+                    error: function() {
+                        openalert("执行操作出错，请重新尝试或与管理员联系。");
+                    }
+                });
+            }
+        });
+	}
+}
+
+
+//同步读取当前节点的字段
+function readField(treeid,tableType) {
+    $.ajax({
+        async: false,
+        url: "getFieldAdvanced.action",
+        type: 'post',
+        dataType: 'script',
+        data: {treeid: treeid, tableType: tableType},
+        success: function (data) {
+            if (data != "error") {
+                field = eval(fields);
+                talbeField(field); //字段
+            } else {
+                openalert('读取数据时出错，请尝试重新操作或与管理员联系!');
+            }
+        }
+    });
+}
+
+//表字段
+function talbeField(tableField){
+	var html = "";
+	if (tableField.length > 0) {
+        for (var i=0;i<tableField.length;i++) {
+        	html += "<option value=\""+tableField[i].englishname+"\">"+tableField[i].chinesename+"</option>";
+        }
+    }
+    $("#selectField").html(html);
+}
+
 /**
 * 档案节点的【帐户】访问权限 / 档案节点电子全文的[帐户]权限
 */    
@@ -542,14 +797,20 @@ function accountoftree(accountid){
 		$("#account_fileprint").attr("disabled", true);
 		$("#account_filescan").attr("checked", false); 
 		$("#account_filedown").attr("checked", false); 
-		$("#account_fileprint").attr("checked", false); 
+		$("#account_fileprint").attr("checked", false);
+		$(".bu").addClass("disabled");
+		$(".bu").attr("disabled","true"); 
        	if (authorityCommon.accountTree.length > 0) {
        		for (var i=0;i<authorityCommon.accountTree.length;i++) {
        			if (authorityCommon.accountTree[i].treeid == node.attr('id') && authorityCommon.accountTree[i].accountid == authorityCommon.accountid) {
        				authorityCommon.accountTreeid = authorityCommon.accountTree[i].accountTreeId;
+       				authorityCommon.selectTree = authorityCommon.accountTree[i];
+       				authorityCommon.isSetAccount = 1;
        				$("#account_filescan").removeAttr("disabled");
        				$("#account_filedown").removeAttr("disabled");
        				$("#account_fileprint").removeAttr("disabled");
+       				$(".bu").removeClass("disabled");
+       				$(".bu").removeAttr("disabled"); 
        				if (authorityCommon.accountTree[i].filescan == 1) {
        					$("#account_filescan").attr("checked",'true');
        				}
@@ -559,6 +820,31 @@ function accountoftree(accountid){
        				if (authorityCommon.accountTree[i].fileprint == 1) {
        					$("#account_fileprint").attr("checked",'true');
        				}
+       				
+       				//获取选择的树节点档案类型，是A还是F／P
+       				$.ajax({
+       			        async: false,
+       			        url: "getTempletType.action",
+       			        type: 'post',
+       			        dataType: 'text',
+       			        data: {treeid: authorityCommon.selectTree.treeid},
+       			        success: function (data) {
+       			            if (data != "error") {
+       			            	templettype = data;
+       			            	if (templettype == 'F') {
+       			            		$("#ajDataAuth").hide();
+       			            	}
+       			            	else {
+       			            		$("#ajDataAuth").show();
+       			            	}
+       			            	
+       			            	showDataAuth(authorityCommon.selectTree.filter);
+       			            } else {
+       			                openalert('读取数据时出错，请尝试重新操作或与管理员联系!');
+       			            }
+       			        }
+       			    });
+       				
        				break;
        			}
        		}

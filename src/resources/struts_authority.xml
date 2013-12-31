@@ -27,9 +27,20 @@
 		
 		<!-- 修改帐户组的档案树节点权限-->
 		<action name="updateOrgTree" class="authorityAction" method="updateOrgTree"></action>
+		<!-- 修改帐户组的数据访问权限-->
+		<action name="setDataAuth" class="authorityAction" method="setDataAuth"></action>
+		<!-- 修改帐户的数据访问权限-->
+		<action name="setAccountDataAuth" class="authorityAction" method="setAccountDataAuth"></action>
+		<!-- 修改帐户组的数据访问权限-->
+		<action name="removeDataAuth" class="authorityAction" method="removeDataAuth"></action>
+		<!-- 修改帐户的数据访问权限-->
+		<action name="removeAccountDataAuth" class="authorityAction" method="removeAccountDataAuth"></action>
 		
 		
 		
+		
+		<!-- 获取树节点的档案类型。是A还是F\P-->
+		<action name="getTempletType" class="authorityAction" method="getTempletType"></action>
 		
 		<!-- 读取帐户的权限信息-->
 		<action name="getAccountAuthorityInfo" class="authorityAction" method="getAccountAuthorityInfo"></action>

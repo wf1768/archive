@@ -96,6 +96,8 @@ us.archive.Authority = function() {
 	this.accountid = "";
 	//选择设置权限的帐户名称
 	this.accountcode = "";
+	//当前选中的树对象
+	this.selectTree = null;
 }
 /**
  * 点击帐户组节点，打开帐户组的权限信息页

@@ -852,11 +852,13 @@ public class ArchiveGroupAction extends BaseAction {
 					break;
 				}
 			}else if (templet.getTemplettype().equals("A")) {
-				if (tableList.get(i).getTabletype().equals(tableType) && tableType.equals("01")) {
+//				if (tableList.get(i).getTabletype().equals(tableType) && tableType.equals("01")) {
+				if (tableList.get(i).getTabletype().equals("01")) {
 					tableName = tableList.get(i).getTablename();
-				}else if (tableList.get(i).getTabletype().equals(tableType) && tableType.equals("02")){
+//				}else if (tableList.get(i).getTabletype().equals(tableType) && tableType.equals("02")){
+				}else if (tableList.get(i).getTabletype().equals("02")){
 					tableNameWj = tableList.get(i).getTablename();
-					break;
+//					break;
 				}else {
 					tableName = tableList.get(i).getTablename();
 				}
