@@ -664,7 +664,6 @@ function removeDataAuth(who) {
             if(result){
                 f_str = f_str.substring(0,f_str.length-1);
                 
-                alert(authorityCommon.isSetAccount);
         		if (authorityCommon.isSetAccount != 1) {
         			tmpid = authorityCommon.orgTreeid;
         			url = "removeDataAuth.action";
@@ -673,7 +672,6 @@ function removeDataAuth(who) {
         			tmpid = authorityCommon.accountTreeid;
         			url = "removeAccountDataAuth.action";
         		}
-        		alert(url);
         		
                 $.ajax({
                     type:"post",

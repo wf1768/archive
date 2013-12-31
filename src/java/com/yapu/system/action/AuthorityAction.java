@@ -329,7 +329,7 @@ public class AuthorityAction extends BaseAction {
 		
 		for (int j = 0; j < delList.size(); j++) {
 			for (int i = 0; i < list.size(); i++) {
-				HashMap<String, String> map = gson.fromJson(list.get(i).toString(), new TypeToken<HashMap<String, String>>(){}.getType());;
+				HashMap<String, String> map = gson.fromJson(list.get(i).toString(), new TypeToken<HashMap<String, String>>(){}.getType());
 				if (map.get("id").toString().equals(delList.get(j))) {
 					list.remove(i);
 				}
