@@ -7,6 +7,8 @@ import com.yapu.archive.entity.DynamicExample;
 public interface DynamicDAO {
 
 	List selectByExample(DynamicExample example);
+	
+	List selectBySql(String sql);
 	/**
 	 * 执行create、update等操作
 	 * @param sql

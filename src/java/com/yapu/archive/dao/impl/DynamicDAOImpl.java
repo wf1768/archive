@@ -26,6 +26,7 @@ public class DynamicDAOImpl extends SqlMapClientDaoSupport implements DynamicDAO
 	public boolean update(String sql) {
 		HashMap map = new HashMap();
 		map.put("sql", sql);
+		logger.info(sql);
 		try {
 			int num = getSqlMapClientTemplate().update("Dynamic.updateSql", map);
 			if (num > 0) {
@@ -80,6 +81,18 @@ public class DynamicDAOImpl extends SqlMapClientDaoSupport implements DynamicDAO
 		
 		return list;
 	}
+	
+	@Override
+	public List selectBySql(String sql) {
+		HashMap map = new HashMap();
+		map.put("sql", sql);
+		logger.info(sql);
+		List list = getSqlMapClientTemplate().queryForList("Dynamic.selectBySql", map);
+		
+		return list;
+	}
+	
+	
 	public List selectListPageBySql(String sql,int index,int size){
 		HashMap map = new HashMap();
 		map.put("sql", sql);
@@ -144,6 +157,7 @@ public class DynamicDAOImpl extends SqlMapClientDaoSupport implements DynamicDAO
 		if (null != example.getOrderByClause()) {
 			sql.append(" ").append(example.getOrderByClause());
 		}
+		logger.info(sql.toString());
 		return sql.toString();
 	}
 

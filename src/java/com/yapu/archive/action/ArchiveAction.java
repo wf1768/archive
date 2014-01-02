@@ -204,6 +204,32 @@ public class ArchiveAction extends BaseAction {
         out.write(gson.toJson(fieldList));
         return null;
     }
+    
+    /**
+     * 获取数据访问权限
+     * @param 
+     * @return
+     * */
+    public String getDataAuth(String treeid){
+    	
+    	SysAccount account = super.getAccount();
+		//先查看账户本身是否有权限
+		List<SysAccountTree> accountTreeList =  accountService.getAccountOfTree(account.getAccountid(), treeid);
+		if(accountTreeList.size() >0 && accountTreeList != null){
+			SysAccountTree accountTree = accountTreeList.get(0);
+			return accountTree.getFilter();
+		}else{
+			//否则查看该账户的所在组
+			SysOrg sysOrg = accountService.getAccountOfOrg(account);
+			if(sysOrg!=null){
+			 	List<SysOrgTree> orgTreeList = orgService.getOrgOfTree(sysOrg.getOrgid(), treeid);
+			 	if(orgTreeList.size() >0 && orgTreeList != null){
+			 		return orgTreeList.get(0).getFilter();
+			 	}
+			}
+		}
+		return "";
+    }
 
 	public String list() throws IOException {
 
@@ -215,34 +241,117 @@ public class ArchiveAction extends BaseAction {
 			out.write(result.toString());
 			return null;
 		}
-
+		
 		//得到树节点对应的表集合
 		List<SysTable> tableList = treeService.getTreeOfTable(treeid);
-
-		DynamicExample de = new DynamicExample();
-        DynamicExample.Criteria criteria = de.createCriteria();
-        criteria.andEqualTo("treeid",treeid);
-
-        if ("0".equals(isAllWj) && "02".equals(tableType)) {
-            criteria.andEqualTo("parentid",selectAid);
-            criteria.andLessThan("status",Long.parseLong("1"));
-        }
-        else if ("1".equals(isAllWj) && "02".equals(tableType)) {
-            criteria.andLessThan("status",Long.parseLong("1"));
-        }
-        else if ("01".equals(tableType)){
-            criteria.andLessThan("status",Long.parseLong("2"));
-        }
-        
-        de.setOrderByClause("order by createtime desc");
-
+		
+		StringBuffer sbBuffer = new StringBuffer();
+		//获得表名
 		for (int i=0;i<tableList.size();i++) {
 			if (tableList.get(i).getTabletype().equals(tableType)) {
-				de.setTableName(tableList.get(i).getTablename());
+				sbBuffer.append("select * from ").append(tableList.get(i).getTablename());
 				break;
 			}
 		}
-		List dynamicList = dynamicService.selectByExample(de);
+		
+		sbBuffer.append(" where (treeid = '").append(treeid).append("'");
+		
+		if ("0".equals(isAllWj) && "02".equals(tableType)) {
+			sbBuffer.append(" and parentid='").append(selectAid).append("'");
+			sbBuffer.append(" and status<").append("1").append(")");
+        }
+        else if ("1".equals(isAllWj) && "02".equals(tableType)) {
+        	sbBuffer.append(" and status<").append("1").append(")");
+        }
+        else if ("01".equals(tableType)){
+        	sbBuffer.append(" and status<").append("2").append(")");
+        }
+		
+		//获取数据访问权限   草，还不如自己手写sql。这样的条件类，实现不了
+        String filter = getDataAuth(treeid);
+        Gson gson = new Gson();
+        List list = gson.fromJson(filter, new TypeToken<List>(){}.getType());
+        Boolean b = false;
+        StringBuffer tmpValue = new StringBuffer();
+        if (list != null && list.size() > 0) {
+        	for (int i = 0; i < list.size(); i++) {
+				HashMap<String, String> map = gson.fromJson(list.get(i).toString(), new TypeToken<HashMap<String, String>>(){}.getType());
+				if (map.get("tableType").toString().equals(tableType)) {
+					if (tmpValue.length() == 0) {
+						b = true;
+						tmpValue.append(" and (");
+						tmpValue.append(map.get("selectField")).append("='").append(map.get("dataAuthValue")).append("'");
+					}
+					else {
+						tmpValue.append(" or ").append(map.get("selectField")).append("='").append(map.get("dataAuthValue")).append("'");
+					}
+					
+				}
+			}
+        	if (b) {
+        		tmpValue.append(")");
+        	}
+        }
+        
+        if (tmpValue.length() > 0) {
+        	sbBuffer.append(tmpValue.toString());
+        }
+        
+        sbBuffer.append(" order by createtime desc");
+        
+        List dynamicList = dynamicService.selectBySql(sbBuffer.toString());
+		
+
+		//===================原采用条件类的方式。现在改为手写sql==================
+		//得到树节点对应的表集合
+//		List<SysTable> tableList = treeService.getTreeOfTable(treeid);
+//		DynamicExample de = new DynamicExample();
+//        DynamicExample.Criteria criteria = de.createCriteria();
+//        criteria.andEqualTo("treeid",treeid);
+//
+//        if ("0".equals(isAllWj) && "02".equals(tableType)) {
+//            criteria.andEqualTo("parentid",selectAid);
+//            criteria.andLessThan("status",Long.parseLong("1"));
+//        }
+//        else if ("1".equals(isAllWj) && "02".equals(tableType)) {
+//            criteria.andLessThan("status",Long.parseLong("1"));
+//        }
+//        else if ("01".equals(tableType)){
+//            criteria.andLessThan("status",Long.parseLong("2"));
+//        }
+//        
+//        //获取数据访问权限   草，还不如自己手写sql。这样的条件类，实现不了
+//        String filter = getDataAuth(treeid);
+//        Gson gson = new Gson();
+//        List list = gson.fromJson(filter, new TypeToken<List>(){}.getType());
+//        if (list != null && list.size() > 0) {
+//        	for (int i = 0; i < list.size(); i++) {
+//				HashMap<String, String> map = gson.fromJson(list.get(i).toString(), new TypeToken<HashMap<String, String>>(){}.getType());
+//				if (map.get("tableType").toString().equals(tableType)) {
+//					if (i==0) {
+//						criteria.andEqualTo(map.get("selectField"), map.get("dataAuthValue"));
+//					}
+//					else {
+//						DynamicExample.Criteria tmp = de.createCriteria();
+//						tmp.andEqualTo(map.get("selectField"), map.get("dataAuthValue"));
+////						de.or(tmp);
+//					}
+//					
+//				}
+//			}
+//        }
+//        
+//        de.setOrderByClause("order by createtime desc");
+//
+//		for (int i=0;i<tableList.size();i++) {
+//			if (tableList.get(i).getTabletype().equals(tableType)) {
+//				de.setTableName(tableList.get(i).getTablename());
+//				break;
+//			}
+//		}
+//		List dynamicList = dynamicService.selectByExample(de);
+		
+		//===================原采用条件类的方式。现在改为手写sql==================
 
 		//得到字段列表
 		List<SysTempletfield> templetfieldList = treeService.getTreeOfTempletfield(treeid, tableType);

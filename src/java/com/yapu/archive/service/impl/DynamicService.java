@@ -19,6 +19,11 @@ public class DynamicService implements IDynamicService {
 		return dynamicDao.selectByExample(example);
 	}
 	
+	@Override
+	public List selectBySql(String sql) {
+		return dynamicDao.selectBySql(sql);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List selectBySql(String sql,int index,int size) {
 		return dynamicDao.selectListPageBySql(sql, index, size);
@@ -182,6 +187,5 @@ public class DynamicService implements IDynamicService {
 		}
 		return result;
 	}
-	
-	
+
 }

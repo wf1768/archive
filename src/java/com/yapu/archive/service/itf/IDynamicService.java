@@ -22,6 +22,8 @@ public interface IDynamicService {
 	 */
 	@SuppressWarnings("unchecked")
 	List selectByExample(DynamicExample example);
+	
+	List selectBySql(String sql);
 
 	@SuppressWarnings("unchecked")
 	List selectBySql(String sql,int index,int size);
