@@ -525,11 +525,14 @@ function orgoftree(){
 
 //设置数据权限范围
 function showSetDataAuthWindow(tabletype){
-//	alert(authorityCommon.selectTree);
 	
 	if (authorityCommon.selectTree == null) {
 		alert("请选中一个档案节点，再编辑权限！");
 		return;
+	}
+	
+	if(templettype == "F") {
+		tabletype = "01";
 	}
 	
 	readField(authorityCommon.selectTree.treeid,tabletype);
@@ -545,6 +548,11 @@ function saveDataAuth() {
 	var selectField = $("#selectField").val();
 	var oper = $("#oper").val();
 	var fieldname = $("#fieldname").val();
+	
+	if(dataAuthValue == "") {
+		alert("请输入数据访问权限值！");
+		return;
+	}
 	
 	//创建对象
 	var dataAuth = {};
