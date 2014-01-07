@@ -12,7 +12,10 @@ import java.util.List;
 import org.apache.lucene.queryParser.ParseException;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yapu.archive.entity.DynamicExample;
+import com.yapu.archive.entity.SysAccountTree;
+import com.yapu.archive.entity.SysOrgTree;
 import com.yapu.archive.entity.SysTable;
 import com.yapu.archive.entity.SysTemplet;
 import com.yapu.archive.entity.SysTempletfield;
@@ -60,6 +63,7 @@ private static final long serialVersionUID = 5004188718476484590L;
 	 * @return
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unchecked")
 	public String getSearchTree() throws IOException {
 		PrintWriter out = this.getPrintWriter();
 		SysAccount account = this.getAccount();
@@ -150,6 +154,7 @@ private static final long serialVersionUID = 5004188718476484590L;
 		return childTreeList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List getSearchNumberByTreeid(String treeid) throws IOException {
 		List<HashMap> resultList = new ArrayList<HashMap>();
 		//得到树节点对应的表集合
@@ -197,7 +202,9 @@ private static final long serialVersionUID = 5004188718476484590L;
 //				ajStr = "";
 //				wjStr = "";
 				HashMap tmp = tableInfoList.get(i);
-				HashMap<String,Integer> numMap = searchService.searchNumber(tmp.get("tablename").toString(), (String[])tmp.get("fields"),searchTxt,tree.getTreeid());
+				//权限字段
+				HashMap<String, String> fMap = getDataAuthField(tree.getTreeid(),tmp.get("tabletype"));
+				HashMap<String,Integer> numMap = searchService.searchNumber(tmp.get("tablename").toString(), (String[])tmp.get("fields"),searchTxt,tree.getTreeid(),fMap);
 				if (tableInfoList.size() == 2) {
 					if ("01".equals(tmp.get("tabletype"))) {
 						if (null == numMap) {
@@ -241,6 +248,7 @@ private static final long serialVersionUID = 5004188718476484590L;
 	 * @return
 	 * @throws IOException 
 	 */
+	@SuppressWarnings("unchecked")
 	public String getSearchNumber() throws IOException {
 		
 		PrintWriter out = this.getPrintWriter();
@@ -273,6 +281,59 @@ private static final long serialVersionUID = 5004188718476484590L;
 		return null;
 	}
 	
+	/**
+	 * 获取数据访问的权限字段
+	 * @param treeid
+	 * @param object
+	 * */
+	@SuppressWarnings("unchecked")
+	public HashMap<String, String> getDataAuthField(String treeid,Object object){
+		//获取数据访问权限
+		String filter = getDataAuth(treeid);
+	    Gson gson = new Gson();
+	    List list = gson.fromJson(filter, new TypeToken<List>(){}.getType());
+	    //权限字段+值
+	    HashMap<String, String> fMap = new HashMap<String, String>();
+	    if(list !=null && list.size() >0){
+	    	for (int i = 0; i < list.size(); i++) {
+				HashMap<String, String> map = gson.fromJson(list.get(i).toString(), new TypeToken<HashMap<String, String>>(){}.getType());
+				if (map.get("tableType").toString().equals(object)) {
+					String selF = map.get("selectField");
+					String selFv = map.get("dataAuthValue");
+					fMap.put(selF, selFv);
+					System.out.println(treeid+":"+selF+"="+selFv);
+				}
+			}
+	    }
+	    return fMap;
+	}
+	/**
+     * 获取数据访问权限
+     * @param 
+     * @return
+     * */
+    public String getDataAuth(String treeid){
+    	
+    	SysAccount account = super.getAccount();
+		//先查看账户本身是否有权限
+		List<SysAccountTree> accountTreeList =  accountService.getAccountOfTree(account.getAccountid(), treeid);
+		if(accountTreeList.size() >0 && accountTreeList != null){
+			SysAccountTree accountTree = accountTreeList.get(0);
+			return accountTree.getFilter();
+		}else{
+			//否则查看该账户的所在组
+			SysOrg sysOrg = accountService.getAccountOfOrg(account);
+			if(sysOrg!=null){
+			 	List<SysOrgTree> orgTreeList = orgService.getOrgOfTree(sysOrg.getOrgid(), treeid);
+			 	if(orgTreeList.size() >0 && orgTreeList != null){
+			 		return orgTreeList.get(0).getFilter();
+			 	}
+			}
+		}
+		return "";
+    }
+    
+	@SuppressWarnings("unchecked")
 	public String search() throws IOException, ParseException {
 		PrintWriter out = this.getPrintWriter();
 		HashMap bb = new HashMap();
@@ -337,6 +398,7 @@ private static final long serialVersionUID = 5004188718476484590L;
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private HashMap searchData(SysTree tree) throws IOException {
 		HashMap resultMap = new HashMap();
 		
@@ -365,7 +427,9 @@ private static final long serialVersionUID = 5004188718476484590L;
 					resultMap = searchService.search(tableAj.getTablename(),fieldsList,searchTxt,currentPage,pageSize);
 				}
 				else {
-					resultMap = searchService.search(tableAj.getTablename(),fieldsList,searchTxt,tree.getTreeid(),currentPage,pageSize);
+					//权限字段
+					HashMap<String, String> fMap = getDataAuthField(tree.getTreeid(),"01");
+					resultMap = searchService.search(tableAj.getTablename(),fieldsList,searchTxt,tree.getTreeid(),currentPage,pageSize,fMap);
 				}
 				
 				resultMap.put("TABLETYPE", "01");
@@ -380,7 +444,9 @@ private static final long serialVersionUID = 5004188718476484590L;
 						resultMap = searchService.search(tableWj.getTablename(),fieldsList,searchTxt,currentPage,pageSize);
 					}
 					else {
-						resultMap = searchService.search(tableWj.getTablename(),fieldsList,searchTxt,tree.getTreeid(),currentPage,pageSize);
+						//权限字段
+						HashMap<String, String> fMap = getDataAuthField(tree.getTreeid(),"02");
+						resultMap = searchService.search(tableWj.getTablename(),fieldsList,searchTxt,tree.getTreeid(),currentPage,pageSize,fMap);
 					}
 					resultMap.put("TABLETYPE", "02");
 					resultMap.put("TEMPLETTYPE", "A");
@@ -394,7 +460,9 @@ private static final long serialVersionUID = 5004188718476484590L;
 					resultMap = searchService.search(tableAj.getTablename(),fieldsList,searchTxt,currentPage,pageSize);
 				}
 				else {
-					resultMap = searchService.search(tableAj.getTablename(),fieldsList,searchTxt,tree.getTreeid(),currentPage,pageSize);
+					//权限字段
+					HashMap<String, String> fMap = getDataAuthField(tree.getTreeid(),"01");
+					resultMap = searchService.search(tableAj.getTablename(),fieldsList,searchTxt,tree.getTreeid(),currentPage,pageSize,fMap);
 				}
 				
 				resultMap.put("TABLETYPE", "01");
@@ -409,7 +477,9 @@ private static final long serialVersionUID = 5004188718476484590L;
 					resultMap = searchService.search(tableWj.getTablename(),fieldsList,searchTxt,currentPage,pageSize);
 				}
 				else {
-					resultMap = searchService.search(tableWj.getTablename(),fieldsList,searchTxt,tree.getTreeid(),currentPage,pageSize);
+					//权限字段
+					HashMap<String, String> fMap = getDataAuthField(tree.getTreeid(),"02");
+					resultMap = searchService.search(tableWj.getTablename(),fieldsList,searchTxt,tree.getTreeid(),currentPage,pageSize,fMap);
 				}
 				resultMap.put("TABLETYPE", "02");
 				resultMap.put("TEMPLETTYPE", "A");
@@ -428,7 +498,9 @@ private static final long serialVersionUID = 5004188718476484590L;
 				resultMap = searchService.search(tableAj.getTablename(),fieldsList,searchTxt,currentPage,pageSize);
 			}
 			else {
-				resultMap = searchService.search(tableAj.getTablename(),fieldsList,searchTxt,tree.getTreeid(),currentPage,pageSize);
+				//权限字段
+				HashMap<String, String> fMap = getDataAuthField(tree.getTreeid(),"01");
+				resultMap = searchService.search(tableAj.getTablename(),fieldsList,searchTxt,tree.getTreeid(),currentPage,pageSize,fMap);
 			}
 			
 			resultMap.put("TABLETYPE", "01");
@@ -448,6 +520,7 @@ private static final long serialVersionUID = 5004188718476484590L;
 		return resultMap;
 	}
 	
+	@SuppressWarnings({ "unchecked", "unused" })
 	private HashMap getData(SysTree tree,SysTable table,List fieldsList) throws IOException {
 		
 		HashMap map = new HashMap();
@@ -461,6 +534,7 @@ private static final long serialVersionUID = 5004188718476484590L;
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String getSelectData() throws IOException {
 		
 		PrintWriter out = this.getPrintWriter();

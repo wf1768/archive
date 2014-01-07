@@ -1,5 +1,10 @@
-#Sat Dec 14 23:54:35 CST 2013
+#Sat Dec 28 22:40:38 CST 2013
 eclipse.preferences.version=1
+encoding//WebContent/webpage/archive/archive/ArchiveList.html=UTF-8
+encoding//WebContent/webpage/archive/archive/ArchiveList.js=UTF-8
+encoding//WebContent/webpage/archive/search/SearchAdvanced.js=UTF-8
+encoding//WebContent/webpage/archive/search/SearchFile.js=UTF-8
+encoding//WebContent/webpage/archive/search/SearchMgr.js=UTF-8
 encoding//src/org/gdh/demo/BackUpTableTask.java=UTF-8
 encoding//src/org/gdh/demo/TaskManager.java=UTF-8
 encoding/<project>=UTF-8

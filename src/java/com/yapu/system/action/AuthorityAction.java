@@ -17,7 +17,6 @@ import net.sf.json.JSON;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import com.yapu.archive.entity.SysAccountTree;
 import com.yapu.archive.entity.SysAccountTreeExample;
 import com.yapu.archive.entity.SysOrgTree;

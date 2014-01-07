@@ -31,9 +31,10 @@ public interface ISearchService {
 	 * @param fieldList
 	 * @param searchTxt
 	 * @param treeid
+	 * @param fMap //权限字段+值
 	 * @return
 	 */
-	HashMap searchNumber(String tableName,String[] fields,String searchTxt,String treeid);
+	HashMap searchNumber(String tableName,String[] fields,String searchTxt,String treeid,HashMap<String, String> fMap);
 
 	/**
 	 * 根据查询关键字，在档案类型下检索内容
@@ -55,10 +56,11 @@ public interface ISearchService {
 	 * @param treeid		树节点id
 	 * @param currentPage	当前页
 	 * @param pageSize		每页数量
+	 * @param fMap 			权限字段
 	 * @return
 	 * @throws IOException
 	 */
-	HashMap search(String tableName, List<SysTempletfield> tmpList,String searchTxt,String treeid,int currentPage,int pageSize) throws IOException;
+	HashMap search(String tableName, List<SysTempletfield> tmpList,String searchTxt,String treeid,int currentPage,int pageSize,HashMap<String, String> fMap) throws IOException;
 	/**
 	 * 电子全文检索
 	 * @param keyword		检索内容
