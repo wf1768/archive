@@ -290,6 +290,9 @@
     	<property name="treeService" ref="treeService" />
     	<property name="searchService" ref="searchService" />
     	<property name="dynamicService" ref="dynamicService" />
+    	
+    	<property name="accountService" ref="publicAccountService" />
+    	<property name="orgService" ref="publicOrgService" />
     </bean>
     <bean id="searchFileAction" class="com.yapu.archive.action.SearchFileAction">
     	<property name="accountService" ref="publicAccountService" />

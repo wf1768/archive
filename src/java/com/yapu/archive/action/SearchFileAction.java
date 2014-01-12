@@ -11,8 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.yapu.archive.entity.SysAccountTree;
 import com.yapu.archive.entity.SysDocserver;
 import com.yapu.archive.entity.SysDocserverExample;
+import com.yapu.archive.entity.SysOrgTree;
 import com.yapu.archive.entity.SysTree;
 import com.yapu.archive.entity.SysTreeExample;
 import com.yapu.archive.entity.SysTreeExample.Criteria;
@@ -85,6 +88,8 @@ public class SearchFileAction extends BaseAction {
 					}
 				}
 			}
+			//权限字段
+//			HashMap<String, String> fMap = getDataAuthField(tree.getTreeid(),tmp.get("tabletype"));
 			
 			bb = searchService.search(keyword, docserver.getDocserverid(), tmpList, currentPage, pageSize);
 			
@@ -176,6 +181,57 @@ public class SearchFileAction extends BaseAction {
 		return childTreeList;
 	}
 
+	/**
+	 * 获取数据访问的权限字段
+	 * @param treeid
+	 * @param object
+	 * */
+	@SuppressWarnings("unchecked")
+	public HashMap<String, String> getDataAuthField(String treeid,Object object){
+		//获取数据访问权限
+		String filter = getDataAuth(treeid);
+	    Gson gson = new Gson();
+	    List list = gson.fromJson(filter, new TypeToken<List>(){}.getType());
+	    //权限字段+值
+	    HashMap<String, String> fMap = new HashMap<String, String>();
+	    if(list !=null && list.size() >0){
+	    	for (int i = 0; i < list.size(); i++) {
+				HashMap<String, String> map = gson.fromJson(list.get(i).toString(), new TypeToken<HashMap<String, String>>(){}.getType());
+				if (map.get("tableType").toString().equals(object)) {
+					String selF = map.get("selectField");
+					String selFv = map.get("dataAuthValue");
+					fMap.put(selF, selFv);
+//					System.out.println(treeid+":"+selF+"="+selFv);
+				}
+			}
+	    }
+	    return fMap;
+	}
+	/**
+     * 获取数据访问权限
+     * @param 
+     * @return
+     * */
+    public String getDataAuth(String treeid){
+    	
+    	SysAccount account = super.getAccount();
+		//先查看账户本身是否有权限
+		List<SysAccountTree> accountTreeList =  accountService.getAccountOfTree(account.getAccountid(), treeid);
+		if(accountTreeList.size() >0 && accountTreeList != null){
+			SysAccountTree accountTree = accountTreeList.get(0);
+			return accountTree.getFilter();
+		}else{
+			//否则查看该账户的所在组
+			SysOrg sysOrg = accountService.getAccountOfOrg(account);
+			if(sysOrg!=null){
+			 	List<SysOrgTree> orgTreeList = orgService.getOrgOfTree(sysOrg.getOrgid(), treeid);
+			 	if(orgTreeList.size() >0 && orgTreeList != null){
+			 		return orgTreeList.get(0).getFilter();
+			 	}
+			}
+		}
+		return "";
+    }
 
 	public String getKeyword() {
 		return keyword;

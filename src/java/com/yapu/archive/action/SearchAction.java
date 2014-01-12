@@ -301,7 +301,7 @@ private static final long serialVersionUID = 5004188718476484590L;
 					String selF = map.get("selectField");
 					String selFv = map.get("dataAuthValue");
 					fMap.put(selF, selFv);
-					System.out.println(treeid+":"+selF+"="+selFv);
+//					System.out.println(treeid+":"+selF+"="+selFv);
 				}
 			}
 	    }

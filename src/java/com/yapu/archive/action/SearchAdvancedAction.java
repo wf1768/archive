@@ -5,27 +5,35 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.MultiFieldQueryParser;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yapu.archive.entity.DynamicExample;
 import com.yapu.archive.entity.QueryItem;
+import com.yapu.archive.entity.SysAccountTree;
+import com.yapu.archive.entity.SysOrgTree;
 import com.yapu.archive.entity.SysTable;
 import com.yapu.archive.entity.SysTemplet;
 import com.yapu.archive.entity.SysTempletfield;
@@ -33,9 +41,15 @@ import com.yapu.archive.service.itf.IDynamicService;
 import com.yapu.archive.service.itf.ISearchService;
 import com.yapu.archive.service.itf.ITreeService;
 import com.yapu.system.common.BaseAction;
+import com.yapu.system.entity.SysAccount;
+import com.yapu.system.entity.SysOrg;
+import com.yapu.system.service.itf.IAccountService;
+import com.yapu.system.service.itf.IOrgService;
 import com.yapu.system.util.BaseSelector;
 
 public class SearchAdvancedAction extends BaseAction{
+	private IAccountService accountService;
+	private IOrgService orgService;
 	
 	private IDynamicService dynamicService;
 	private ITreeService treeService;
@@ -121,13 +135,25 @@ public class SearchAdvancedAction extends BaseAction{
         //增加多媒体文件级表内容
         List<SysTable> tableList = treeService.getTreeOfTable(treeid);
         String tableName = "";
+        HashMap<String, String> fMap = null;
         //得到表名
         for (int i=0;i<tableList.size();i++) {
             if (tableList.get(i).getTabletype().equals(tableType)) {
                 tableName = tableList.get(i).getTablename();
+                //权限字段
+        		fMap = getDataAuthField(treeid,tableType);
                 break;
             }
         }
+        String fieldAuth_Sql = ""; //权限字段Sql
+		if(fMap != null){
+	        Set<Map.Entry<String, String>> set = fMap.entrySet();
+	        for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
+			    Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
+		    	fieldAuth_Sql += " AND "+entry.getKey() +"='" + entry.getValue() +"'";
+//			    System.out.println(entry.getKey() + "--->" + entry.getValue());
+			}
+		}
     	Gson gson = new Gson();
     	//把json对象转成实体对象 
     	List<QueryItem> retList = gson.fromJson(groupitem,  
@@ -142,6 +168,11 @@ public class SearchAdvancedAction extends BaseAction{
     		sql.append(" AND " +BaseSelector.getSql(qt.getOperatorType(), qt.getName(), qt.getValue()));
     		sql_count.append(" AND " +BaseSelector.getSql(qt.getOperatorType(), qt.getName(), qt.getValue()));
     	}
+    	if(!fieldAuth_Sql.equals("")){
+    		sql.append(fieldAuth_Sql);
+    		sql_count.append(fieldAuth_Sql);
+    	}
+//    	System.out.println(sql.toString());
     	//总记录数
     	intRowCount = dynamicService.rowCount(sql_count.toString());
     	//获得分页信息
@@ -294,6 +325,59 @@ public class SearchAdvancedAction extends BaseAction{
         }  
     }  
     
+    
+    /**
+	 * 获取数据访问的权限字段
+	 * @param treeid
+	 * @param object
+	 * */
+	@SuppressWarnings("unchecked")
+	public HashMap<String, String> getDataAuthField(String treeid,Object object){
+		//获取数据访问权限
+		String filter = getDataAuth(treeid);
+	    Gson gson = new Gson();
+	    List list = gson.fromJson(filter, new TypeToken<List>(){}.getType());
+	    //权限字段+值
+	    HashMap<String, String> fMap = new HashMap<String, String>();
+	    if(list !=null && list.size() >0){
+	    	for (int i = 0; i < list.size(); i++) {
+				HashMap<String, String> map = gson.fromJson(list.get(i).toString(), new TypeToken<HashMap<String, String>>(){}.getType());
+				if (map.get("tableType").toString().equals(object)) {
+					String selF = map.get("selectField");
+					String selFv = map.get("dataAuthValue");
+					fMap.put(selF, selFv);
+//					System.out.println(treeid+":"+selF+"="+selFv);
+				}
+			}
+	    }
+	    return fMap;
+	}
+	/**
+     * 获取数据访问权限
+     * @param 
+     * @return
+     * */
+    public String getDataAuth(String treeid){
+    	
+    	SysAccount account = super.getAccount();
+		//先查看账户本身是否有权限
+		List<SysAccountTree> accountTreeList =  accountService.getAccountOfTree(account.getAccountid(), treeid);
+		if(accountTreeList.size() >0 && accountTreeList != null){
+			SysAccountTree accountTree = accountTreeList.get(0);
+			return accountTree.getFilter();
+		}else{
+			//否则查看该账户的所在组
+			SysOrg sysOrg = accountService.getAccountOfOrg(account);
+			if(sysOrg!=null){
+			 	List<SysOrgTree> orgTreeList = orgService.getOrgOfTree(sysOrg.getOrgid(), treeid);
+			 	if(orgTreeList.size() >0 && orgTreeList != null){
+			 		return orgTreeList.get(0).getFilter();
+			 	}
+			}
+		}
+		return "";
+    }
+    
 	public ITreeService getTreeService() {
 		return treeService;
 	}
@@ -334,6 +418,22 @@ public class SearchAdvancedAction extends BaseAction{
 
 	public void setGroupitem(String groupitem) {
 		this.groupitem = groupitem;
+	}
+
+	public IAccountService getAccountService() {
+		return accountService;
+	}
+
+	public void setAccountService(IAccountService accountService) {
+		this.accountService = accountService;
+	}
+
+	public IOrgService getOrgService() {
+		return orgService;
+	}
+
+	public void setOrgService(IOrgService orgService) {
+		this.orgService = orgService;
 	}
 
 }

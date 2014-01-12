@@ -16,13 +16,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
+import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -30,7 +30,6 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.highlight.Highlighter;
@@ -47,9 +46,7 @@ import org.wltea.analyzer.lucene.IKAnalyzer;
 import com.yapu.archive.dao.itf.SysTreeDAO;
 import com.yapu.archive.entity.SysTempletfield;
 import com.yapu.archive.entity.SysTree;
-import com.yapu.archive.service.itf.IDocService;
 import com.yapu.archive.service.itf.ISearchService;
-import com.yapu.archive.service.itf.ITreeService;
 
 public class SearchService implements ISearchService {
 	
@@ -62,6 +59,7 @@ public class SearchService implements ISearchService {
 	 * @see com.yapu.archive.service.itf.ISearchService#searchNumber(java.lang.String, java.lang.String[], java.lang.String, java.lang.String)
 	 */
 	
+	@SuppressWarnings("unchecked")
 	public HashMap searchNumber(String tableName, String[] fields,
 			String searchTxt, String treeid,HashMap<String, String> fMap) {
 		String path = indexDir + "/" + tableName;
@@ -98,20 +96,7 @@ public class SearchService implements ISearchService {
 			BooleanQuery m_BooleanQuery = new BooleanQuery();// 得到一个组合检索对象
 
 			//权限字段
-			if(fMap != null){
-				Set<Map.Entry<String, String>> set = fMap.entrySet();
-		        for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
-		            Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
-		            System.out.println(entry.getKey() + "--->" + entry.getValue());
-//		            KeywordAnalyzer k_analyzer = new KeywordAnalyzer();
-//		            BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD};//AND
-//		            Query q = MultiFieldQueryParser.parse(Version.LUCENE_36, "值", new String[]{"title", "describes", "keywords"}, flags, k_analyzer);
-//		            BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD};//AND
-//		            Query q = MultiFieldQueryParser.parse(Version.LUCENE_36, entry.getValue(), new String[]{entry.getKey()}, flags, k_analyzer);
-//		            m_BooleanQuery.add(q, BooleanClause.Occur.MUST);
-		        }
-			}
-//			Query q = new TermQuery(new Term("gddw", "中粮肉"));
+			setSearchAuthor(m_BooleanQuery, fMap, analyzer);
 			
 			m_BooleanQuery.add(query1, BooleanClause.Occur.MUST);
 			m_BooleanQuery.add(query, BooleanClause.Occur.MUST);
@@ -136,6 +121,7 @@ public class SearchService implements ISearchService {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public HashMap searchNumber(String tableName,BooleanQuery booleanQuery, String treeid) {
 		try {  
 //        	String path = "E:\\Program Files\\apache-tomcat-6.0.29\\webapps\\archive1\\LUCENE\\A_C50BD8FC_01";
@@ -188,6 +174,7 @@ public class SearchService implements ISearchService {
 	 * @see com.yapu.archive.service.itf.ISearchService#search(java.lang.String, java.util.List, java.lang.String, int, int)
 	 */
 	
+	@SuppressWarnings("unchecked")
 	public HashMap search(String tableName,List<SysTempletfield> tmpList, String searchTxt,int currentPage,int pageSize)
 			throws IOException {
 		
@@ -325,6 +312,7 @@ public class SearchService implements ISearchService {
 	 * (non-Javadoc)
 	 * @see com.yapu.archive.service.itf.ISearchService#search(java.lang.String, java.util.List, java.lang.String, java.lang.String, int, int)
 	 */
+	@SuppressWarnings("unchecked")
 	public HashMap search(String tableName, List<SysTempletfield> tmpList, String searchTxt, String treeid,int currentPage,int pageSize,HashMap<String, String> fMap) {
 
 		if (currentPage <= 0) {
@@ -390,42 +378,25 @@ public class SearchService implements ISearchService {
 
 			//权限字段
 //			http://www.cnblogs.com/bluepoint2009/archive/2012/10/07/lucene-QueryParser.html
-			if(fMap != null){
-				Set<Map.Entry<String, String>> set = fMap.entrySet();
-		        for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
-		            Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
-		            System.out.println(entry.getKey() + "--->" + entry.getValue());
-	//	            KeywordAnalyzer k_analyzer = new KeywordAnalyzer();
-	//	            BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD};//AND
-	//	            Query q = MultiFieldQueryParser.parse(Version.LUCENE_36, "值", new String[]{"title", "describes", "keywords"}, flags, k_analyzer);
-		            
-	//	            BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD};//AND
-	//	            Query q = MultiFieldQueryParser.parse(Version.LUCENE_36, entry.getValue(), new String[]{entry.getKey()}, flags, k_analyzer);
-	//	            m_BooleanQuery.add(q, BooleanClause.Occur.MUST);
-		            
+//			if(fMap != null){
+//				Set<Map.Entry<String, String>> set = fMap.entrySet();
+//				BooleanQuery bQuery = new BooleanQuery(); //权限字段关系组合对象
+//				//读取设置的权限字段
+//		        for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
+//		            Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
+//		            System.out.println(entry.getKey() + "--->" + entry.getValue());
+//		           
 //		            String[] f = {entry.getKey().toLowerCase()};
 //					QueryParser q = new MultiFieldQueryParser(Version.LUCENE_36,f, analyzer);// 检索content列
-//					q.setDefaultOperator(QueryParser.OR_OPERATOR);
+//					q.setDefaultOperator(QueryParser.AND_OPERATOR);
 //					q.parse(entry.getValue());
 //					Query qu = q.parse(entry.getValue());
-//					m_BooleanQuery.add(qu, BooleanClause.Occur.MUST);
-		        }
-//		        Query qu = 
-//		        m_BooleanQuery.add(qu, BooleanClause.Occur.MUST);
-			}
-			String[] f = {"zrz"};
-			QueryParser q = new MultiFieldQueryParser(Version.LUCENE_36,f, analyzer);// 检索content列
-			q.setDefaultOperator(QueryParser.AND_OPERATOR);
-			Query qu = q.parse("栋辉科技");
-			
-			String[] f1 = {"gddw"};
-			QueryParser q1 = new MultiFieldQueryParser(Version.LUCENE_36,f1, analyzer);// 检索content列
-			q1.setDefaultOperator(QueryParser.AND_OPERATOR);
-			Query qu1 = q1.parse("中粮肉");
-			m_BooleanQuery.add(qu1, BooleanClause.Occur.SHOULD);
-			m_BooleanQuery.add(qu, BooleanClause.Occur.MUST);
-			
-			
+//					bQuery.add(qu, BooleanClause.Occur.MUST); //权限字段关系（AND）
+//		        }
+//		        m_BooleanQuery.add(bQuery, BooleanClause.Occur.MUST);	//把权限字段关系组合对象添加到组合检索对象
+//			}
+			//权限字段
+			setSearchAuthor(m_BooleanQuery, fMap, analyzer);
 			
 			if (null != searchTxt && !"".equals(searchTxt)) {
 				QueryParser qp1 = new MultiFieldQueryParser(Version.LUCENE_36,
@@ -505,6 +476,7 @@ public class SearchService implements ISearchService {
 	 * @see com.yapu.archive.service.itf.ISearchService#search(java.lang.String, java.lang.String, int, int)
 	 */
 	
+	@SuppressWarnings("unchecked")
 	public HashMap search(String keyword, String docserverid, List<SysTree> treeList,int currentPage,
 			int pageSize) {
 		
@@ -698,4 +670,34 @@ public class SearchService implements ISearchService {
 		this.treeDao = treeDao;
 	}
 	
+	/**
+	 * 权限字段
+	 * @param booleanQuery 关系组合对象
+	 * @param fMap 权限字段集合
+	 * @param analyzer 分词
+	 * */
+	public void setSearchAuthor(BooleanQuery booleanQuery,HashMap<String, String> fMap,Analyzer analyzer){
+		//http://www.cnblogs.com/bluepoint2009/archive/2012/10/07/lucene-QueryParser.html 参考资料
+		if(fMap != null){
+			try {
+				Set<Map.Entry<String, String>> set = fMap.entrySet();
+				BooleanQuery bQuery = new BooleanQuery(); //权限字段关系组合对象
+				//读取设置的权限字段
+				for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
+				    Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
+//				    System.out.println(entry.getKey() + "--->" + entry.getValue());
+				   
+				    String[] f = {entry.getKey().toLowerCase()};
+					QueryParser q = new MultiFieldQueryParser(Version.LUCENE_36,f, analyzer);// 检索content列
+					q.setDefaultOperator(QueryParser.AND_OPERATOR);
+					q.parse(entry.getValue());
+					Query qu = q.parse(entry.getValue());
+					bQuery.add(qu, BooleanClause.Occur.MUST); //权限字段关系（AND）
+				}
+				booleanQuery.add(bQuery, BooleanClause.Occur.MUST);	//把权限字段关系组合对象添加到组合检索对象
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
