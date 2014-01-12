@@ -33,7 +33,7 @@ $(function(){
 		  fit:true,
 		  iconCls:'icon-application_side_list'
 	});  
-	
+	$("#tree").height($("#p").height()-80);
 });
 //新建档案夹
 function addTreeFolder() {

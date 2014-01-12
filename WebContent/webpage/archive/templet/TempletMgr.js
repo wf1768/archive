@@ -1,5 +1,7 @@
 
 	$(function(){
+		$("#templetid").height($("templetid").height() - 40);
+		$("#templettree").height($("#templetid").height()-80);
           $('#templettree').tree({
               checkbox: false,   
               url: 'loadTempletTreeData.action',

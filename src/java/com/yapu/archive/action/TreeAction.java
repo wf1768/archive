@@ -81,6 +81,7 @@ public class TreeAction extends BaseAction {
 		
 		//获得父节点为nodeId的子节点
 		SysTreeExample example = new SysTreeExample();
+		example.setOrderByClause("CONVERT(TREENAME USING gbk)");
         example.createCriteria().andParentidEqualTo(tmpParent);
 //		if ("admin".equals(sessionAccount.getAccountcode())) {
 //			example.createCriteria().andParentidEqualTo(tmpParent);
@@ -217,7 +218,7 @@ public class TreeAction extends BaseAction {
 		else {
 			example.createCriteria().andParentidEqualTo(parentid).andTreeidIn(treeidList);
 		}
-		
+		example.setOrderByClause("CONVERT(TREENAME USING gbk)");
 		List<SysTree> trees = treeService.selectByWhereNotPage(example);
 		List list = new ArrayList();
 		if(null!=trees && trees.size()>0){
@@ -228,6 +229,7 @@ public class TreeAction extends BaseAction {
 				//判断该节点下是否有子节点
 				example.clear();
 				example.createCriteria().andParentidEqualTo(tree.getTreeid());
+				example.setOrderByClause("CONVERT(TREENAME USING gbk)");
 				if (treeService.selectByWhereNotPage(example).size() >0) {
 					attrMap.put("id", tree.getTreeid());
 					attrMap.put("rel", "folder");

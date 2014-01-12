@@ -1,7 +1,7 @@
 
 
 <script type="text/javascript" src="TreeList.js"></script>
-<div id="p" class="easyui-panel" style="padding:0px;">
+<div id="p" class="easyui-panel" style="padding:0px;overflow:hidden;"">
 	<div style="background:#efefef;padding:0px;width:100%;text-align:left;">
 		<a href="#" onClick="addTreeFolder()" title="新建档案夹" class="easyui-linkbutton" plain="true" iconCls=icon-add>新建档案夹</a>
 		<a href="#" onClick="addTreeW()" title="新建档案节点" class="easyui-linkbutton" plain="true" iconCls=icon-add>新建档案节点</a>
@@ -9,6 +9,6 @@
 		<a href="#" onClick="editTree()" title="编辑档案树" class="easyui-linkbutton" plain="true" iconCls=icon-edit>编辑</a>
 		<a href="#" onClick="reloadTree()" title="刷新" class="easyui-linkbutton" plain="true" iconCls=icon_refresh></a>
 	</div>
-	<ul id="tree" class="easyui-tree"></ul>
+	<ul id="tree" class="easyui-tree" style="overflow:auto;"></ul>
 </div>
 

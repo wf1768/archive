@@ -259,6 +259,7 @@ public class OrgAction extends BaseAction {
 		//得到节点
 		SysTreeExample example = new SysTreeExample();
 		example.createCriteria().andParentidEqualTo(parentId);
+		example.setOrderByClause("CONVERT(treename USING gbk)");
 		List<SysTree> trees = treeService.selectByWhereNotPage(example);
 		JSONArray jsonArray = new JSONArray();
 		
@@ -269,6 +270,7 @@ public class OrgAction extends BaseAction {
 			
 			SysTreeExample example1 = new SysTreeExample();
 			example1.createCriteria().andParentidEqualTo(tree.getTreeid());
+			example1.setOrderByClause("CONVERT(treename USING gbk)");
 			List<SysTree> trees1 = treeService.selectByWhereNotPage(example1);
 			if (trees1 != null && trees1.size() >= 1){
 				attro.put("id", (new StringBuilder("")).append(tree.getTreeid()).toString());

@@ -199,9 +199,16 @@ public class AccountAction extends BaseAction {
 		boolean result = false;
 		if (sysAccount != null) {
 			//如果密码填写了则修改，否则为原密码
-			if(!password.equals("") || password!=null){
+//			if(!password.equals("") || password!=null){
+//				sysAccount.setPassword(MD5.encode(password));
+//			}
+			if(password!=null && !password.equals("")){
 				sysAccount.setPassword(MD5.encode(password));
 			}
+//			
+//			if (sysAccount.getPassword() != null && !sysAccount.getPassword().equals("")) {
+//				sysAccount.setPassword(MD5.encode(password));
+//			}
 			if(accountService.updateAccount(sysAccount) > 0){
 				result = true;
 			}
@@ -349,6 +356,7 @@ public class AccountAction extends BaseAction {
     	//得到节点
 		SysTreeExample example = new SysTreeExample();
 		example.createCriteria().andParentidEqualTo(parentId);
+		example.setOrderByClause("CONVERT(treename USING gbk)");
 		List<SysTree> trees = treeService.selectByWhereNotPage(example);
 		JSONArray jsonArray = new JSONArray();
 		for (Iterator iterator1 = trees.iterator(); iterator1.hasNext();){
@@ -358,6 +366,7 @@ public class AccountAction extends BaseAction {
 			
 			SysTreeExample example1 = new SysTreeExample();
 			example1.createCriteria().andParentidEqualTo(tree.getTreeid());
+			example1.setOrderByClause("CONVERT(treename USING gbk)");
 			List<SysTree> trees1 = treeService.selectByWhereNotPage(example1);
 			if (trees1 != null && trees1.size() >= 1){
 				attro.put("id", (new StringBuilder("")).append(tree.getTreeid()).toString());

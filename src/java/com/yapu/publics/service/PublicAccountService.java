@@ -194,7 +194,7 @@ public class PublicAccountService extends AccountService {
 				}
 				SysTreeExample treeExample = new SysTreeExample();
 				treeExample.createCriteria().andTreeidIn(treeIDList);
-				
+				treeExample.setOrderByClause("CONVERT(TREENAME USING gbk)");
 				List<SysTree> treeList = treeDao.selectByExample(treeExample);
 				return treeList;
 			}

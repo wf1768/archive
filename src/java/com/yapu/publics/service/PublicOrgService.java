@@ -103,6 +103,7 @@ public class PublicOrgService extends OrgService {
 					treeIDList.add(orgTreeList.get(i).getTreeid());
 				}
 				SysTreeExample treeExample = new SysTreeExample();
+				treeExample.setOrderByClause("CONVERT(TREENAME USING gbk)");
 				treeExample.createCriteria().andTreeidIn(treeIDList);
 				
 				List<SysTree> treeList = treeDao.selectByExample(treeExample);

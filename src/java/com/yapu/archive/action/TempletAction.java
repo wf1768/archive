@@ -42,6 +42,7 @@ public class TempletAction extends BaseAction {
 		
 		//获得模板表所有数据
 		SysTempletExample example = new SysTempletExample();
+		example.setOrderByClause("CONVERT(TEMPLETNAME USING gbk)");
 		List<SysTemplet> templetList = templetService.selectByWhereNotPage(example);
 		
 		//获得表名管理表所有数据
