@@ -283,7 +283,7 @@ public class ArchiveAction extends BaseAction {
 						tmpValue.append(map.get("selectField")).append("='").append(map.get("dataAuthValue")).append("'");
 					}
 					else {
-						tmpValue.append(" or ").append(map.get("selectField")).append("='").append(map.get("dataAuthValue")).append("'");
+						tmpValue.append(" and ").append(map.get("selectField")).append("='").append(map.get("dataAuthValue")).append("'");
 					}
 					
 				}

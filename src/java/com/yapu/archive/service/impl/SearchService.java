@@ -682,19 +682,22 @@ public class SearchService implements ISearchService {
 			try {
 				Set<Map.Entry<String, String>> set = fMap.entrySet();
 				BooleanQuery bQuery = new BooleanQuery(); //权限字段关系组合对象
-				//读取设置的权限字段
-				for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
-				    Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
-//				    System.out.println(entry.getKey() + "--->" + entry.getValue());
-				   
-				    String[] f = {entry.getKey().toLowerCase()};
-					QueryParser q = new MultiFieldQueryParser(Version.LUCENE_36,f, analyzer);// 检索content列
-					q.setDefaultOperator(QueryParser.AND_OPERATOR);
-					q.parse(entry.getValue());
-					Query qu = q.parse(entry.getValue());
-					bQuery.add(qu, BooleanClause.Occur.MUST); //权限字段关系（AND）
+				if (set.size() > 0) {
+					//读取设置的权限字段
+					for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
+					    Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
+//					    System.out.println(entry.getKey() + "--->" + entry.getValue());
+					   
+					    String[] f = {entry.getKey().toLowerCase()};
+						QueryParser q = new MultiFieldQueryParser(Version.LUCENE_36,f, analyzer);// 检索content列
+						q.setDefaultOperator(QueryParser.AND_OPERATOR);
+						q.parse(entry.getValue());
+						Query qu = q.parse(entry.getValue());
+						bQuery.add(qu, BooleanClause.Occur.MUST); //权限字段关系（AND）
+					}
+					booleanQuery.add(bQuery, BooleanClause.Occur.MUST);	//把权限字段关系组合对象添加到组合检索对象
 				}
-				booleanQuery.add(bQuery, BooleanClause.Occur.MUST);	//把权限字段关系组合对象添加到组合检索对象
+				
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
